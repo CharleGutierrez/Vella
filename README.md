@@ -288,6 +288,7 @@ To help your team seamlessly integrate Vella into their specific workflows, we h
 *   🟥 [Angular RxJS & Signals Guide (150 Snippets)](ANGULAR_DEVELOPER_GUIDE.md)
 
 **Backend, Data Science & Ops:**
+*   🧠 [The 500 AI Integration Patterns Guide](AI_PROGRAMMER_500_GUIDE.md)
 *   🐍 [Python Data Science & MLOps Guide (150 Snippets)](PYTHON_DS_150_GUIDE.md)
 *   🏎️ [Formula One & High-Performance IoT Guide (150 Snippets)](F1_TELEMETRY_150_GUIDE.md)
 *   🌍 [Global Streaming Architecture Guide (150 Snippets)](GLOBAL_STREAMING_150_GUIDE.md)
