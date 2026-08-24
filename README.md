@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="vellalogo.jpeg" alt="Vella Engine Logo" width="600"/>
+</div>
+
 # ⚡ Vella
 
 **The Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase simplicity with Supabase scale, featuring native vector embeddings (PostgreSQL pgvector & SQLite-vec), Agentic AI Schema Scaffolding, AI Middleware (Token Rate-Limiting, Prompt-Logging, <1ms Semantic Caching), Zero-Config TypeScript Sync, Realtime WebSocket/SSE Synchronization, and Enterprise Self-Healing Resilience.**
