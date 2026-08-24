@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="vellalogo.jpeg" alt="Vella Engine Logo" width="600"/>
+  <img src="vellalogo.svg" alt="Vella Engine Logo" width="600"/>
 </div>
 
 # ⚡ Vella
