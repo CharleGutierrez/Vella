@@ -128,11 +128,11 @@ impl VellaApp {
         // 4. Resilience & AI Engine
         let watchdog = Arc::new(SystemWatchdog::default());
         watchdog.start(db.pool.clone());
-        let circuit_breaker = Arc::new(CircuitBreaker::new("vella_global_breaker", 5, 10));
-        let ai_tuner = Arc::new(AiTuner::default());
+        let ai_tuner = Arc::new(AiTuner::new());
+        let circuit_breaker = Arc::new(CircuitBreaker::new("vella_global_breaker", 5, 10, ai_tuner.clone()));
         let token_limiter = Arc::new(TokenRateLimiter::new(self.config.token_rate_limit_per_minute));
         let prompt_logger = Arc::new(PromptLogger::default());
-        let semantic_cache = Arc::new(SemanticCache::new(self.config.semantic_cache_threshold));
+        let semantic_cache = Arc::new(SemanticCache::new(self.config.semantic_cache_threshold, ai_tuner.clone()));
 
         let app_state = AppState {
             pool: db.pool.clone(),

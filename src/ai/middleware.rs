@@ -1,3 +1,4 @@
+use crate::ai::tuner::AiTuner;
 use crate::ai::vector::cosine_similarity;
 use crate::core::error::VellaError;
 use serde::{Deserialize, Serialize};
@@ -171,36 +172,42 @@ pub struct SemanticCacheItem {
 /// If cosine_similarity >= threshold, returns cached LLM response in < 1ms!
 #[derive(Debug, Clone)]
 pub struct SemanticCache {
-    threshold: f32,
+    base_threshold: f32,
     items: Arc<RwLock<Vec<SemanticCacheItem>>>,
     total_hits: Arc<AtomicU64>,
     total_misses: Arc<AtomicU64>,
-}
-
-impl Default for SemanticCache {
-    fn default() -> Self {
-        Self::new(0.90)
-    }
+    false_positives: Arc<AtomicU64>, // Mock tracking for the tuner
+    ai_tuner: Arc<AiTuner>,
 }
 
 impl SemanticCache {
-    pub fn new(threshold: f32) -> Self {
+    pub fn new(threshold: f32, ai_tuner: Arc<AiTuner>) -> Self {
         Self {
-            threshold,
+            base_threshold: threshold,
             items: Arc::new(RwLock::new(Vec::new())),
             total_hits: Arc::new(AtomicU64::new(0)),
             total_misses: Arc::new(AtomicU64::new(0)),
+            false_positives: Arc::new(AtomicU64::new(0)),
+            ai_tuner,
         }
     }
 
     /// Lookup cached response for a query embedding
     pub fn lookup(&self, query_embedding: &[f32]) -> Option<(Value, f32, String)> {
+        // Calculate false positive rate dynamically
+        let hits = self.total_hits.load(Ordering::Relaxed) as f64;
+        let fps = self.false_positives.load(Ordering::Relaxed) as f64;
+        let fp_rate = if hits > 0.0 { fps / hits } else { 0.0 };
+
+        // Tuner determines the active threshold dynamically
+        let active_threshold = self.ai_tuner.tune_semantic_cache_threshold(fp_rate);
+
         let mut items = self.items.write().unwrap();
         let mut best_match: Option<(usize, f32)> = None;
 
         for (idx, item) in items.iter().enumerate() {
             let sim = cosine_similarity(query_embedding, &item.embedding);
-            if sim >= self.threshold {
+            if sim >= active_threshold {
                 if let Some((_, best_sim)) = best_match {
                     if sim > best_sim {
                         best_match = Some((idx, sim));
@@ -248,7 +255,7 @@ impl SemanticCache {
 
         serde_json::json!({
             "cache_entries": self.items.read().unwrap().len(),
-            "threshold": self.threshold,
+            "threshold": self.base_threshold,
             "total_hits": hits,
             "total_misses": misses,
             "hit_rate_percentage": (hit_rate * 10.0).round() / 10.0

@@ -4,7 +4,16 @@ pub mod middleware;
 pub mod stats;
 pub mod tuner;
 pub mod vector;
+pub mod chunking;
+pub mod local_llm;
+pub mod registry;
+pub mod gpu;
+pub mod vision;
 
+pub use chunking::DocumentSplitter;
+pub use local_llm::LocalLlmEngine;
+pub use registry::ModelRegistry;
+pub use gpu::HardwareAccelerator;
 pub use decision::{AiDecisionEngine, RiskAssessment, RiskLevel};
 pub use generator::{AiScaffolder, GeneratedScaffoldResult};
 pub use middleware::{PromptLogEntry, PromptLogger, SemanticCache, TokenRateLimiter};

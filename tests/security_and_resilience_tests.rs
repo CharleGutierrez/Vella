@@ -111,7 +111,11 @@ fn test_security_privilege_escalation_detection() {
 
 #[test]
 fn test_circuit_breaker_self_healing() {
-    let breaker = CircuitBreaker::new("db_pool_breaker", 3, 1);
+    use vella::ai::AiTuner;
+    use std::sync::Arc;
+
+    let ai_tuner = Arc::new(AiTuner::new());
+    let breaker = CircuitBreaker::new("db_pool_breaker", 3, 1, ai_tuner);
 
     assert_eq!(breaker.state(), BreakerState::Closed);
     assert!(breaker.allow_execution());

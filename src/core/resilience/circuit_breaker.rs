@@ -1,6 +1,7 @@
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, RwLock};
 use std::time::{Duration, Instant};
+use crate::ai::tuner::AiTuner;
 
 /// Circuit Breaker states for self-healing failure isolation
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -15,25 +16,27 @@ pub enum BreakerState {
 pub struct CircuitBreaker {
     name: String,
     failure_threshold: u32,
-    cooldown_duration: Duration,
+    base_cooldown_secs: u64,
     consecutive_failures: Arc<AtomicU32>,
     last_state_change: Arc<RwLock<Instant>>,
     state: Arc<RwLock<BreakerState>>,
     total_trips: Arc<AtomicU64>,
     total_heals: Arc<AtomicU64>,
+    ai_tuner: Arc<AiTuner>,
 }
 
 impl CircuitBreaker {
-    pub fn new(name: impl Into<String>, failure_threshold: u32, cooldown_secs: u64) -> Self {
+    pub fn new(name: impl Into<String>, failure_threshold: u32, cooldown_secs: u64, ai_tuner: Arc<AiTuner>) -> Self {
         Self {
             name: name.into(),
             failure_threshold,
-            cooldown_duration: Duration::from_secs(cooldown_secs),
+            base_cooldown_secs: cooldown_secs,
             consecutive_failures: Arc::new(AtomicU32::new(0)),
             last_state_change: Arc::new(RwLock::new(Instant::now())),
             state: Arc::new(RwLock::new(BreakerState::Closed)),
             total_trips: Arc::new(AtomicU64::new(0)),
             total_heals: Arc::new(AtomicU64::new(0)),
+            ai_tuner,
         }
     }
 
@@ -45,7 +48,14 @@ impl CircuitBreaker {
             BreakerState::HalfOpen => true,
             BreakerState::Open => {
                 let elapsed = self.last_state_change.read().unwrap().elapsed();
-                if elapsed >= self.cooldown_duration {
+                
+                // AI Tuner dynamically evaluates the cooldown needed
+                let active_cooldown = self.ai_tuner.tune_circuit_breaker_cooldown(
+                    self.total_trips.load(Ordering::Relaxed), 
+                    self.base_cooldown_secs
+                );
+                
+                if elapsed >= active_cooldown {
                     // Transition to HalfOpen to probe if system has self-healed
                     let mut s = self.state.write().unwrap();
                     *s = BreakerState::HalfOpen;

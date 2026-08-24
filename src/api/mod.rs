@@ -1,6 +1,7 @@
 pub mod filter;
 pub mod handlers;
 pub mod openapi;
+pub mod cdn;
 
 use axum::{
     routing::{get, post},

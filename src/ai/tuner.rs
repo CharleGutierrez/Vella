@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::time::Duration;
+use tracing::{info, warn};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IndexRecommendation {
@@ -30,13 +33,12 @@ pub struct AiTunerReport {
     pub workload_summary: String,
 }
 
-/// The AI Tuner: Analyzes database query execution patterns, detects latency spikes,
-/// and recommends or auto-applies missing indexes and connection parameters.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AiTuner {
     pub stats: Arc<WorkloadStats>,
     column_access_counts: Arc<RwLock<HashMap<String, u64>>>,
     applied_indexes: Arc<RwLock<Vec<String>>>,
+    pub current_system_load: AtomicUsize,
 }
 
 impl Default for AiTuner {
@@ -51,10 +53,12 @@ impl AiTuner {
             stats: Arc::new(WorkloadStats::new()),
             column_access_counts: Arc::new(RwLock::new(HashMap::new())),
             applied_indexes: Arc::new(RwLock::new(Vec::new())),
+            current_system_load: AtomicUsize::new(50),
         }
     }
 
-    /// Record a query filter event for AI pattern analysis
+    // --- Original Methods ---
+
     pub fn record_query_pattern(&self, model: &str, table: &str, filtered_columns: &[&str], duration_ms: f64) {
         let snippet = if filtered_columns.is_empty() {
             format!("SELECT * FROM \"{}\"", table)
@@ -71,7 +75,6 @@ impl AiTuner {
         }
     }
 
-    /// Generate AI Index Recommendations based on runtime query analysis
     pub fn generate_recommendations(&self, registry: &SchemaRegistry) -> Vec<IndexRecommendation> {
         let counts = self.column_access_counts.read().unwrap();
         let applied = self.applied_indexes.read().unwrap();
@@ -86,7 +89,6 @@ impl AiTuner {
                 let key = format!("{}.{}", schema.table_name, field.name);
                 let hit_count = counts.get(&key).copied().unwrap_or(0);
 
-                // Recommend index if filtered frequently or flagged searchable
                 if hit_count >= 1 || field.searchable || field.filterable {
                     let idx_name = format!("idx_ai_{}_{}", schema.table_name, field.name);
                     let is_applied = applied.contains(&idx_name);
@@ -97,7 +99,7 @@ impl AiTuner {
                         table_name: schema.table_name.clone(),
                         column: field.name.clone(),
                         reason: format!(
-                            "Column '{}.{}' was queried {} times. Creating a B-Tree index will eliminate sequential full-table scans.",
+                            "Column '{}.{}' was queried {} times.",
                             schema.table_name, field.name, hit_count
                         ),
                         estimated_speedup: "10x - 50x faster queries".to_string(),
@@ -110,22 +112,12 @@ impl AiTuner {
                 }
             }
         }
-
         recs
     }
 
-    /// Auto-apply an AI-recommended index directly to the database
-    pub async fn apply_index(
-        &self,
-        pool: &Pool<Sqlite>,
-        table: &str,
-        column: &str,
-    ) -> Result<String, VellaError> {
+    pub async fn apply_index(&self, pool: &Pool<Sqlite>, table: &str, column: &str) -> Result<String, VellaError> {
         let idx_name = format!("idx_ai_{}_{}", table, column);
-        let ddl = format!(
-            "CREATE INDEX IF NOT EXISTS \"{}\" ON \"{}\" (\"{}\");",
-            idx_name, table, column
-        );
+        let ddl = format!("CREATE INDEX IF NOT EXISTS \"{}\" ON \"{}\" (\"{}\");", idx_name, table, column);
 
         sqlx::query(&ddl).execute(pool).await?;
 
@@ -134,21 +126,12 @@ impl AiTuner {
             applied.push(idx_name.clone());
         }
 
-        Ok(format!("Successfully created index '{}' on {}({})", idx_name, table, column))
+        Ok(format!("Successfully created index '{}'", idx_name))
     }
 
-    /// Generate complete AI Tuner report
     pub fn generate_report(&self, registry: &SchemaRegistry) -> AiTunerReport {
         let (p50, p95, p99) = self.stats.percentiles();
         let recs = self.generate_recommendations(registry);
-
-        let workload_summary = if p99 < 2.0 {
-            "💚 Optimal: Sub-millisecond response latency. Database I/O is operating at peak efficiency.".to_string()
-        } else if p99 < 15.0 {
-            "⚡ Good: Fast query execution. Consider applying recommended indexes to optimize p99 latency.".to_string()
-        } else {
-            "⚠️ Attention: High latency detected on unindexed columns. Applying AI index recommendations is advised.".to_string()
-        };
 
         AiTunerReport {
             engine_status: "AI Optimization Active & Telemetry Online".to_string(),
@@ -158,7 +141,100 @@ impl AiTuner {
             p95_latency_ms: (p95 * 100.0).round() / 100.0,
             p99_latency_ms: (p99 * 100.0).round() / 100.0,
             recommendations: recs,
-            workload_summary,
+            workload_summary: "AI Telemetry Online".to_string(),
+        }
+    }
+
+    // --- New Predictive AI Methods ---
+
+    pub fn predict_optimal_delay(&self, base_cron: &str) -> u64 {
+        let load = self.current_system_load.load(Ordering::SeqCst);
+        if load > 80 {
+            warn!("AI Tuner: System load at {}%. Delaying background job by 15 minutes.", load);
+            900
+        } else {
+            info!("AI Tuner: System load optimal ({}%). Executing on schedule ({}).", load, base_cron);
+            0
+        }
+    }
+
+    pub fn analyze_slow_join(&self, table: &str, related: &str, latency_ms: u64) -> Option<IndexRecommendation> {
+        if latency_ms > 50 {
+            info!("AI Tuner: Detected slow join between {} and {} ({}ms). Recommending index.", table, related, latency_ms);
+            Some(IndexRecommendation {
+                id: format!("auto_{}_{}", table, related),
+                model: table.to_string(),
+                table_name: table.to_string(),
+                column: format!("{}_id", related),
+                reason: "Auto AI Relational Join Index".to_string(),
+                estimated_speedup: "10x".to_string(),
+                ddl: format!("CREATE INDEX idx_ai_auto_{}_{} ON {} ({}_id);", table, related, table, related),
+                is_applied: false,
+            })
+        } else {
+            None
+        }
+    }
+
+    pub fn recommend_storage_tier(&self, file_path: &str, access_count: usize) -> &'static str {
+        if access_count > 1000 {
+            info!("AI Tuner: {} accessed {} times. Promoting to InMemory Cache.", file_path, access_count);
+            "Memory"
+        } else {
+            "S3"
+        }
+    }
+
+    pub fn determine_optimal_chunk_size(&self, document_preview: &str) -> usize {
+        if document_preview.matches("```").count() > 2 {
+            info!("AI Tuner: High code-block density detected. Increasing chunk size to preserve logic blocks.");
+            1024
+        } else {
+            512
+        }
+    }
+
+    /// Dynamic Semantic Cache Tuning: Optimize threshold based on system hit rates
+    pub fn tune_semantic_cache_threshold(&self, false_positive_rate: f64) -> f32 {
+        if false_positive_rate > 0.05 {
+            info!("AI Tuner: High false-positive rate detected in RAG cache. Tightening Cosine Similarity threshold to 0.95.");
+            0.95
+        } else {
+            // Drop to 0.85 to save token costs when accuracy is stable
+            0.85
+        }
+    }
+
+    /// Dynamic Circuit Breaker Cooldown: Adjust timeout windows based on trip frequency
+    pub fn tune_circuit_breaker_cooldown(&self, recent_trip_frequency: u64, base_cooldown_secs: u64) -> Duration {
+        if recent_trip_frequency > 3 {
+            info!("AI Tuner: Downstream service is highly volatile (tripped {} times). Stretching cooldown window.", recent_trip_frequency);
+            Duration::from_secs(base_cooldown_secs * 2)
+        } else {
+            Duration::from_secs(base_cooldown_secs)
+        }
+    }
+
+    /// Dynamic SCADA Data Compression: Widens or tightens deviation thresholds based on disk space
+    pub fn tune_compression_deviation(&self, base_deviation: f64, disk_usage_percent: f64) -> f64 {
+        if disk_usage_percent > 85.0 {
+            warn!("AI Tuner: Storage at {}%. Widening Swinging Door Compression tolerance to aggressively drop sensor packets.", disk_usage_percent);
+            base_deviation * 2.0
+        } else if disk_usage_percent < 40.0 {
+            info!("AI Tuner: Storage plentiful. Tightening compression tolerance to increase Historian data fidelity.");
+            base_deviation * 0.5
+        } else {
+            base_deviation
+        }
+    }
+
+    /// Dynamic Time-Series Auto-Bucketing: Adjusts resolution based on query performance
+    pub fn tune_timeseries_bucket_interval(&self, base_interval_ms: u64, last_query_latency_ms: u64) -> u64 {
+        if last_query_latency_ms > 200 {
+            warn!("AI Tuner: Time-Series query extremely slow ({}ms). Increasing downsampling bucket size to speed up dashboards.", last_query_latency_ms);
+            base_interval_ms * 5
+        } else {
+            base_interval_ms
         }
     }
 }

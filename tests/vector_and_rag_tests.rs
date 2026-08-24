@@ -80,7 +80,11 @@ async fn test_vector_similarity_search_in_database() {
 
 #[test]
 fn test_semantic_cache_instant_lookup() {
-    let cache = SemanticCache::new(0.90);
+    use vella::ai::AiTuner;
+    use std::sync::Arc;
+
+    let ai_tuner = Arc::new(AiTuner::new());
+    let cache = SemanticCache::new(0.90, ai_tuner);
     let prompt_vec = vec![0.8, 0.5, 0.1];
 
     // Put item in cache

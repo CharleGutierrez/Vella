@@ -17,7 +17,16 @@ pub mod prelude;
 pub mod realtime;
 pub mod types;
 pub mod ui;
+pub mod storage;
+pub mod jobs;
+pub mod scripting;
+pub mod data;
+pub mod media;
+pub mod net;
+pub mod compute;
+pub mod scada;
 
+pub use data::ArrowExporter;
 pub use ai::{
     cosine_similarity, dot_product, euclidean_distance, AiDecisionEngine, AiScaffolder,
     AiTuner, DistanceMetric, PromptLogEntry, PromptLogger, RiskAssessment, RiskLevel,

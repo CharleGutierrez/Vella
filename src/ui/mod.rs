@@ -3,6 +3,11 @@ pub mod assets;
 pub mod react_sdk;
 pub mod todo_showcase;
 pub mod vue_sdk;
+pub mod observability;
+pub mod python_sdk;
+pub mod hmi;
+
+pub use observability::observability_router;
 
 use axum::http::{header, StatusCode};
 use axum::response::{IntoResponse, Response};
