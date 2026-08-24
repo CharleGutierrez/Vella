@@ -7,6 +7,7 @@ pub mod wasm;
 pub mod chaos;
 pub mod rtos;
 pub mod tmr;
+pub mod mesh;
 
 pub use config::VellaConfig;
 pub use error::VellaError;
@@ -15,3 +16,4 @@ pub use hooks::ModelHook;
 pub use resilience::{CircuitBreaker, SystemWatchdog};
 pub use rtos::RtosIsolator;
 pub use tmr::TmrVoter;
+pub use mesh::GossipMeshNode;

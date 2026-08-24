@@ -276,6 +276,31 @@ Vella has transcended standard web-backend capabilities to natively support hype
 *   **Triple Modular Redundancy (TMR):** Executes hardware voting logic in microseconds. If Sensor A diverges from B and C, Vella physically isolates the node to prevent single-point-of-failure plant shutdowns.
 *   **ISA-18.2 Alarm State Machines:** Replaces standard web notifications with strict, legally compliant Control Room alarm states (`UNACKNOWLEDGED_ACTIVE`, `SHELVED`).
 
+---
+
+## 📚 Comprehensive Developer Cookbooks (150+ Patterns)
+
+To help your team seamlessly integrate Vella into their specific workflows, we have generated highly dense, 150-snippet copy-paste guides for every major engineering discipline.
+
+**Frontend & UI/UX:**
+*   ⚛️ [React Developer Guide (150 Snippets)](REACT_DEVELOPER_GUIDE.md)
+*   🟩 [Vue 3 Composition API Guide (150 Snippets)](VUE_DEVELOPER_GUIDE.md)
+*   🟥 [Angular RxJS & Signals Guide (150 Snippets)](ANGULAR_DEVELOPER_GUIDE.md)
+
+**Backend, Data Science & Ops:**
+*   🐍 [Python Data Science & MLOps Guide (150 Snippets)](PYTHON_DS_150_GUIDE.md)
+*   🏎️ [Formula One & High-Performance IoT Guide (150 Snippets)](F1_TELEMETRY_150_GUIDE.md)
+*   🌍 [Global Streaming Architecture Guide (150 Snippets)](GLOBAL_STREAMING_150_GUIDE.md)
+*   🏭 [SCADA & Industrial Control Guide (150 Snippets)](SCADA_INDUSTRIAL_150_GUIDE.md)
+*   🛡️ [Enterprise SecOps & Zero-Trust Guide (150 Snippets)](SECOPS_ENTERPRISE_150_GUIDE.md)
+
+**Platform Onboarding:**
+*   🪟 [Windows Zero-Dependency Onboarding Guide](WINDOWS_ONBOARDING.md)
+*   🐧 [Linux Native Onboarding Guide](LINUX_ONBOARDING.md)
+*   📖 [General Integration Cookbook](COOKBOOK.md)
+
+---
+
 ### 🌐 Quick Reference: How Teams Use Vella
 
 | Industry / Domain | Primary End-Users | Key Vella Features Utilized | How They Use Vella (The Execution) |
