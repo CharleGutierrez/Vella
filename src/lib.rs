@@ -35,6 +35,7 @@ pub mod defense;
 pub mod government;
 pub mod agi;
 pub mod supercomputing;
+pub mod gis;
 
 pub use data::ArrowExporter;
 pub use ai::{
