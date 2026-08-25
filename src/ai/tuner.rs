@@ -305,4 +305,36 @@ impl AiTuner {
             0.5 // Standard 0.5% slippage
         }
     }
+
+    // --- Frontier Expansion Auto-Tuning (Space, Robotics, Gaming) ---
+
+    /// Dynamically adjusts Delay Tolerant Networking (DTN) latency thresholds based on Solar Weather / Link Quality
+    pub fn tune_dtn_latency_tolerance(&self, solar_flare_activity_index: f64, base_tolerance: u64) -> u64 {
+        if solar_flare_activity_index > 7.0 {
+            warn!("AI Tuner: High solar flare activity ({}) detected. Increasing deep space DTN queue tolerance by 4 hours.", solar_flare_activity_index);
+            base_tolerance + 14400 
+        } else {
+            base_tolerance
+        }
+    }
+
+    /// Dynamically scales Lidar/SLAM point cloud downsampling to maintain server stability during rapid drone movement
+    pub fn tune_slam_downsample_rate(&self, drone_velocity_ms: f64) -> usize {
+        if drone_velocity_ms > 20.0 {
+            warn!("AI Tuner: Drone fleet moving at extreme velocity ({}m/s). Downsampling point cloud by 4x to preserve processing bandwidth.", drone_velocity_ms);
+            4
+        } else {
+            1
+        }
+    }
+
+    /// Dynamically expands multiplayer matchmaking ELO tolerance if the active player pool is small, preventing infinite queues
+    pub fn tune_matchmaking_elo_tolerance(&self, active_player_pool: u32, base_elo: u32) -> u32 {
+        if active_player_pool < 500 {
+            warn!("AI Tuner: Low multiplayer population ({} players). Expanding ELO tolerance to ensure fast lobby filling.", active_player_pool);
+            base_elo * 2
+        } else {
+            base_elo
+        }
+    }
 }

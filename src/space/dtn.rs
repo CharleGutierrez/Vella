@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use crate::ai::tuner::AiTuner;
 
 /// Delay Tolerant Networking (DTN) queue for deep space comms
 pub struct DtnQueue {
@@ -12,6 +13,11 @@ impl DtnQueue {
             bundles: VecDeque::new(),
             max_latency_tolerance_secs,
         }
+    }
+
+    /// Automatically adjusts transmission windows based on solar weather telemetry
+    pub fn optimize_with_ai(&mut self, tuner: &AiTuner, solar_flare_activity: f64) {
+        self.max_latency_tolerance_secs = tuner.tune_dtn_latency_tolerance(solar_flare_activity, self.max_latency_tolerance_secs);
     }
 
     pub fn enqueue_bundle(&mut self, payload: Vec<u8>) {

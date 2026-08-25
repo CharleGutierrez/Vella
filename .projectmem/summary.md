@@ -17,6 +17,7 @@ Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase a
 - New feature: feat: upgrade to v0.2.0 with Enterprise, Streaming, F1, and SCADA features [.gitignore]
 - New feature: feat(ai): integrate Unified AI Gateway to support OpenAI, Claude, Gemini, Grok, DeepSeek, and local Ollama models with H [Cargo.lock]
 - Merge: test: Verify all 8 God-Tier subsystems
+- New feature: feat: Add Space, Robotics, Gaming, Local-First Sync, and Synthetic Matrix modules [src/ai/mod.rs]
 
 ## Key files
 - `.gitignore`
