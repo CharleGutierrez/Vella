@@ -237,4 +237,30 @@ impl AiTuner {
             base_interval_ms
         }
     }
+
+    // --- Web3 / Blockchain Auto-Tuning Methods ---
+
+    /// Dynamically tunes the ZK-Rollup Sequencer based on Ethereum Mainnet Gas Prices
+    pub fn tune_zk_rollup_batch_interval(&self, current_eth_gas_gwei: f64, base_interval_secs: u64) -> Duration {
+        if current_eth_gas_gwei > 50.0 {
+            warn!("AI Tuner: Ethereum network heavily congested ({} Gwei). Stretching ZK-Rollup interval to save on Layer 1 settlement costs.", current_eth_gas_gwei);
+            Duration::from_secs(base_interval_secs * 4)
+        } else if current_eth_gas_gwei < 15.0 {
+            info!("AI Tuner: Ethereum gas is cheap ({} Gwei). Tightening ZK-Rollup interval for faster Layer 2 finality.", current_eth_gas_gwei);
+            Duration::from_secs(base_interval_secs / 2)
+        } else {
+            Duration::from_secs(base_interval_secs)
+        }
+    }
+
+    /// Evaluates whether the Vella Paymaster should sponsor gas for a specific user based on spam risk
+    pub fn predict_gas_sponsorship_viability(&self, user_daily_tx_count: u64, bot_probability: f64) -> bool {
+        if bot_probability > 0.85 || user_daily_tx_count > 100 {
+            warn!("AI Tuner: Paymaster risk threshold exceeded (Bot Prob: {}). Rejecting Account Abstraction gas sponsorship.", bot_probability);
+            false
+        } else {
+            info!("AI Tuner: Wallet action approved. Sponsoring Gas via EIP-4337.");
+            true
+        }
+    }
 }
