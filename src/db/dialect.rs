@@ -71,6 +71,18 @@ impl SqlDialect {
                 DatabaseType::MySql => "JSON".to_string(),
                 DatabaseType::Sqlite => "TEXT".to_string(),
             },
+            FieldType::Point { srid } => match db_type {
+                DatabaseType::Postgres => format!("GEOMETRY(Point, {})", srid),
+                _ => "POINT".to_string(),
+            },
+            FieldType::Polygon { srid } => match db_type {
+                DatabaseType::Postgres => format!("GEOMETRY(Polygon, {})", srid),
+                _ => "POLYGON".to_string(),
+            },
+            FieldType::Geometry { geom_type, srid } => match db_type {
+                DatabaseType::Postgres => format!("GEOMETRY({}, {})", geom_type, srid),
+                _ => "GEOMETRY".to_string(),
+            },
             _ => match db_type {
                 DatabaseType::Sqlite => "TEXT".to_string(),
                 DatabaseType::Postgres => "TEXT".to_string(),
@@ -85,6 +97,11 @@ impl SqlDialect {
 
         if db_type == DatabaseType::Postgres && schema.has_vectors() {
             statements.push("CREATE EXTENSION IF NOT EXISTS vector;".to_string());
+        }
+
+        let has_spatial = schema.fields.iter().any(|f| matches!(f.field_type, FieldType::Point { .. } | FieldType::Polygon { .. } | FieldType::Geometry { .. }));
+        if db_type == DatabaseType::Postgres && has_spatial {
+            statements.push("CREATE EXTENSION IF NOT EXISTS postgis;".to_string());
         }
 
         let mut col_defs = Vec::new();
@@ -143,6 +160,18 @@ impl SqlDialect {
                     "CREATE INDEX IF NOT EXISTS idx_{}_{}_hnsw ON {} USING hnsw (\"{}\" vector_cosine_ops);",
                     schema.table_name, v_field.name, Self::quote_identifier(db_type, &schema.table_name), v_field.name
                 ));
+            }
+        }
+
+        // Spatial indexes (GiST)
+        if db_type == DatabaseType::Postgres {
+            for field in &schema.fields {
+                if field.spatial_indexed {
+                    statements.push(format!(
+                        "CREATE INDEX IF NOT EXISTS idx_{}_{}_gist ON {} USING GIST (\"{}\");",
+                        schema.table_name, field.name, Self::quote_identifier(db_type, &schema.table_name), field.name
+                    ));
+                }
             }
         }
 

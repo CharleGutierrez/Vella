@@ -19,6 +19,8 @@ impl TypeScriptGenerator {
             }
             FieldType::Json => "Record<string, any>".to_string(),
             FieldType::Vector { .. } => "number[]".to_string(),
+            FieldType::Point { .. } => "[number, number]".to_string(), // [longitude, latitude]
+            FieldType::Polygon { .. } | FieldType::Geometry { .. } => "Record<string, any>".to_string(), // GeoJSON
             _ => "string".to_string(),
         }
     }

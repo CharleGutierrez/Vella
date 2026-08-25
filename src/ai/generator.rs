@@ -34,6 +34,8 @@ impl AiScaffolder {
             schema = schema.category("Finance & Billing").icon("credit-card");
         } else if p_lower.contains("rag") || p_lower.contains("ai") || p_lower.contains("knowledge") || p_lower.contains("doc") {
             schema = schema.category("AI & Knowledge Base").icon("cpu");
+        } else if p_lower.contains("gis") || p_lower.contains("spatial") || p_lower.contains("map") || p_lower.contains("location") {
+            schema = schema.category("GIS & Spatial").icon("map");
         } else {
             schema = schema.category("General").icon("database");
         }
@@ -108,6 +110,17 @@ impl AiScaffolder {
                 1536 // Default OpenAI text-embedding-3-small / ada-002
             };
             schema = schema.field(Field::vector("embedding", dimensions));
+        }
+
+        // 5.1 GIS / Spatial Data
+        if p_lower.contains("location") || p_lower.contains("coordinate") || p_lower.contains("gps") || p_lower.contains("point") {
+            let field_name = if p_lower.contains("location") { "location" } else { "coordinates" };
+            schema = schema.field(Field::point(field_name, 4326).spatial_indexed());
+        }
+
+        if p_lower.contains("boundary") || p_lower.contains("polygon") || p_lower.contains("area") || p_lower.contains("zone") {
+            let field_name = if p_lower.contains("boundary") { "boundary" } else if p_lower.contains("zone") { "zone" } else { "area" };
+            schema = schema.field(Field::polygon(field_name, 4326).spatial_indexed());
         }
 
         // 6. Status & Workflow
@@ -187,6 +200,9 @@ impl AiScaffolder {
                 }
                 FieldType::Json => format!("Field::json(\"{}\")", field.name),
                 FieldType::Vector { dimensions } => format!("Field::vector(\"{}\", {})", field.name, dimensions),
+                FieldType::Point { srid } => format!("Field::point(\"{}\", {})", field.name, srid),
+                FieldType::Polygon { srid } => format!("Field::polygon(\"{}\", {})", field.name, srid),
+                FieldType::Geometry { geom_type, srid } => format!("Field::geometry(\"{}\", \"{}\", {})", field.name, geom_type, srid),
             };
 
             if field.required && field.field_type != FieldType::Password {
@@ -200,6 +216,9 @@ impl AiScaffolder {
             }
             if field.requires_approval {
                 f_line.push_str(".requires_approval()");
+            }
+            if field.spatial_indexed {
+                f_line.push_str(".spatial_indexed()");
             }
             if let Some(ref help) = field.help_text {
                 f_line.push_str(&format!(".help(\"{}\")", help.replace('"', "\\\"")));
@@ -222,6 +241,9 @@ impl AiScaffolder {
         let mut features = Vec::new();
         if schema.has_vectors() {
             features.push("LLM Vector Embeddings (RAG Ready)".to_string());
+        }
+        if schema.fields.iter().any(|f| matches!(f.field_type, FieldType::Point { .. } | FieldType::Polygon { .. } | FieldType::Geometry { .. })) {
+            features.push("GIS Spatial Capabilities (PostGIS / Spatialite)".to_string());
         }
         if schema.fields.iter().any(|f| f.requires_approval) {
             features.push("AI Approval Workflow Queue".to_string());

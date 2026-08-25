@@ -43,6 +43,7 @@ impl ModelSchema {
             read_only: true,
             encrypted: false,
             requires_approval: false,
+            spatial_indexed: false,
             default_value: None,
             help_text: Some("Primary Key".to_string()),
         });
@@ -94,6 +95,7 @@ impl ModelSchema {
             read_only: true,
             encrypted: false,
             requires_approval: false,
+            spatial_indexed: false,
             default_value: None,
             help_text: Some("Creation timestamp".to_string()),
         });
@@ -109,6 +111,7 @@ impl ModelSchema {
             read_only: true,
             encrypted: false,
             requires_approval: false,
+            spatial_indexed: false,
             default_value: None,
             help_text: Some("Last modification timestamp".to_string()),
         });

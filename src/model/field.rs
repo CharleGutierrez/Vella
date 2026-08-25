@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// The data types and specialized widgets supported by Vella fields,
-/// including native vector embeddings for LLMs and RAG architectures.
+/// including native vector embeddings for LLMs and RAG architectures, and GIS types.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "config")]
 pub enum FieldType {
@@ -23,6 +23,12 @@ pub enum FieldType {
     Json,
     /// Native Vector Embedding for pgvector, sqlite-vec, and semantic RAG search
     Vector { dimensions: usize },
+    /// GIS Point type
+    Point { srid: i32 },
+    /// GIS Polygon type
+    Polygon { srid: i32 },
+    /// Generic GIS Geometry type
+    Geometry { geom_type: String, srid: i32 },
 }
 
 /// Metadata, validation rules, and UI rendering hints for a model field.
@@ -39,6 +45,7 @@ pub struct Field {
     pub read_only: bool,
     pub encrypted: bool,
     pub requires_approval: bool,
+    pub spatial_indexed: bool,
     pub default_value: Option<serde_json::Value>,
     pub help_text: Option<String>,
 }
@@ -59,6 +66,7 @@ impl Field {
             read_only: false,
             encrypted: false,
             requires_approval: false,
+            spatial_indexed: false,
             default_value: None,
             help_text: None,
         }
@@ -150,6 +158,31 @@ impl Field {
         f
     }
 
+    /// GIS Point field for locations
+    pub fn point(name: impl Into<String>, srid: i32) -> Self {
+        let mut f = Self::new(name, FieldType::Point { srid });
+        f.list_display = false;
+        f.help_text = Some(format!("GIS Point (SRID: {})", srid));
+        f
+    }
+
+    /// GIS Polygon field for boundaries
+    pub fn polygon(name: impl Into<String>, srid: i32) -> Self {
+        let mut f = Self::new(name, FieldType::Polygon { srid });
+        f.list_display = false;
+        f.help_text = Some(format!("GIS Polygon (SRID: {})", srid));
+        f
+    }
+
+    /// Generic GIS Geometry field
+    pub fn geometry(name: impl Into<String>, geom_type: impl Into<String>, srid: i32) -> Self {
+        let geom_type_str = geom_type.into();
+        let mut f = Self::new(name, FieldType::Geometry { geom_type: geom_type_str.clone(), srid });
+        f.list_display = false;
+        f.help_text = Some(format!("GIS Geometry {} (SRID: {})", geom_type_str, srid));
+        f
+    }
+
     // Builder methods
     pub fn display_name(mut self, name: impl Into<String>) -> Self {
         self.display_name = name.into();
@@ -193,6 +226,11 @@ impl Field {
 
     pub fn requires_approval(mut self) -> Self {
         self.requires_approval = true;
+        self
+    }
+
+    pub fn spatial_indexed(mut self) -> Self {
+        self.spatial_indexed = true;
         self
     }
 
