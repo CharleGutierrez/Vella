@@ -20,6 +20,10 @@ impl DtnQueue {
         self.max_latency_tolerance_secs = tuner.tune_dtn_latency_tolerance(solar_flare_activity, self.max_latency_tolerance_secs);
     }
 
+    pub fn get_tolerance(&self) -> u64 {
+        self.max_latency_tolerance_secs
+    }
+
     pub fn enqueue_bundle(&mut self, payload: Vec<u8>) {
         self.bundles.push_back(payload);
     }

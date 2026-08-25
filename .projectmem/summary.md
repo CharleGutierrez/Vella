@@ -18,6 +18,9 @@ Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase a
 - New feature: feat(ai): integrate Unified AI Gateway to support OpenAI, Claude, Gemini, Grok, DeepSeek, and local Ollama models with H [Cargo.lock]
 - Merge: test: Verify all 8 God-Tier subsystems
 - New feature: feat: Add Space, Robotics, Gaming, Local-First Sync, and Synthetic Matrix modules [src/ai/mod.rs]
+- New feature: feat: Integrate AiTuner into Space, Robotics, and Gaming modules [.projectmem/summary.md]
+- New feature: feat: Replace mock ROS2 bridge with a real Async WebSocket connection [Cargo.lock]
+- New feature: feat: Implement asynchronous FIX (Financial Information eXchange) Protocol Client [src/trading/fix.rs]
 
 ## Key files
 - `.gitignore`
