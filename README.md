@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>⚡ Vella</h1>
+  <img src="assets/vella_logo.jpg" alt="Vella Logo" width="400" />
   <p><b>The Ultra-Fast, AI-Native Headless CMS written in Rust.</b></p>
 </div>
 
