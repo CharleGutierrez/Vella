@@ -42,8 +42,7 @@
         timeline: false
     });
 
-    // We can simulate fetching data from Vella's backend on port 8080
-    // For now, let's just drop a pin to prove it works!
+    // Drop a pin
     viewer.entities.add({
         name: 'Vella HQ',
         position: Cesium.Cartesian3.fromDegrees(-122.4194, 37.7749, 100), // San Francisco
@@ -63,11 +62,12 @@
         }
     });
 
-    viewer.zoomTo(viewer.entities);
+    // Zoom out to view the entire planet spinning in space
+    viewer.camera.flyHome(0);
 
     // Make the globe spin automatically!
     viewer.clock.onTick.addEventListener(function(clock) {
-        viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, 0.001);
+        viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, 0.002);
     });
   </script>
 </body>
