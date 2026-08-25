@@ -32,6 +32,7 @@ pub mod frontier;
 pub mod commerce;
 pub mod medicine;
 pub mod defense;
+pub mod government;
 
 pub use data::ArrowExporter;
 pub use ai::{
