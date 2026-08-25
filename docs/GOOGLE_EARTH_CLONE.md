@@ -20,9 +20,30 @@ cargo run --release --example google_earth_clone
 
 ---
 
-## 2. The Frontend (React + CesiumJS)
+## 2. Running the Local Demo (`earth.html`)
 
-To render a 3D globe in the browser that consumes Vella's APIs, we use [Resium](https://resium.reearth.io/) (React components for CesiumJS).
+We have included a pre-built frontend demo file called `earth.html` in the root of the repository. This file uses pure HTML/JS to render the 3D Cesium globe and connect to the Vella engine.
+
+### Bypassing CORS (Crucial Step)
+If you double-click `earth.html` and open it via a `file:///` URL, your web browser's security policies (CORS) will silently block the ArcGIS satellite imagery from downloading. The globe will appear as a red dot floating in a dark blue void.
+
+To fix this, you must serve the HTML file over a real HTTP server:
+
+```bash
+# Start a simple Python web server in the root of the repo
+python -m http.server 8081
+```
+
+Now, open your browser and navigate to:
+`http://localhost:8081/earth.html`
+
+You will instantly see the fully textured planet Earth spinning in space, powered by Vella's GIS spatial coordinates!
+
+---
+
+## 3. The React Frontend (For Production)
+
+To render a 3D globe in a modern application, we recommend using [Resium](https://resium.reearth.io/) (React components for CesiumJS).
 
 ### Installation
 ```bash
