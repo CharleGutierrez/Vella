@@ -263,4 +263,46 @@ impl AiTuner {
             true
         }
     }
+
+    // --- High-Frequency Trading & Advanced Web3 Auto-Tuning ---
+
+    /// Dynamically adjusts the Limit Order Book (LOB) matching batch size during high market volatility
+    pub fn tune_lob_matching_batch_size(&self, orders_per_second: u64) -> u64 {
+        if orders_per_second > 1_000_000 {
+            warn!("AI Tuner: Market Open Volatility detected ({} OPS). Batching LOB matching to preserve L3 CPU Cache.", orders_per_second);
+            100 // Batch 100 orders at a time
+        } else {
+            1 // Real-time FIFO nanosecond matching
+        }
+    }
+
+    /// Predictive Flash-Crash Kill Switch for the FIX Protocol
+    pub fn predict_market_volatility_circuit_breaker(&self, vix_index_level: f64, order_rejection_rate: f64) -> bool {
+        if vix_index_level > 40.0 || order_rejection_rate > 0.15 {
+            warn!("AI Tuner: SEVERE MARKET ANOMALY DETECTED. Triggering FIX Protocol Kill Switch to prevent Flash Crash wipeout.");
+            true // Trip the circuit breaker (halt trading)
+        } else {
+            false // Safe to trade
+        }
+    }
+
+    /// Optimizes Fully Homomorphic Encryption (FHE) polynomial depth based on CPU load
+    pub fn tune_fhe_encryption_depth(&self, system_load_percent: f64) -> u32 {
+        if system_load_percent > 90.0 {
+            warn!("AI Tuner: CPU load critical ({}%). Reducing FHE polynomial degree to maintain throughput.", system_load_percent);
+            4096 // Lower cryptographic hardness for faster AI inference
+        } else {
+            8192 // Maximum mathematical privacy
+        }
+    }
+
+    /// Dynamically adjusts Cross-Chain Oracle Slippage based on DEX Liquidity
+    pub fn tune_cross_chain_oracle_slippage(&self, source_chain_liquidity_usd: f64) -> f64 {
+        if source_chain_liquidity_usd < 1_000_000.0 {
+            warn!("AI Tuner: Low liquidity detected on target chain. Increasing Oracle slippage tolerance to 3.0% to guarantee execution.");
+            3.0
+        } else {
+            0.5 // Standard 0.5% slippage
+        }
+    }
 }
