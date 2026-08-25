@@ -8,6 +8,9 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["backend", "framework", "pocketbase", "supabase", "pgvector", "rag", "headless-cms", "realtime"]
 categories = ["web-programming::http-server", "database", "command-line-utilities"]
+repository = "https://github.com/CharleGutierrez/Vella"
+homepage = "https://github.com/CharleGutierrez/Vella"
+documentation = "https://github.com/CharleGutierrez/Vella/tree/main/docs"
 
 [dependencies]
 redis = { version = "0.25", features = ["tokio-comp"] }
