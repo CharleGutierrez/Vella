@@ -31,6 +31,7 @@ pub mod environment;
 pub mod frontier;
 pub mod commerce;
 pub mod medicine;
+pub mod defense;
 
 pub use data::ArrowExporter;
 pub use ai::{
