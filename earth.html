@@ -31,10 +31,10 @@
   <div id="cesiumContainer"></div>
   
   <script>
-    // Initialize the 3D Viewer with OpenStreetMap (No API Key required)
+    // Initialize the 3D Viewer with ArcGIS Satellite Imagery (No API Key required)
     const viewer = new Cesium.Viewer('cesiumContainer', {
-        imageryProvider: new Cesium.UrlTemplateImageryProvider({
-            url: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
         }),
         baseLayerPicker: false,
         geocoder: false,
