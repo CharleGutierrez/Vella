@@ -30,6 +30,7 @@ pub mod trading;
 pub mod environment;
 pub mod frontier;
 pub mod commerce;
+pub mod medicine;
 
 pub use data::ArrowExporter;
 pub use ai::{
