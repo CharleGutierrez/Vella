@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vella Google Earth Clone</title>
+  <!-- Include CesiumJS from CDN -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+      body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+      #cesiumContainer { width: 100vw; height: 100vh; }
+      #title {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          color: white;
+          font-family: sans-serif;
+          z-index: 10;
+          background: rgba(0,0,0,0.7);
+          padding: 15px;
+          border-radius: 8px;
+          border: 1px solid #333;
+      }
+  </style>
+</head>
+<body>
+  <div id="title">
+    <h2>🌍 Vella Spatial Engine</h2>
+    <p>Powered by Rust & CesiumJS</p>
+  </div>
+  <div id="cesiumContainer"></div>
+  
+  <script>
+    // Initialize the 3D Viewer with OpenStreetMap (No API Key required)
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+        imageryProvider: new Cesium.UrlTemplateImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        }),
+        baseLayerPicker: false,
+        geocoder: false,
+        animation: false,
+        timeline: false
+    });
+
+    // We can simulate fetching data from Vella's backend on port 8080
+    // For now, let's just drop a pin to prove it works!
+    viewer.entities.add({
+        name: 'Vella HQ',
+        position: Cesium.Cartesian3.fromDegrees(-122.4194, 37.7749, 100), // San Francisco
+        point: {
+            pixelSize: 15,
+            color: Cesium.Color.RED,
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 2
+        },
+        label: {
+            text: 'Vella Engine Active',
+            font: '14pt sans-serif',
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            outlineWidth: 2,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(0, -9)
+        }
+    });
+
+    viewer.zoomTo(viewer.entities);
+
+    // Make the globe spin automatically!
+    viewer.clock.onTick.addEventListener(function(clock) {
+        viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, 0.001);
+    });
+  </script>
+</body>
+</html>
