@@ -1,319 +1,84 @@
 <div align="center">
-  <img src="vellalogo.svg" alt="Vella Engine Logo" width="600"/>
+  <h1>⚡ Vella</h1>
+  <p><b>The Ultra-Fast, AI-Native Headless CMS written in Rust.</b></p>
+  
+  [![Build Status](https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Rust](https://img.shields.io/badge/rust-1.80%2B-blue.svg)](https://www.rust-lang.org)
 </div>
 
-# ⚡ Vella
+Vella is not just another CMS. It is a highly concurrent, industrial-grade backend engine designed specifically for the AI era. Whether you are building a multimodal AI chat app, an enterprise GIS mapping tool, or an F1 telemetry dashboard, Vella has the internal architecture to handle it securely at the edge.
 
-**The Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase simplicity with Supabase scale, featuring native vector embeddings (PostgreSQL pgvector & SQLite-vec), Agentic AI Schema Scaffolding, AI Middleware (Token Rate-Limiting, Prompt-Logging, <1ms Semantic Caching), Zero-Config TypeScript Sync, Realtime WebSocket/SSE Synchronization, and Enterprise Self-Healing Resilience.**
+## 🚀 Killer Features
 
-[![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org)
-[![Axum](https://img.shields.io/badge/powered%20by-Axum%200.7-blue.svg)](https://github.com/tokio-rs/axum)
-[![LLM Native](https://img.shields.io/badge/llm-native%20vector%20%26%20rag-purple.svg)]()
-[![Databases](https://img.shields.io/badge/databases-SQLite%20%7C%20Postgres%20%7C%20MySQL-blue.svg)]()
-[![Frontend](https://img.shields.io/badge/frontends-React%20%7C%20Vue%203%20%7C%20Angular-61dafb.svg)]()
-[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-30%20passing-brightgreen.svg)]()
+- **🧠 Unified AI Gateway:** Native integrations with OpenAI, Anthropic (Claude), Google (Gemini), DeepSeek, Grok, and local Ollama models. Supports Tool Calling, Multimodal Vision, JSON Structured Outputs, and Server-Sent Events (Streaming).
+- **🛡️ AI Circuit Breakers (Failover):** Enterprise high-availability. If Anthropic goes down, Vella automatically catches the `HTTP 500` and falls back to Grok or a local Qwen model without dropping the user's request.
+- **🌍 Native GIS & Spatial Support:** Built-in `Point`, `Polygon`, and `Geometry` field types with GiST indexing for lightning-fast spatial queries.
+- **🏭 Industrial & Real-Time:** 1000Hz IPC shared-memory bridges, UDP telemetry listeners, and SCADA protocol drivers out-of-the-box.
+- **⚡ WASM Edge Pipelines:** Compile Python data-science models to WebAssembly and run them directly in the database pipeline at edge speeds.
 
----
+## 🛠️ The AI Gateway in Action
 
-## 📑 Table of Contents
-- [1. Master Architectural Comparison Matrix](#-1-master-architectural-comparison-matrix)
-- [2. The 5 Core Strategic Pillars of Vella](#-2-the-5-core-strategic-pillars-of-vella)
-  - [I. Capitalize on "AI Tuner" (LLM-Native Architecture)](#i-capitalize-on-ai-tuner-llm-native-architecture)
-  - [II. Bridge the PocketBase vs. Supabase Gap](#ii-bridge-the-pocketbase-vs-supabase-gap)
-  - [III. Frictionless Frontend Type Safety (End-to-End)](#iii-frictionless-frontend-type-safety-end-to-end)
-  - [IV. Edge and WebAssembly (Wasm) Compatibility](#iv-edge-and-webassembly-wasm-compatibility)
-  - [V. Ruthless Focus on Developer Experience (DX)](#v-ruthless-focus-on-developer-experience-dx)
-- [3. Quickstart: 60-Second Setup](#-3-quickstart-60-second-setup)
-- [4. Agentic AI Scaffolding CLI](#-4-agentic-ai-scaffolding-cli)
-- [5. Native Vector Search & RAG AI Middleware](#-5-native-vector-search--rag-ai-middleware)
-- [6. Realtime WebSocket & SSE Synchronization](#-6-realtime-websocket--sse-synchronization)
-- [7. Security Penetration & OWASP Audit Results](#-7-security-penetration--owasp-audit-results)
-- [8. CPU Server Generation Benchmarks (2000 – 2025)](#-8-cpu-server-generation-benchmarks-2000--2025)
+Vella abstracts away all the proprietary JSON formatting of different AI providers. 
 
----
-
-## 📊 1. Master Architectural Comparison Matrix
-
-| Technical Vector | **⚡ Vella (Rust)** | **PocketBase (Go)** | **Supabase (Node/Go/PG)** | **Django (Python)** | **FastAPI (Python)** | **NestJS (Node.js)** |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Language & Runtime** | **Rust 2021 (Tokio)** | Go 1.22+ | Multi-Service Stack | Python 3.12 (WSGI) | Python 3.12 (ASGI) | Node.js 20+ (V8) |
-| **Memory Footprint (Idle)** | **~12 – 18 MB** | ~35 – 55 MB | ~800 MB – 2 GB (Docker) | ~180 – 300 MB | ~120 – 200 MB | ~150 – 250 MB |
-| **Median Latency (p50)** | **< 0.35 ms** | ~2.5 ms | ~4.0 – 8.0 ms | ~25 – 45 ms | ~12 – 25 ms | ~8 – 18 ms |
-| **Vector DB (pgvector / SIMD)** | ✅ **Native Multi-DB** | ❌ None | ✅ PostgreSQL only | ❌ Plugin required | ⚠️ Manual code | ⚠️ Manual code |
-| **Semantic Caching (<1ms RAG)** | ✅ **Built-in (Cosine SIMD)** | ❌ None | ❌ Third-party service | ❌ None | ❌ None | ❌ None |
-| **Agentic AI Scaffolder CLI** | ✅ **Natural Language DDL** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None |
-| **Token Rate-Limiting & Prompt Log** | ✅ **Built-in AI Middleware** | ❌ None | ❌ None | ❌ Plugin required | ⚠️ Manual code | ⚠️ Third-party module |
-| **Single-Binary to Enterprise Scale** | ✅ **SQLite ➔ Postgres ➔ MySQL** | ⚠️ SQLite only | ❌ Heavy Docker/K8s | ⚠️ Multi-file venv | ⚠️ Multi-file venv | ⚠️ Node dependencies |
-| **Realtime Transport** | ✅ **Native WS & SSE Hub** | ✅ SSE only | ✅ Realtime Engine | ❌ Celery/Channels | ⚠️ Manual WS loop | ⚠️ Socket.io module |
-| **Zero-Config TypeScript `.d.ts`** | ✅ **Automatic Sync / Export** | ⚠️ JS SDK only | ✅ CLI generation | ❌ None | ❌ Third-party plugin | ❌ Third-party plugin |
-| **Embedded Glass Headless CMS** | ✅ **React 18 Glass SPA** | Svelte SPA | React Dashboard | HTML/CSS SSR | ❌ None | ❌ None |
-| **Edge & WASM32-WASI Ready** | ✅ **Modular Edge Core** | ❌ None | ❌ None | ❌ None | ❌ None | ❌ None |
-| **Self-Healing Resilience Pipeline** | ✅ **Watchdog + Breaker + Panic** | ⚠️ Basic recover() | ⚠️ Orchestration restart | ❌ Worker crash | ❌ Unhandled crash | ⚠️ Cluster mode |
-
----
-
-## 🚀 2. The 5 Core Strategic Pillars of Vella
-
-### I. Capitalize on "AI Tuner" (LLM-Native Architecture)
-1. **Native Vector Support**: Abstract vector embeddings across your multi-DB support. If PostgreSQL is connected, Vella leverages `pgvector` with HNSW/IVFFLAT indexing; if SQLite, Vella utilizes in-memory SIMD-accelerated cosine similarity and dot product indexers.
-2. **Agentic Generators**: Natural language schema creation CLI (`vella generate model User --ai "..."`) that auto-designs fields, types, vector dimensions, and generates idiomatic Rust and TypeScript code.
-3. **AI Middleware**: Built-in token consumption rate limiters, comprehensive prompt audit telemetry with latency & cost calculation, and sub-millisecond semantic caching.
-
-### II. Bridge the PocketBase vs. Supabase Gap
-1. **The "Scale-Up" Promise**: Start with single-binary zero-config SQLite for lightning-fast local development, and scale to high-concurrency PostgreSQL in production simply by altering the connection string:
-   ```rust
-   // Local Development (PocketBase Simplicity)
-   .database("sqlite://dev.db?mode=rwc")
-
-   // Production Scale (Supabase Concurrency)
-   .database("postgres://postgres:password@db.cluster:5432/enterprise_db")
-   ```
-2. **Instant Auto-Admin as Headless CMS**: Instant Glassmorphic Headless CMS and Admin UI ready out-of-the-box with content status workflows (Draft, InReview, Published, Archived), visual query builder, vector search playground, AI scaffolding copilot, and manager approval queues.
-
-### III. Frictionless Frontend Type Safety (End-to-End)
-1. **Zero-Config Type Generation**: Automatic TypeScript definitions (`.d.ts`), OpenAPI 3.1 schema generation, and direct filesystem export (`vella export-types --output ./frontend/types/vella.d.ts`).
-2. **Realtime Sync**: Native WebSocket (`/api/realtime/ws`) and Server-Sent Events (`/api/realtime/sse`) broadcasting. The React, Vue 3, and Angular SDKs update reactively with zero custom polling.
-
-### IV. Edge and WebAssembly (Wasm) Compatibility
-1. **`wasm32-wasi` Target Ready**: Core routing, model validation, query parsing, and vector calculations are designed to compile directly to WebAssembly and serverless Edge runtimes (Cloudflare Workers, Fermyon Spin, Fastly Compute).
-
-### V. Ruthless Focus on Developer Experience (DX)
-1. **Macro-Free Readability**: No heavy, cryptic procedural macros. Routes and models are expressed in clean, fluent, idiomatic Rust.
-2. **Batteries-Included Auth**: Built-in constant-time Password authentication, Google OAuth 2.0, GitHub OAuth 2.0, Magic Links, and Role-Based Access Control (RBAC).
-
----
-
-## ⚡ 3. Quickstart: 60-Second Setup
-
-### 1. Add Vella to `Cargo.toml`
-```toml
-[dependencies]
-vella = "0.1"
-tokio = { version = "1.38", features = ["full"] }
-serde_json = "1.0"
-```
-
-### 2. Define Models and Launch Server (`src/main.rs`)
 ```rust
-use vella::prelude::*;
+use vella::ai::{UnifiedAiGateway, AiConfig, AiProvider, AiRequest, AiMessage};
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    // 1. Declare RAG Article Model with 1536d Vector Embeddings
-    let article_schema = ModelSchema::new("Article")
-        .category("Content & CMS")
-        .icon("file-text")
-        .description("Articles with Vector Embeddings for Semantic RAG Search")
-        .field(Field::string("title").required().searchable())
-        .field(Field::string("slug").unique().searchable())
-        .field(Field::markdown("content").help("Markdown formatted body"))
-        .field(Field::vector("embedding", 1536).help("OpenAI 1536d vector"))
-        .field(Field::r#enum("status", vec!["Draft", "InReview", "Published", "Archived"]).filterable(true))
-        .field(Field::boolean("is_featured").default_value(serde_json::json!(false)))
-        .with_timestamps();
+let gateway = UnifiedAiGateway::new();
 
-    // 2. Launch Vella Engine
-    VellaApp::new()
-        .site_name("My AI Platform")
-        .bind("0.0.0.0:8080")
-        .database("sqlite://vella.db?mode=rwc")
-        .semantic_cache(true, 0.90)
-        .token_rate_limit(100_000)
-        .auto_export_types_to("./frontend/types/vella.d.ts")
-        .register(article_schema)
-        .run()
-        .await?;
+let claude = AiConfig {
+    provider: AiProvider::Anthropic,
+    base_url: "https://api.anthropic.com/v1/messages".to_string(),
+    api_key: "sk-...".to_string(),
+    model: "claude-3-5-sonnet-20240620".to_string(),
+};
 
-    Ok(())
-}
+let grok = AiConfig {
+    provider: AiProvider::Grok,
+    base_url: "https://api.x.ai/v1/chat/completions".to_string(),
+    api_key: "xoxb-...".to_string(),
+    model: "grok-2-latest".to_string(),
+};
+
+// Automatic Failover: Tries Claude first, falls back to Grok on failure
+let response = gateway.generate_with_fallback(&claude, &grok, "Explain quantum physics").await;
 ```
 
----
+## 🏗️ Architecture 
 
-## 🤖 4. Agentic AI Scaffolding CLI
+```mermaid
+graph TD
+    Client[Web / Mobile / IoT Client] --> |WebSocket / HTTP| Vella
+    
+    subgraph Vella Core [Vella Engine (Rust)]
+        Router[Axum Router]
+        Gateway[Unified AI Gateway]
+        Spatial[GIS Spatial Engine]
+        SCADA[Industrial Telemetry]
+        
+        Router --> Gateway
+        Router --> Spatial
+        Router --> SCADA
+    end
+    
+    Gateway --> |Fallback Circuit Breaker| Claude[Anthropic API]
+    Gateway --> |Primary Route| DeepSeek[DeepSeek API]
+    Gateway --> |Offline| Ollama[Local Qwen/Llama]
+    
+    Spatial --> |GiST Index| DB[(PostgreSQL / PostGIS)]
+```
 
-Generate full backend models from natural language descriptions directly from the command line:
+## 📦 Getting Started
+
+Ensure you have Rust and Cargo installed, then clone the repository:
 
 ```bash
-# Generate User model with Stripe billing and OAuth
-vella generate model User --ai "A user with stripe billing, oauth, and manager approval on discounts"
-
-# Generate RAG Document model with Vector embeddings
-vella generate model KnowledgeDoc --ai "A technical doc with markdown content, 1536 vector embeddings, and published status" --database postgres
+git clone https://github.com/CharleGutierrez/Vella.git
+cd Vella
+cargo build
+cargo test
 ```
 
-The CLI outputs:
-- **Detected Features**: Stripe Billing, OAuth 2.0, Vector Embeddings, Approval Workflows.
-- **Copy-Paste Rust Builder Code** for `main.rs`.
-- **Database DDL** (PostgreSQL pgvector / SQLite).
-- **Strict TypeScript Definitions**.
+## 🤝 Contributing
 
----
-
-## 🧠 5. Native Vector Search & RAG AI Middleware
-
-### Vector Similarity Search (`POST /api/d/:model/search-vector`)
-```json
-{
-  "model": "Article",
-  "vector_field": "embedding",
-  "query_vector": [0.05, -0.12, 0.88, 0.42, -0.15, ...],
-  "top_k": 5,
-  "metric": "Cosine"
-}
-```
-
-### Semantic Cached Query (`POST /api/ai/rag/query`)
-If an incoming query has cosine similarity $\ge 0.90$ with a previous prompt, Vella returns the cached completion in **< 1 millisecond**, completely bypassing expensive LLM calls.
-
----
-
-## 📡 6. Realtime WebSocket & SSE Synchronization
-
-Frontend clients update automatically on any database mutation:
-
-### React 18+ Hook Example:
-```tsx
-import { VellaProvider, useVellaQuery, useRealtimeSubscription } from './api/sdk/react';
-
-function ArticleList() {
-  // Automatically refetches whenever an Article is created, updated, or deleted
-  const { data: articles, isLoading } = useVellaQuery('Article', {
-    order: '-created_at',
-    limit: 20
-  });
-
-  return (
-    <div>
-      {articles.map(art => (
-        <div key={art.id}>{art.title} - {art.status}</div>
-      ))}
-    </div>
-  );
-}
-```
-
----
-
-## 🛡️ 7. Security Penetration & OWASP Audit Results
-
-Verified in automated test suite (`tests/security_and_resilience_tests.rs`):
-
-| Attack Vector | Defense Mechanism | Result |
-| :--- | :--- | :---: |
-| **SQL Injection (Tautology)** | Parameterized SQL binding (`?` / `$1`). | 🛡️ **BLOCKED** |
-| **SQL Injection (Order-By)** | Schema field whitelist validation. | 🛡️ **BLOCKED** |
-| **Timing Attack on Password** | Bitwise constant-time byte comparison (`diff \|= a ^ b`). | 🛡️ **BLOCKED** |
-| **Session Replay Attack** | Expiration enforcement & automatic database purge. | 🛡️ **BLOCKED & PURGED** |
-| **Privilege Escalation** | AI Decision Engine flags role changes to Superadmin as `CRITICAL_RISK`. | 🛡️ **QUARANTINED** |
-| **DoS Parameter Overflow** | Boundary clamping (`$limit` in `[1, 1000]`, `$offset >= 0`). | 🛡️ **DEFENDED** |
-| **Handler Panic / Server Crash**| Thread panic isolation returning clean JSON 500. | 🛡️ **0% DOWNTIME** |
-
----
-
-## ⚡ 8. CPU Server Generation Benchmarks (2000 – 2025)
-
-| Era & Architecture | Specs & Constraints | Concurrency Load | Measured Latency / Throughput | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **2000–2005 Server Era** (Pentium 4 / Opteron) | 1 Core, 256MB RAM | 100 Sequential Txns | **Sub-second execution** (12ms) | ✅ **PASSED** |
-| **2006–2011 Quad Core** (Core 2 Quad / Nehalem) | 4 Cores, 4GB RAM | 4 Concurrent Workers | **1,450 ops/sec** (138ms) | ✅ **PASSED** |
-| **2012–2017 Cloud Era** (Haswell Xeon) | 16 Cores, 32GB RAM | 16 Parallel Readers | **Microsecond latency** (42ms) | ✅ **PASSED** |
-| **2020–2021 Server Era** (EPYC Rome / Ice Lake) | 64 Cores / 128 Threads | 64 Parallel Workers | **1,282 txn/sec** (1.24s) | ✅ **PASSED** |
-| **2022–2023 Server Era** (EPYC Genoa / Zen 4) | 128 Cores / 256 Threads | 128 Parallel Workers | **4,307 reads/sec** (1.48s) | ✅ **PASSED** |
-| **2024–2025 Server Era** (EPYC Turin / Zen 5) | 192 Cores / 384 Threads | 256 Async Tasks | **Sub-second Completion** (753ms) | ✅ **PASSED** |
-| **AI Tuner Telemetry Engine** | SIMD Vector Calculations | 10,000 Concurrent Queries | **p50: 0.35ms \| p99: 0.55ms** | ✅ **PASSED** |
-
----
-
-
-
-## 🎬 Enterprise Case Study: Streaming Platforms (Netflix, Hulu, Disney+)
-
-If a major streaming platform were to adopt **Vella** as their core backend engine, they would leverage its unique blend of LLM-native vector search, real-time broadcasting, and enterprise governance to power a highly personalized, globally synchronized experience:
-
-### 1. Semantic AI Search & Recommendations (The "pgvector" Advantage)
-Instead of exact-match string searches, Vella enables **Semantic Search**. 
-*   **The Execution:** A user searches for *"dark, gritty sci-fi with atmospheric synth music."* Vella's `POST /api/d/movie/search-vector` endpoint queries the catalog. Utilizing PostgreSQL `pgvector` with `HNSW` indexes, it returns the top nearest neighbors in **< 2 milliseconds**.
-
-### 2. Cross-Device "Continue Watching" & Watch Parties (Realtime Hub)
-Streaming platforms require instant state synchronization across Smart TVs, phones, and browsers.
-*   **The Execution:** Vella's `RealtimeHub` uses the **Redis Pub/Sub Backplane** to scale WebSockets horizontally across thousands of global Kubernetes nodes. As a TV client updates `watch_progress`, the Redis backplane routes the `SystemEvent::RecordUpdated` to the user's mobile app instantly with zero polling.
-
-### 3. Content Publishing & Enterprise Governance (Headless CMS)
-Releasing a highly anticipated season of a show before its embargo date is a catastrophic failure.
-*   **The Execution:** The `release_date` field is flagged with `.requires_approval()`. When a junior operator attempts to publish it, Vella’s **AI Decision Engine** quarantines the request as `Critical Risk`. A senior manager reviews the JSON diff in the Vella Admin SPA and authorizes it. Mistakes are fixed instantly via **1-Click Time-Travel Rollback**.
-
-### 4. Edge-Deployed Telemetry (Wasm Compatibility)
-Platforms receive millions of telemetry pings (play, pause, buffer events) per second.
-*   **The Execution:** Vella’s `wasm32-wasi` compatible validation core is deployed to edge nodes (like Cloudflare Workers) globally. The edge instances validate and aggregate watch-time data in memory, then batch-insert it to the central Supabase/PostgreSQL warehouse, protecting the database from traffic spikes.
-
-### 5. Autonomous Zero-Cost Customer Support (Semantic Caching)
-During an outage, millions of users flood support asking the exact same question.
-*   **The Execution:** The support bot uses Vella’s **RAG AI Middleware**. When User A asks a question, Vella queries the LLM and caches the embedding and response. For Users B through Z, Vella detects a $\ge 95\%$ cosine similarity match in the **Semantic Cache**. It returns the cached response in **< 0.5 milliseconds**, reducing the OpenAI API bill by 99% and resolving tickets instantly.
-
----
-
-## 🏭 Industry-Specific Architectures (v0.2.0 Expansion)
-
-Vella has transcended standard web-backend capabilities to natively support hyper-specialized global industries with extreme latency, resilience, and MLOps requirements:
-
-### 🔬 Tier-1 Data Science & MLOps
-*   **Apache Arrow & Parquet IPC:** Dumps millions of telemetry rows instantly into columnar bytes for zero-copy loading into Python `Polars` DataFrames.
-*   **Model Shadow Routing:** Test `v2` LLM weights in the `ModelRegistry` on live production traffic silently without impacting real users.
-*   **In-Memory Feature Store:** Ultra-low latency Key-Value RAM store allowing models to fetch calculated historical features in `< 1ms` during live inference.
-*   **Dynamic GPU Thermal Routing:** Probes hardware automatically and routes heavy tensor math directly to `CUDA` or Apple `Metal` cores, falling back to CPU AVX-512 SIMD if thermal throttling is detected.
-
-### 🏎️ High-Performance IoT & Formula 1
-*   **UDP Telemetry Ingestion:** Bypasses TCP handshakes entirely to ingest raw radio byte arrays at 200mph.
-*   **Hard Real-Time (RTOS) Threads:** `RtosIsolator` spawns raw OS threads that bypass the Tokio async scheduler, guaranteeing microsecond deterministic deadlines for ECU control hardware.
-*   **1000Hz IPC Shared Memory:** Lock-free `AtomicU64` ring buffers map straight to `/dev/shm`, piping suspension load data into Digital Twin simulators at 1,000 frames per second without network overhead.
-*   **Time-Series Auto-Bucketing:** AI Tuner automatically intercepts TimescaleDB/Influx requests and adjusts downsampling intervals on the fly to guarantee smooth graph rendering under heavy load.
-
-### 🏭 Industrial SCADA & Nuclear Control (DCS)
-*   **Native OPC UA & Modbus Drivers:** Interfaces directly with physical Programmable Logic Controllers (PLCs) and remote holding registers—no legacy middleware needed.
-*   **Swinging Door Trend Compression:** Saves petabytes of Historian disk space by applying geometric AI compression to analog sensors, actively dropping redundant data packets.
-*   **Triple Modular Redundancy (TMR):** Executes hardware voting logic in microseconds. If Sensor A diverges from B and C, Vella physically isolates the node to prevent single-point-of-failure plant shutdowns.
-*   **ISA-18.2 Alarm State Machines:** Replaces standard web notifications with strict, legally compliant Control Room alarm states (`UNACKNOWLEDGED_ACTIVE`, `SHELVED`).
-
----
-
-## 📚 Comprehensive Developer Cookbooks (150+ Patterns)
-
-To help your team seamlessly integrate Vella into their specific workflows, we have generated highly dense, 150-snippet copy-paste guides for every major engineering discipline.
-
-**Frontend & UI/UX:**
-*   ⚛️ [React Developer Guide (150 Snippets)](REACT_DEVELOPER_GUIDE.md)
-*   🟩 [Vue 3 Composition API Guide (150 Snippets)](VUE_DEVELOPER_GUIDE.md)
-*   🟥 [Angular RxJS & Signals Guide (150 Snippets)](ANGULAR_DEVELOPER_GUIDE.md)
-
-**Backend, Data Science & Ops:**
-*   🧠 [The 500 AI Integration Patterns Guide](AI_PROGRAMMER_500_GUIDE.md)
-*   🐍 [Python Data Science & MLOps Guide (150 Snippets)](PYTHON_DS_150_GUIDE.md)
-*   🏎️ [Formula One & High-Performance IoT Guide (150 Snippets)](F1_TELEMETRY_150_GUIDE.md)
-*   🌍 [Global Streaming Architecture Guide (150 Snippets)](GLOBAL_STREAMING_150_GUIDE.md)
-*   🏭 [SCADA & Industrial Control Guide (150 Snippets)](SCADA_INDUSTRIAL_150_GUIDE.md)
-*   🛡️ [Enterprise SecOps & Zero-Trust Guide (150 Snippets)](SECOPS_ENTERPRISE_150_GUIDE.md)
-
-**Platform Onboarding:**
-*   🪟 [Windows Zero-Dependency Onboarding Guide](WINDOWS_ONBOARDING.md)
-*   🐧 [Linux Native Onboarding Guide](LINUX_ONBOARDING.md)
-*   📖 [General Integration Cookbook](COOKBOOK.md)
-
----
-
-### 🌐 Quick Reference: How Teams Use Vella
-
-| Industry / Domain | Primary End-Users | Key Vella Features Utilized | How They Use Vella (The Execution) |
-| :--- | :--- | :--- | :--- |
-| **Standard Web & SaaS** | Full-Stack Developers, Content Managers | Agentic Scaffolder, Realtime Hub, TS SDK Sync, RBAC | Developers use the AI CLI to instantly generate databases via natural language. Content managers use the Glassmorphic UI to publish articles, while the React frontend updates automatically via WebSockets without any manual polling. |
-| **Data Science & MLOps** | Data Scientists, Machine Learning Engineers | Apache Arrow IPC, Python/Polars SDK, Model Shadow Routing | Data scientists pull millions of rows into Jupyter notebooks via zero-copy Arrow streams. When deploying a new AI model, they use Vella's Shadow Routing to safely test its accuracy against real production traffic without breaking the live app. |
-| **Global Streaming** | Platform Architects, Media Engineers | Cassandra Multi-Master, Cypher Graph Traversal, HLS/DRM Media | Media engineers use Vella to generate DRM-encrypted 4K video playlists. Vella's Graph DB traversals power deep, sub-millisecond movie recommendations, while Cassandra multi-region adapters ensure the platform stays online even if an entire AWS region goes dark. |
-| **Motorsport / IoT (F1)** | Trackside Engineers, Aerodynamicists | UDP Ingestion, RTOS Isolation, Time-Series Downsampling | The car's ECU uses Vella's RTOS threads to execute hard-deadline brake logic. Trackside engineers ingest raw UDP radio telemetry at 200mph, instantly downsampling billions of tire-temperature metrics into smooth Grafana dashboards via TimescaleDB integrations. |
-| **Industrial SCADA** | Plant Operators, DCS Engineers | OPC UA / Modbus Drivers, ISA-18.2 Alarms, Swinging Door Compression | Operators bypass web APIs entirely, connecting Vella directly to physical pipeline sensors (PLCs). Vella governs life-critical Alarm State Machines, while Triple Modular Redundancy (TMR) prevents single-point-of-failure plant meltdowns. |
-| **Enterprise SecOps** | Cybersecurity Engineers, Compliance Auditors | Chaos Engineering Middleware, AI Decision Engine, 1-Click Rollback | SecOps teams use Vella's Chaos Monkey to intentionally inject network lag to test frontend resilience. The AI Decision engine autonomously blocks abnormal privilege escalation, quarantining malicious requests for human approval. |
-
----
-
-## 📄 License
-Licensed under either of [Apache License, Version 2.0](LICENSE) or [MIT License](LICENSE) at your option.
+Pull requests are welcome! If you want to add a new AI Provider to the `UnifiedAiGateway` or add a new GIS field type, please ensure you write a test case for it and verify it passes via `cargo test`.
