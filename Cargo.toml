@@ -65,3 +65,7 @@ path = "examples/rag_ai_app.rs"
 [[example]]
 name = "ultimate_demo"
 path = "examples/ultimate_demo.rs"
+
+[[example]]
+name = "google_earth_clone"
+path = "examples/google_earth_clone.rs"
