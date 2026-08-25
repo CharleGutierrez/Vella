@@ -203,6 +203,8 @@ impl AiScaffolder {
                 FieldType::Point { srid } => format!("Field::point(\"{}\", {})", field.name, srid),
                 FieldType::Polygon { srid } => format!("Field::polygon(\"{}\", {})", field.name, srid),
                 FieldType::Geometry { geom_type, srid } => format!("Field::geometry(\"{}\", \"{}\", {})", field.name, geom_type, srid),
+                FieldType::Crdt => format!("Field::crdt(\"{}\")", field.name),
+                FieldType::Web3Address => format!("Field::web3_address(\"{}\")", field.name),
             };
 
             if field.required && field.field_type != FieldType::Password {
