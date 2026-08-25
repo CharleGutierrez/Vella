@@ -34,6 +34,7 @@ pub mod medicine;
 pub mod defense;
 pub mod government;
 pub mod agi;
+pub mod supercomputing;
 
 pub use data::ArrowExporter;
 pub use ai::{
