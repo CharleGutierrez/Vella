@@ -1,11 +1,13 @@
 <div align="center">
   <h1>⚡ Vella</h1>
   <p><b>The Ultra-Fast, AI-Native Headless CMS written in Rust.</b></p>
-  
-  [![Build Status](https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Rust](https://img.shields.io/badge/rust-1.80%2B-blue.svg)](https://www.rust-lang.org)
 </div>
+
+<p align="center">
+  <a href="https://github.com/CharleGutierrez/Vella/actions"><img src="https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/rust-1.80%2B-blue.svg" alt="Rust"></a>
+</p>
 
 Vella is not just another CMS. It is a highly concurrent, industrial-grade backend engine designed specifically for the AI era. Whether you are building a multimodal AI chat app, an enterprise GIS mapping tool, or an F1 telemetry dashboard, Vella has the internal architecture to handle it securely at the edge.
 
