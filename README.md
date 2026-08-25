@@ -1,86 +1,126 @@
 <div align="center">
-  <img src="assets/vella_logo.jpg" alt="Vella Logo" width="400" />
-  <p><b>The Ultra-Fast, AI-Native Headless CMS written in Rust.</b></p>
+  <img src="assets/vella_logo.jpg" alt="Vella Logo" width="300" />
+  <h1>Vella Framework</h1>
+  <p><strong>The Decentralized Operating System for the AI and Web3 Era.</strong></p>
+
+  [![Build Status](https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+  [![Rust: 1.75+](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 </div>
 
-<p align="center">
-  <a href="https://github.com/CharleGutierrez/Vella/actions"><img src="https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/rust-1.80%2B-blue.svg" alt="Rust"></a>
-</p>
+---
 
-Vella is not just another CMS. It is a highly concurrent, industrial-grade backend engine designed specifically for the AI era. Whether you are building a multimodal AI chat app, an enterprise GIS mapping tool, or an F1 telemetry dashboard, Vella has the internal architecture to handle it securely at the edge.
+## ⚡ What is Vella?
+Vella is not just a backend framework; it is a **Decentralized Operating System**. Written entirely in memory-safe, ultra-fast Rust, Vella unifies Relational Databases, AI Gateways, High-Frequency Trading (HFT), and Web3 Blockchain architecture into a single, cohesive engine.
 
-## 🚀 Killer Features
+If you are building the next billion-dollar FinTech startup, a massive Multiplayer Web3 Game, or a globally distributed AI agent network, Vella is the only infrastructure you will ever need.
 
-- **🧠 Unified AI Gateway:** Native integrations with OpenAI, Anthropic (Claude), Google (Gemini), DeepSeek, Grok, and local Ollama models. Supports Tool Calling, Multimodal Vision, JSON Structured Outputs, and Server-Sent Events (Streaming).
-- **🛡️ AI Circuit Breakers (Failover):** Enterprise high-availability. If Anthropic goes down, Vella automatically catches the `HTTP 500` and falls back to Grok or a local Qwen model without dropping the user's request.
-- **🌍 Native GIS & Spatial Support:** Built-in `Point`, `Polygon`, and `Geometry` field types with GiST indexing for lightning-fast spatial queries.
-- **🏭 Industrial & Real-Time:** 1000Hz IPC shared-memory bridges, UDP telemetry listeners, and SCADA protocol drivers out-of-the-box.
-- **⚡ WASM Edge Pipelines:** Compile Python data-science models to WebAssembly and run them directly in the database pipeline at edge speeds.
+---
 
-## 🛠️ The AI Gateway in Action
+## 🚀 God-Tier Features
 
-Vella abstracts away all the proprietary JSON formatting of different AI providers. 
+### 🧠 Native AI & Retrieval-Augmented Generation (RAG)
+Vella doesn't just connect to AI; it is fundamentally powered by it.
+- **RAG Vector Database:** Native integration with `pgvector`. Vella automatically chunks documents, generates 1536D embeddings, and executes Cosine Similarity searches.
+- **AI Decision Engine:** Vella can read text streams (like Bloomberg News) and calculate real-time Risk Assessments using local or remote LLMs.
+- **Autonomous AI Tuner:** Vella actively monitors its own CPU load and database telemetry. If it detects network congestion, it automatically optimizes SQL indexes and adjusts cryptographic complexity on the fly to prevent crashes.
+
+### ⛓️ Web3 & Blockchain Singularity
+Vella is the ultimate Headless CMS for Decentralized Applications (dApps).
+- **Smart Contract Compiler:** Vella can dynamically compile Solidity into EVM bytecode and auto-deploy it to Ethereum.
+- **Zero-Knowledge Rollup Sequencer:** Vella batches thousands of high-speed off-chain database actions and rolls them up into a single cryptographic ZK Proof, saving 99% in Ethereum gas fees.
+- **Fully Homomorphic Encryption (FHE):** Vella's AI can perform matrix multiplications on your users' data *without ever decrypting it*, preserving absolute Zero-Knowledge privacy.
+- **EIP-4337 Account Abstraction:** Vella automatically spins up invisible, gas-less Smart Contract Wallets for your users the moment they sign in via Google.
+
+### 📈 High-Frequency FinTech Trading (HFT)
+Built to replace legacy Wall Street infrastructure.
+- **Native FIX Protocol Engine:** Send stock and forex orders directly to the matching engines of Nasdaq or the NYSE in microseconds.
+- **FPGA Hardware Compiler:** Write a trading strategy in Rust, and Vella will compile it directly into raw **Verilog HDL** so you can flash it onto physical silicon chips for zero-latency, speed-of-light execution.
+- **Limit Order Book (LOB):** A native in-memory matching engine to build your own Binance or Robinhood exchange out of the box.
+
+### 🏭 SCADA & DePIN (Decentralized Physical Infrastructure)
+- **1000Hz IPC Shared Memory:** Ingest telemetry from F1 race cars or industrial IoT sensors with nanosecond latency.
+- **DePIN Gateway:** Connect physical hardware (like solar panels) to Vella, and it will automatically mint and distribute crypto token rewards to the physical device's wallet address.
+
+---
+
+## 💻 Developer Experience (DX) First
+
+Vella is heavily inspired by Supabase and PocketBase, but engineered for the extreme edge.
+
+### Agentic Schema Scaffolding
+Just tell Vella what you want, and the built-in AI will architect your database schemas automatically.
 
 ```rust
-use vella::ai::{UnifiedAiGateway, AiConfig, AiProvider, AiRequest, AiMessage};
+use vella::prelude::*;
 
-let gateway = UnifiedAiGateway::new();
+#[tokio::main]
+async fn main() {
+    let mut app = VellaApp::new();
 
-let claude = AiConfig {
-    provider: AiProvider::Anthropic,
-    base_url: "https://api.anthropic.com/v1/messages".to_string(),
-    api_key: "sk-...".to_string(),
-    model: "claude-3-5-sonnet-20240620".to_string(),
-};
+    // The AI generates the entire User schema, Auth flow, and Vector fields
+    let user_schema = AiScaffolder::generate("A Web3 User with an Embedded Wallet and FaceID");
+    app.register(user_schema);
 
-let grok = AiConfig {
-    provider: AiProvider::Grok,
-    base_url: "https://api.x.ai/v1/chat/completions".to_string(),
-    api_key: "xoxb-...".to_string(),
-    model: "grok-2-latest".to_string(),
-};
-
-// Automatic Failover: Tries Claude first, falls back to Grok on failure
-let response = gateway.generate_with_fallback(&claude, &grok, "Explain quantum physics").await;
+    // Start the ultra-fast Rust server
+    app.serve().await;
+}
 ```
 
-## 🏗️ Architecture 
+### Zero-Config TypeScript Sync
+Vella completely eradicates the need for GraphQL or tRPC. The moment you define a schema in Rust, Vella generates an exact, type-safe TypeScript SDK (`vella-sdk.ts`) and pushes it to your React/Vue frontend automatically.
+
+```typescript
+// Auto-generated by Vella!
+import { VellaClient } from './vella-sdk';
+
+const vella = new VellaClient();
+const wallet = await vella.auth.provisionEmbeddedWallet("satoshi@vella.dev");
+```
+
+---
+
+## 🏗️ Architecture
 
 ```mermaid
 graph TD
-    Client["Web / Mobile / IoT Client"] -->|"WebSocket / HTTP"| Vella
+    Client[React / Vue / Mobile] <-->|Real-time WebSockets & SSE| Gateway[Vella Edge Gateway]
     
-    subgraph VellaCore ["Vella Engine (Rust)"]
-        Router["Axum Router"]
-        Gateway["Unified AI Gateway"]
-        Spatial["GIS Spatial Engine"]
-        SCADA["Industrial Telemetry"]
+    subgraph Vella Rust Engine
+        Gateway --> AI[Unified AI Gateway & RAG]
+        Gateway --> Trading[High-Frequency Trading LOB & FIX]
+        Gateway --> Web3[ZK-Rollups & EIP-4337 Wallets]
         
-        Router --> Gateway
-        Router --> Spatial
-        Router --> SCADA
+        AI --> DB[(PostgreSQL / SQLite Vector)]
+        Trading --> IPC[1000Hz IPC Shared Memory]
+        Web3 --> IPFS[IPFS/Arweave Decentralized Storage]
+        
+        Tuner((Autonomous AI Tuner)) -.->|Self-Optimizes| DB
+        Tuner -.->|Adjusts Gas Fees| Web3
     end
     
-    Gateway -->|"Fallback Circuit Breaker"| Claude["Anthropic API"]
-    Gateway -->|"Primary Route"| DeepSeek["DeepSeek API"]
-    Gateway -->|"Offline"| Ollama["Local Qwen/Llama"]
-    
-    Spatial -->|"GiST Index"| DB[("PostgreSQL / PostGIS")]
+    Trading --> Nasdaq[Nasdaq / NYSE FIX Servers]
+    Web3 --> ETH[Ethereum / Solana RPC]
+    IPC --> SCADA[Industrial IoT Sensors]
 ```
 
-## 📦 Getting Started
+---
 
-Ensure you have Rust and Cargo installed, then clone the repository:
+## 🛡️ Enterprise Security & Resilience
+- **Order By Whitelist SQLi Defense:** Bulletproof against automated injection attacks.
+- **DDoS Rate Limiting & Circuit Breakers:** If an external API goes down, Vella self-heals via exponential backoffs.
+- **Expired Session Replay Prevention:** Blocks malicious actors from intercepting WebSocket payloads.
+
+---
+
+## 🏁 Get Started
+Vella is ready for production. Clone the repo and boot the engine:
 
 ```bash
 git clone https://github.com/CharleGutierrez/Vella.git
 cd Vella
-cargo build
-cargo test
+cargo build --release
+cargo run
 ```
 
-## 🤝 Contributing
-
-Pull requests are welcome! If you want to add a new AI Provider to the `UnifiedAiGateway` or add a new GIS field type, please ensure you write a test case for it and verify it passes via `cargo test`.
+_Vella: Because building the future shouldn't require 50 different microservices._
