@@ -50,24 +50,24 @@ let response = gateway.generate_with_fallback(&claude, &grok, "Explain quantum p
 
 ```mermaid
 graph TD
-    Client[Web / Mobile / IoT Client] --> |WebSocket / HTTP| Vella
+    Client["Web / Mobile / IoT Client"] -->|"WebSocket / HTTP"| Vella
     
-    subgraph Vella Core [Vella Engine (Rust)]
-        Router[Axum Router]
-        Gateway[Unified AI Gateway]
-        Spatial[GIS Spatial Engine]
-        SCADA[Industrial Telemetry]
+    subgraph VellaCore ["Vella Engine (Rust)"]
+        Router["Axum Router"]
+        Gateway["Unified AI Gateway"]
+        Spatial["GIS Spatial Engine"]
+        SCADA["Industrial Telemetry"]
         
         Router --> Gateway
         Router --> Spatial
         Router --> SCADA
     end
     
-    Gateway --> |Fallback Circuit Breaker| Claude[Anthropic API]
-    Gateway --> |Primary Route| DeepSeek[DeepSeek API]
-    Gateway --> |Offline| Ollama[Local Qwen/Llama]
+    Gateway -->|"Fallback Circuit Breaker"| Claude["Anthropic API"]
+    Gateway -->|"Primary Route"| DeepSeek["DeepSeek API"]
+    Gateway -->|"Offline"| Ollama["Local Qwen/Llama"]
     
-    Spatial --> |GiST Index| DB[(PostgreSQL / PostGIS)]
+    Spatial -->|"GiST Index"| DB[("PostgreSQL / PostGIS")]
 ```
 
 ## 📦 Getting Started
