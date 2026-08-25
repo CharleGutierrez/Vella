@@ -31,16 +31,20 @@
   <div id="cesiumContainer"></div>
   
   <script>
-    // Initialize the 3D Viewer with ArcGIS Satellite Imagery (No API Key required)
+    // Initialize the 3D Viewer (Disable default Ion imagery)
     const viewer = new Cesium.Viewer('cesiumContainer', {
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-        }),
         baseLayerPicker: false,
         geocoder: false,
         animation: false,
-        timeline: false
+        timeline: false,
+        baseLayer: false
     });
+
+    // Load ArcGIS Satellite Imagery asynchronously (fixes Cesium 1.114 API changes)
+    Cesium.ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer')
+        .then(function(provider) {
+            viewer.imageryLayers.addImageryProvider(provider);
+        });
 
     // Drop a pin
     viewer.entities.add({
