@@ -26,6 +26,7 @@ pub mod net;
 pub mod compute;
 pub mod scada;
 pub mod web3;
+pub mod trading;
 
 pub use data::ArrowExporter;
 pub use ai::{
