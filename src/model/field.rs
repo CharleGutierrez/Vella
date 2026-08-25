@@ -29,6 +29,10 @@ pub enum FieldType {
     Polygon { srid: i32 },
     /// Generic GIS Geometry type
     Geometry { geom_type: String, srid: i32 },
+    /// Native Multiplayer Sync Data Type (Yjs / Automerge)
+    Crdt,
+    /// Web3 Wallet Address for native Ethereum/Solana auth
+    Web3Address,
 }
 
 /// Metadata, validation rules, and UI rendering hints for a model field.
@@ -174,12 +178,31 @@ impl Field {
         f
     }
 
-    /// Generic GIS Geometry field
+    // Generic GIS Geometry field
     pub fn geometry(name: impl Into<String>, geom_type: impl Into<String>, srid: i32) -> Self {
         let geom_type_str = geom_type.into();
         let mut f = Self::new(name, FieldType::Geometry { geom_type: geom_type_str.clone(), srid });
         f.list_display = false;
         f.help_text = Some(format!("GIS Geometry {} (SRID: {})", geom_type_str, srid));
+        f
+    }
+
+    /// Conflict-free Replicated Data Type (CRDT) for multiplayer sync (Yjs/Automerge)
+    pub fn crdt(name: impl Into<String>) -> Self {
+        let mut f = Self::new(name, FieldType::Crdt);
+        f.list_display = false;
+        f.filterable = false;
+        f.searchable = false;
+        f.help_text = Some("Multiplayer CRDT Sync Data".to_string());
+        f
+    }
+
+    /// Web3 Wallet Address for Ethereum/Solana
+    pub fn web3_address(name: impl Into<String>) -> Self {
+        let mut f = Self::new(name, FieldType::Web3Address);
+        f.searchable = true;
+        f.unique = true;
+        f.help_text = Some("Web3 Cryptographic Address".to_string());
         f
     }
 

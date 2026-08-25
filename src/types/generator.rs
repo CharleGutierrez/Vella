@@ -21,6 +21,8 @@ impl TypeScriptGenerator {
             FieldType::Vector { .. } => "number[]".to_string(),
             FieldType::Point { .. } => "[number, number]".to_string(), // [longitude, latitude]
             FieldType::Polygon { .. } | FieldType::Geometry { .. } => "Record<string, any>".to_string(), // GeoJSON
+            FieldType::Crdt => "Uint8Array".to_string(), // Yjs / Automerge binary payload
+            FieldType::Web3Address => "string".to_string(), // 0x... ETH/Solana address
             _ => "string".to_string(),
         }
     }

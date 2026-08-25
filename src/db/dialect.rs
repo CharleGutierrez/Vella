@@ -83,6 +83,16 @@ impl SqlDialect {
                 DatabaseType::Postgres => format!("GEOMETRY({}, {})", geom_type, srid),
                 _ => "GEOMETRY".to_string(),
             },
+            FieldType::Crdt => match db_type {
+                DatabaseType::Sqlite => "BLOB".to_string(),
+                DatabaseType::Postgres => "BYTEA".to_string(),
+                DatabaseType::MySql => "LONGBLOB".to_string(),
+            },
+            FieldType::Web3Address => match db_type {
+                DatabaseType::Sqlite => "TEXT".to_string(),
+                DatabaseType::Postgres => "VARCHAR(44)".to_string(), // Fits ETH (42) and Solana (44)
+                DatabaseType::MySql => "VARCHAR(44)".to_string(),
+            },
             _ => match db_type {
                 DatabaseType::Sqlite => "TEXT".to_string(),
                 DatabaseType::Postgres => "TEXT".to_string(),
