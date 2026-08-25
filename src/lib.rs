@@ -28,6 +28,7 @@ pub mod scada;
 pub mod web3;
 pub mod trading;
 pub mod environment;
+pub mod frontier;
 
 pub use data::ArrowExporter;
 pub use ai::{
