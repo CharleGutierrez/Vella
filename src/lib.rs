@@ -36,6 +36,9 @@ pub mod government;
 pub mod agi;
 pub mod supercomputing;
 pub mod gis;
+pub mod space;
+pub mod robotics;
+pub mod gaming;
 
 pub use data::ArrowExporter;
 pub use ai::{

@@ -8,6 +8,7 @@ pub mod chaos;
 pub mod rtos;
 pub mod tmr;
 pub mod mesh;
+pub mod local_first;
 
 pub use config::VellaConfig;
 pub use error::VellaError;
@@ -17,3 +18,4 @@ pub use resilience::{CircuitBreaker, SystemWatchdog};
 pub use rtos::RtosIsolator;
 pub use tmr::TmrVoter;
 pub use mesh::GossipMeshNode;
+pub use local_first::LocalFirstSync;

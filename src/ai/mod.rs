@@ -11,6 +11,7 @@ pub mod gpu;
 pub mod vision;
 pub mod gateway;
 pub mod rag;
+pub mod swarm;
 
 pub use chunking::DocumentSplitter;
 pub use local_llm::LocalLlmEngine;
@@ -18,6 +19,7 @@ pub use registry::ModelRegistry;
 pub use gpu::HardwareAccelerator;
 pub use gateway::{UnifiedAiGateway, AiConfig, AiProvider};
 pub use rag::RagEngine;
+pub use swarm::AgentSwarm;
 pub use decision::{AiDecisionEngine, RiskAssessment, RiskLevel};
 pub use generator::{AiScaffolder, GeneratedScaffoldResult};
 pub use middleware::{PromptLogEntry, PromptLogger, SemanticCache, TokenRateLimiter};
