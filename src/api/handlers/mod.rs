@@ -7,6 +7,7 @@ pub mod health;
 pub mod oauth;
 pub mod realtime;
 pub mod types;
+pub mod web3;
 
 pub use ai::*;
 pub use approval::*;
@@ -17,6 +18,7 @@ pub use health::*;
 pub use oauth::*;
 pub use realtime::*;
 pub use types::*;
+pub use web3::*;
 
 use crate::ai::middleware::{PromptLogger, SemanticCache, TokenRateLimiter};
 use crate::ai::tuner::AiTuner;
@@ -53,4 +55,5 @@ pub struct AppState {
     pub token_limiter: Arc<TokenRateLimiter>,
     pub prompt_logger: Arc<PromptLogger>,
     pub semantic_cache: Arc<SemanticCache>,
+    pub job_queue: Arc<tokio::sync::Mutex<crate::jobs::queue::JobQueue>>,
 }

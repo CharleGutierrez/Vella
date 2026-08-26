@@ -15,6 +15,7 @@ pub enum SystemEvent {
     AiPromptLogged { model_used: String, prompt_tokens: u64, completion_tokens: u64, latency_ms: f64 },
     VectorIndexed { model: String, record_id: i64, dimensions: usize },
     SemanticCacheHit { query: String, similarity: f32 },
+    CrdtSyncMessage { room: String, data: Vec<u8> },
 }
 
 /// Asynchronous, broadcast-capable event bus for Vella

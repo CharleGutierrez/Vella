@@ -1,0 +1,29 @@
+{
+  "name": "vella",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">   <img src=\"assets/vella_logo.jpg\" alt=\"Vella Logo\" width=\"300\" />   <h1>Vella Framework</h1>   <p><strong>The Decentralized Operating System for the AI and Web3 Era.</strong></p>",
+  "main": "check.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CharleGutierrez/Vella.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CharleGutierrez/Vella/issues"
+  },
+  "homepage": "https://github.com/CharleGutierrez/Vella#readme",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

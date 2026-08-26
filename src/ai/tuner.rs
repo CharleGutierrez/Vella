@@ -75,10 +75,28 @@ impl AiTuner {
         }
     }
 
-    pub fn generate_recommendations(&self, registry: &SchemaRegistry) -> Vec<IndexRecommendation> {
+    pub async fn generate_recommendations(&self, registry: &SchemaRegistry) -> Vec<IndexRecommendation> {
+        let (stats_json, applied_clone) = {
+            let counts = self.column_access_counts.read().unwrap();
+            let applied = self.applied_indexes.read().unwrap();
+            (serde_json::to_string(&*counts).unwrap_or_default(), applied.clone())
+        };
+
+        let mut recs = Vec::new();
+
+        if let Ok(api_key) = std::env::var("GEMINI_API_KEY") {
+            let schemas_json = serde_json::to_string(&registry.all()).unwrap_or_default();
+            if let Some(mut ai_recs) = crate::ai::gemini_scaffolder::call_gemini_db_advisor(&schemas_json, &stats_json, &api_key).await {
+                // Apply 'is_applied' flags to AI suggestions
+                for rec in &mut ai_recs {
+                    rec.is_applied = applied_clone.contains(&rec.id);
+                }
+                return ai_recs;
+            }
+        }
+        
         let counts = self.column_access_counts.read().unwrap();
         let applied = self.applied_indexes.read().unwrap();
-        let mut recs = Vec::new();
 
         for schema in registry.all() {
             for field in &schema.fields {
@@ -129,9 +147,9 @@ impl AiTuner {
         Ok(format!("Successfully created index '{}'", idx_name))
     }
 
-    pub fn generate_report(&self, registry: &SchemaRegistry) -> AiTunerReport {
+    pub async fn generate_report(&self, registry: &SchemaRegistry) -> AiTunerReport {
         let (p50, p95, p99) = self.stats.percentiles();
-        let recs = self.generate_recommendations(registry);
+        let recs = self.generate_recommendations(registry).await;
 
         AiTunerReport {
             engine_status: "AI Optimization Active & Telemetry Online".to_string(),

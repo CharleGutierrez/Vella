@@ -29,3 +29,4 @@ pub use vector::{
     cosine_similarity, dot_product, euclidean_distance, format_pgvector_literal,
     parse_vector_from_json, DistanceMetric, VectorSearchQuery, VectorSearchResult,
 };
+pub mod gemini_scaffolder;

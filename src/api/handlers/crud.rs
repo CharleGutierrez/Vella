@@ -102,7 +102,53 @@ pub async fn create_record_handler(
         hook.before_create(&schema.name, &mut payload).await?;
     }
 
+
+    // Automatically generate embeddings for Vector fields
+    for field in &schema.fields {
+        if let crate::model::field::FieldType::Vector { .. } = field.field_type {
+            let mut doc_text = String::new();
+            if let serde_json::Value::Object(ref mut map) = payload {
+                for f in &schema.fields {
+                    if let Some(val) = map.get(&f.name).and_then(|v| v.as_str()) {
+                        doc_text.push_str(val);
+                        doc_text.push_str(" ");
+                    }
+                }
+                
+                if !doc_text.is_empty() {
+                    if let Ok(vec) = crate::ai::gemini_scaffolder::call_gemini_embedding(&doc_text).await {
+                        map.insert(field.name.clone(), serde_json::json!(vec));
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Automatically generate embeddings for Vector fields
+    for field in &schema.fields {
+        if let crate::model::field::FieldType::Vector { .. } = field.field_type {
+            let mut doc_text = String::new();
+            if let serde_json::Value::Object(ref mut map) = payload {
+                for f in &schema.fields {
+                    if let Some(val) = map.get(&f.name).and_then(|v| v.as_str()) {
+                        doc_text.push_str(val);
+                        doc_text.push_str(" ");
+                    }
+                }
+                
+                if !doc_text.is_empty() {
+                    if let Ok(vec) = crate::ai::gemini_scaffolder::call_gemini_embedding(&doc_text).await {
+                        map.insert(field.name.clone(), serde_json::json!(vec));
+                    }
+                }
+            }
+        }
+    }
+
     let obj = match payload {
+
+
         Value::Object(map) => map,
         _ => return Err(VellaError::Validation("Payload must be a JSON object".to_string())),
     };
@@ -167,7 +213,53 @@ pub async fn update_record_handler(
         hook.before_update(&schema.name, id, &mut payload).await?;
     }
 
+
+    // Automatically generate embeddings for Vector fields
+    for field in &schema.fields {
+        if let crate::model::field::FieldType::Vector { .. } = field.field_type {
+            let mut doc_text = String::new();
+            if let serde_json::Value::Object(ref mut map) = payload {
+                for f in &schema.fields {
+                    if let Some(val) = map.get(&f.name).and_then(|v| v.as_str()) {
+                        doc_text.push_str(val);
+                        doc_text.push_str(" ");
+                    }
+                }
+                
+                if !doc_text.is_empty() {
+                    if let Ok(vec) = crate::ai::gemini_scaffolder::call_gemini_embedding(&doc_text).await {
+                        map.insert(field.name.clone(), serde_json::json!(vec));
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Automatically generate embeddings for Vector fields
+    for field in &schema.fields {
+        if let crate::model::field::FieldType::Vector { .. } = field.field_type {
+            let mut doc_text = String::new();
+            if let serde_json::Value::Object(ref mut map) = payload {
+                for f in &schema.fields {
+                    if let Some(val) = map.get(&f.name).and_then(|v| v.as_str()) {
+                        doc_text.push_str(val);
+                        doc_text.push_str(" ");
+                    }
+                }
+                
+                if !doc_text.is_empty() {
+                    if let Ok(vec) = crate::ai::gemini_scaffolder::call_gemini_embedding(&doc_text).await {
+                        map.insert(field.name.clone(), serde_json::json!(vec));
+                    }
+                }
+            }
+        }
+    }
+
     let obj = match payload {
+
+
         Value::Object(map) => map,
         _ => return Err(VellaError::Validation("Payload must be a JSON object".to_string())),
     };

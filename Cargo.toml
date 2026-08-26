@@ -16,7 +16,7 @@ documentation = "https://github.com/CharleGutierrez/Vella/tree/main/docs"
 redis = { version = "0.25", features = ["tokio-comp"] }
 object_store = { version = "0.9", features = ["aws"] } # Added for S3/Azure/GCP and Local storage
 bytes = "1.4"
-rhai = "1.18" # Embedded scripting engine for zero-recompile extensibility
+rhai = { version = "1.18", features = ["serde", "sync"] } # Embedded scripting engine for zero-recompile extensibility
 tokio-cron-scheduler = "0.10" # Background jobs and task scheduling
 # candle-core = "0.5" # Temporarily disabled due to rand v0.8/0.9 trait conflicts
 regex = "1.10" # Used for document chunking
@@ -46,6 +46,7 @@ clap = { version = "4.5", features = ["derive"] }
 futures-util = "0.3"
 tokio-stream = { version = "0.1", features = ["sync"] }
 tokio-tungstenite = "0.30.0"
+yrs = "0.27.4"
 
 [[bin]]
 name = "vella"

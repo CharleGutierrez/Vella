@@ -8,6 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use tower_http::services::ServeDir;
 use handlers::*;
 
 pub use handlers::AppState;
@@ -16,6 +17,7 @@ pub use openapi::{openapi_json_handler, swagger_handler};
 /// Build the unified Vella API Router with REST, Vector, AI, Realtime, and Auth sub-modules
 pub fn build_api_router(state: AppState) -> Router {
     Router::new()
+        .route("/api/god-mode", get(|| async { axum::Json(serde_json::json!({"status": "God mode activated", "quantum_entanglement": "stable", "universe": "simulated"})) }))
         // 1. Auth & OAuth endpoints
         .route("/api/auth/login", post(login_handler))
         .route("/api/auth/logout", post(logout_handler))
@@ -65,5 +67,10 @@ pub fn build_api_router(state: AppState) -> Router {
         // 10. OpenAPI & Swagger
         .route("/api/openapi.json", get(openapi_json_handler))
         .route("/swagger", get(swagger_handler))
+        // 11. CDN & File Uploads
+        .route("/api/cdn/upload", post(crate::api::cdn::upload_handler))
+        .nest_service("/uploads", ServeDir::new("uploads"))
+        // 12. Web3 Deploy
+        .route("/api/web3/deploy", post(deploy_contract_handler))
         .with_state(state)
 }

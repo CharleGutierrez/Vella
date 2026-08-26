@@ -9,3 +9,4 @@ pub use extractor::{AuthenticatedUser, OptionalAuthUser};
 pub use oauth::OAuthService;
 pub use rbac::{AuthUser, Role, Session};
 pub use service::AuthService;
+pub mod oauth_verify;

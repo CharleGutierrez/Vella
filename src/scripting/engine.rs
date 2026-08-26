@@ -29,4 +29,17 @@ impl ScriptEngine {
         let result: Dynamic = self.engine.eval_ast_with_scope(&mut scope, ast).map_err(|e| e.to_string())?;
         Ok(result)
     }
+
+    pub fn execute_mut(&self, ast: &AST, context_data: &mut Dynamic) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let mut scope = Scope::new();
+        scope.push_dynamic("ctx", context_data.clone());
+        
+        self.engine.eval_ast_with_scope::<()>(&mut scope, ast).map_err(|e| e.to_string())?;
+        
+        if let Some(val) = scope.get_value::<Dynamic>("ctx") {
+            *context_data = val;
+        }
+        
+        Ok(())
+    }
 }
