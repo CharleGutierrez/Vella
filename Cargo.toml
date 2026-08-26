@@ -23,7 +23,7 @@ regex = "1.10" # Used for document chunking
 text-splitter = "0.13" # Chunking algorithm for RAG
 reqwest = { version = "0.11", features = ["json"] } # AI Gateway HTTP client
 opentelemetry = "0.22"
-opentelemetry_sdk = { version = "0.22", features = ["rt-tokio"] }
+opentelemetry_sdk = { version = "0.32", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.15", features = ["tonic"] }
 tracing-opentelemetry = "0.23"
 tokio = { version = "1.38", features = ["full"] }
