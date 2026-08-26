@@ -156,7 +156,6 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
 
       // System Health
       const [healthData, setHealthData] = useState(null);
-      const [godModeData, setGodModeData] = useState(null);
 
       // Show toast
       const notify = (message, type = 'success') => {
@@ -389,17 +388,6 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
       };
 
       // Load Health Data
-      
-      const loadGodMode = async () => {
-        try {
-          const res = await fetch('/api/god-mode');
-          if (res.ok) {
-            const data = await res.json();
-            setGodModeData(data);
-          }
-        } catch (e) {}
-      };
-
       const loadHealth = async () => {
         try {
           const res = await fetch('/health');
@@ -415,7 +403,6 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
         if (activeTab === 'approvals') loadApprovals();
         if (activeTab === 'audit') loadAuditLogs();
         if (activeTab === 'health') loadHealth();
-        if (activeTab === 'god-mode') loadGodMode();
       }, [activeTab]);
 
       // Save Form (Create / Edit Record)
@@ -1260,40 +1247,6 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
               )}
 
               {/* Tab 7: Health & Self-Healing Telemetry */}
-              
-              {activeTab === 'god-mode' && (
-                <div className="space-y-6 max-w-4xl">
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">Quantum God Mode</h2>
-                    <p className="text-slate-400 mt-1">Direct interface to the 256-qubit quantum processor and reality simulator.</p>
-                  </div>
-                  {godModeData ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="activity" className="w-8 h-8 text-purple-400 mb-3"></i>
-                        <div className="text-2xl font-bold text-white">{godModeData.status}</div>
-                        <div className="text-xs text-slate-400 uppercase mt-1">System Status</div>
-                      </div>
-                      <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="cpu" className="w-8 h-8 text-cyan-400 mb-3"></i>
-                        <div className="text-2xl font-bold text-white">{godModeData.quantum_entanglement}</div>
-                        <div className="text-xs text-slate-400 uppercase mt-1">Entanglement Field</div>
-                      </div>
-                      <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="globe" className="w-8 h-8 text-emerald-400 mb-3"></i>
-                        <div className="text-2xl font-bold text-white">{godModeData.universe}</div>
-                        <div className="text-xs text-slate-400 uppercase mt-1">Reality Fabric</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-8 text-center text-slate-400 border border-slate-700/50 border-dashed rounded-2xl">
-                      <i data-lucide="loader" className="w-8 h-8 mx-auto mb-3 animate-spin"></i>
-                      <p>Waking up the Quantum AI...</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {activeTab === 'health' && (
                 <div className="space-y-6 max-w-4xl">
                   <div>
