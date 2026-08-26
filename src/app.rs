@@ -134,6 +134,13 @@ impl VellaApp {
         let prompt_logger = Arc::new(PromptLogger::default());
         let semantic_cache = Arc::new(SemanticCache::new(self.config.semantic_cache_threshold, ai_tuner.clone()));
 
+
+        // --- INJECT TRUE SERVERLESS DYNAMIC SCRIPTING ---
+        let mut all_hooks = self.hooks;
+        let script_engine = std::sync::Arc::new(crate::scripting::engine::ScriptEngine::new());
+        let dynamic_hook = Box::new(crate::scripting::hook::DynamicScriptHook::new(script_engine));
+        all_hooks.push(dynamic_hook);
+
         let app_state = AppState {
             pool: db.pool.clone(),
             db,
@@ -145,7 +152,8 @@ impl VellaApp {
             approval_service,
             event_bus,
             realtime_hub,
-            hooks: Arc::new(self.hooks),
+            hooks: Arc::new(all_hooks),
+
             watchdog,
             circuit_breaker,
             ai_tuner,
