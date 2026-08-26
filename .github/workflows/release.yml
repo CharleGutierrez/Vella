@@ -42,7 +42,7 @@ jobs:
         run: mv target/${{ matrix.target }}/release/vella.exe target/${{ matrix.target }}/release/${{ matrix.name }}
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: target/${{ matrix.target }}/release/${{ matrix.name }}
         env:
