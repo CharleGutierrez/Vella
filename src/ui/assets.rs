@@ -112,6 +112,20 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
       );
     }
 
+    
+    const Icon = ({ name, className }) => {
+      const [svgHtml, setSvgHtml] = useState('');
+      
+      useEffect(() => {
+        if (window.lucide && window.lucide.icons && window.lucide.icons[name]) {
+          const svg = window.lucide.icons[name].toSvg({ class: className || '' });
+          setSvgHtml(svg);
+        }
+      }, [name, className]);
+
+      return <span dangerouslySetInnerHTML={{ __html: svgHtml }} />;
+    };
+
     function VellaAdminApp() {
       const [user, setUser] = useState(null);
       const [authChecking, setAuthChecking] = useState(true);
@@ -260,7 +274,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
 
       useEffect(() => {
         if (window.lucide) {
-          window.lucide.createIcons();
+          // window.lucide.createIcons();
         }
       });
 
@@ -486,7 +500,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
         return (
           <div className="min-h-screen flex items-center justify-center">
             <div className="flex items-center gap-3 text-sky-400 font-medium">
-              <i data-lucide="loader" className="w-5 h-5 animate-spin"></i>
+              <Icon name="loader" className="w-5 h-5 animate-spin" />
               <span>Initializing Vella Engine...</span>
             </div>
           </div>
@@ -500,7 +514,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500"></div>
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400 mb-4 shadow-inner">
-                  <i data-lucide="sparkles" className="w-7 h-7"></i>
+                  <Icon name="sparkles" className="w-7 h-7" />
                 </div>
                 <h1 className="text-2xl font-bold tracking-tight text-white">Vella Headless CMS</h1>
                 <p className="text-sm text-slate-400 mt-1">Sign in with superadmin or OAuth credentials</p>
@@ -526,7 +540,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                     defaultValue="admin"
                     required
                     className="glass-input w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   />
                 </div>
                 <button
@@ -562,7 +576,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <span>SQLite / PostgreSQL Scale</span>
-                    <span>•</span>
+                    <span>â€¢</span>
                     <span className="flex items-center gap-1">
                       <span className={`w-2 h-2 rounded-full ${realtimeActive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
                       {realtimeActive ? 'Realtime Live' : 'Polling'}
@@ -578,7 +592,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 target="_blank"
                 className="px-3 py-1.5 rounded-lg glass-card hover:bg-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5 transition-all"
               >
-                <i data-lucide="file-code" className="w-3.5 h-3.5 text-sky-400"></i>
+                <Icon name="file-code" className="w-3.5 h-3.5 text-sky-400" />
                 Swagger API
               </a>
               <a
@@ -586,7 +600,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 target="_blank"
                 className="px-3 py-1.5 rounded-lg glass-card hover:bg-slate-800 text-xs font-medium text-slate-300 flex items-center gap-1.5 transition-all"
               >
-                <i data-lucide="code" className="w-3.5 h-3.5 text-indigo-400"></i>
+                <Icon name="code" className="w-3.5 h-3.5 text-indigo-400" />
                 .d.ts Types
               </a>
               <div className="h-5 w-px bg-slate-800 mx-1"></div>
@@ -600,7 +614,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 className="p-1.5 rounded-lg glass-card hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 transition-all"
                 title="Logout"
               >
-                <i data-lucide="log-out" className="w-4 h-4"></i>
+                <Icon name="log-out" className="w-4 h-4" />
               </button>
             </div>
           </header>
@@ -648,7 +662,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="sparkles" className="w-4 h-4 text-purple-400"></i>
+                    <Icon name="sparkles" className="w-4 h-4 text-purple-400" />
                     <span>AI Scaffolder</span>
                   </button>
                   <button
@@ -659,7 +673,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="target" className="w-4 h-4 text-indigo-400"></i>
+                    <Icon name="target" className="w-4 h-4 text-indigo-400" />
                     <span>Vector & RAG Studio</span>
                   </button>
                   <button
@@ -670,7 +684,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="gauge" className="w-4 h-4 text-amber-400"></i>
+                    <Icon name="gauge" className="w-4 h-4 text-amber-400" />
                     <span>AI Tuner & DDL</span>
                   </button>
                   <button
@@ -681,7 +695,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="zap" className="w-4 h-4 text-purple-400"></i>
+                    <Icon name="zap" className="w-4 h-4 text-purple-400" />
                     <span>Quantum God Mode</span>
                   </button>
                 </nav>
@@ -698,7 +712,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="shield-check" className="w-4 h-4 text-emerald-400"></i>
+                    <Icon name="shield-check" className="w-4 h-4 text-emerald-400" />
                     <span>Approval Queue</span>
                   </button>
                   <button
@@ -709,7 +723,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="history" className="w-4 h-4 text-sky-400"></i>
+                    <Icon name="history" className="w-4 h-4 text-sky-400" />
                     <span>Audit & Rollback</span>
                   </button>
                   <button
@@ -720,7 +734,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                     }`}
                   >
-                    <i data-lucide="activity" className="w-4 h-4 text-rose-400"></i>
+                    <Icon name="activity" className="w-4 h-4 text-rose-400" />
                     <span>Self-Healing Health</span>
                   </button>
                 </nav>
@@ -762,7 +776,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         </span>
                         {selectedModel.has_vectors && (
                           <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center gap-1 font-medium">
-                            <i data-lucide="cpu" className="w-3 h-3"></i> pgvector / sqlite-vec
+                            <Icon name="cpu" className="w-3 h-3" /> pgvector / sqlite-vec
                           </span>
                         )}
                       </div>
@@ -771,7 +785,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
 
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <i data-lucide="search" className="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+                        <Icon name="search" className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
                         <input
                           type="text"
                           value={searchQuery}
@@ -791,7 +805,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         }}
                         className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-md shadow-sky-500/20 flex items-center gap-2 transition-all"
                       >
-                        <i data-lucide="plus" className="w-4 h-4"></i>
+                        <Icon name="plus" className="w-4 h-4" />
                         Create {selectedModel.name}
                       </button>
                     </div>
@@ -813,7 +827,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                           {loading ? (
                             <tr>
                               <td colSpan="10" className="px-6 py-12 text-center text-slate-500">
-                                <i data-lucide="loader" className="w-6 h-6 animate-spin mx-auto mb-2 text-sky-400"></i>
+                                <Icon name="loader" className="w-6 h-6 animate-spin mx-auto mb-2 text-sky-400" />
                                 Loading records...
                               </td>
                             </tr>
@@ -841,7 +855,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                                       ) : typeof val === 'object' && val !== null ? (
                                         <code className="text-xs text-purple-300 font-mono">{Array.isArray(val) ? `[Vector (${val.length}d)]` : JSON.stringify(val)}</code>
                                       ) : (
-                                        <span className="truncate max-w-xs block">{val !== undefined && val !== null ? String(val) : '—'}</span>
+                                        <span className="truncate max-w-xs block">{val !== undefined && val !== null ? String(val) : 'â€”'}</span>
                                       )}
                                     </td>
                                   );
@@ -856,14 +870,14 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                                     className="p-1.5 text-slate-400 hover:text-sky-300 hover:bg-slate-800 rounded-lg transition-all mr-1"
                                     title="Edit"
                                   >
-                                    <i data-lucide="edit-2" className="w-4 h-4"></i>
+                                    <Icon name="edit-2" className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleDeleteRecord(rec.id)}
                                     className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
                                     title="Delete"
                                   >
-                                    <i data-lucide="trash-2" className="w-4 h-4"></i>
+                                    <Icon name="trash-2" className="w-4 h-4" />
                                   </button>
                                 </td>
                               </tr>
@@ -905,7 +919,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="sparkles" className="w-6 h-6 text-purple-400"></i>
+                      <Icon name="sparkles" className="w-6 h-6 text-purple-400" />
                       Agentic AI Schema Scaffolder
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">
@@ -947,7 +961,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                           }}
                           className="px-3 py-1 rounded-lg bg-slate-800 text-[11px] text-slate-400 hover:text-sky-300"
                         >
-                          ⚡ RAG Doc Preset
+                          âš¡ RAG Doc Preset
                         </button>
                         <button
                           type="button"
@@ -957,7 +971,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                           }}
                           className="px-3 py-1 rounded-lg bg-slate-800 text-[11px] text-slate-400 hover:text-sky-300"
                         >
-                          ⚡ Stripe User Preset
+                          âš¡ Stripe User Preset
                         </button>
                       </div>
 
@@ -966,7 +980,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                         disabled={scaffoldLoading}
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-500/25 flex items-center gap-2 transition-all disabled:opacity-50"
                       >
-                        {scaffoldLoading ? <i data-lucide="loader" className="w-4 h-4 animate-spin"></i> : <i data-lucide="zap" className="w-4 h-4"></i>}
+                        {scaffoldLoading ? <Icon name="loader" className="w-4 h-4 animate-spin" /> : <Icon name="zap" className="w-4 h-4" />}
                         Generate Schema & Code
                       </button>
                     </div>
@@ -980,7 +994,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                           <div className="flex gap-2 mt-1">
                             {scaffoldResult.detected_features.map((f, i) => (
                               <span key={i} className="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-medium">
-                                ✓ {f}
+                                âœ“ {f}
                               </span>
                             ))}
                           </div>
@@ -1012,7 +1026,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="target" className="w-6 h-6 text-indigo-400"></i>
+                      <Icon name="target" className="w-6 h-6 text-indigo-400" />
                       Vector & RAG Studio
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">
@@ -1055,7 +1069,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                       disabled={vectorLoading}
                       className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-400 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition-all disabled:opacity-50"
                     >
-                      {vectorLoading ? <i data-lucide="loader" className="w-4 h-4 animate-spin"></i> : <i data-lucide="search" className="w-4 h-4"></i>}
+                      {vectorLoading ? <Icon name="loader" className="w-4 h-4 animate-spin" /> : <Icon name="search" className="w-4 h-4" />}
                       Search Top-K Neighbors
                     </button>
                   </div>
@@ -1088,7 +1102,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="gauge" className="w-6 h-6 text-amber-400"></i>
+                      <Icon name="gauge" className="w-6 h-6 text-amber-400" />
                       AI Tuner & Database Advisor
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">Real-time query telemetry, latency percentiles, and automated DDL index recommendation.</p>
@@ -1158,7 +1172,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="shield-check" className="w-6 h-6 text-emerald-400"></i>
+                      <Icon name="shield-check" className="w-6 h-6 text-emerald-400" />
                       Two-Person Rule Approval Queue
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">Review sensitive mutations scored by the AI Decision Engine.</p>
@@ -1185,7 +1199,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                             </div>
                             <div className="mt-2 text-xs text-slate-300 flex items-center gap-2">
                               <span className="line-through text-rose-400">{app.old_value || 'null'}</span>
-                              <span>➔</span>
+                              <span>âž”</span>
                               <span className="font-bold text-emerald-400">{app.new_value}</span>
                             </div>
                             <p className="text-xs text-slate-400 mt-2 italic">{app.ai_risk?.recommendation}</p>
@@ -1229,7 +1243,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="history" className="w-6 h-6 text-sky-400"></i>
+                      <Icon name="history" className="w-6 h-6 text-sky-400" />
                       Audit Trail & 1-Click Time-Travel Rollback
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">Immutable mutation logs capturing diffs and full snapshots for instant restoration.</p>
@@ -1279,24 +1293,24 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                   {godModeData ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="activity" className="w-8 h-8 text-purple-400 mb-3"></i>
+                        <Icon name="activity" className="w-8 h-8 text-purple-400 mb-3" />
                         <div className="text-2xl font-bold text-white">{godModeData.status}</div>
                         <div className="text-xs text-slate-400 uppercase mt-1">System Status</div>
                       </div>
                       <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="cpu" className="w-8 h-8 text-cyan-400 mb-3"></i>
+                        <Icon name="cpu" className="w-8 h-8 text-cyan-400 mb-3" />
                         <div className="text-2xl font-bold text-white">{godModeData.quantum_entanglement}</div>
                         <div className="text-xs text-slate-400 uppercase mt-1">Entanglement Field</div>
                       </div>
                       <div className="bg-slate-800/40 border border-slate-700/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <i data-lucide="globe" className="w-8 h-8 text-emerald-400 mb-3"></i>
+                        <Icon name="globe" className="w-8 h-8 text-emerald-400 mb-3" />
                         <div className="text-2xl font-bold text-white">{godModeData.universe}</div>
                         <div className="text-xs text-slate-400 uppercase mt-1">Reality Fabric</div>
                       </div>
                     </div>
                   ) : (
                     <div className="p-8 text-center text-slate-400 border border-slate-700/50 border-dashed rounded-2xl">
-                      <i data-lucide="loader" className="w-8 h-8 mx-auto mb-3 animate-spin"></i>
+                      <Icon name="loader" className="w-8 h-8 mx-auto mb-3 animate-spin" />
                       <p>Waking up the Quantum AI...</p>
                     </div>
                   )}
@@ -1307,7 +1321,7 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                      <i data-lucide="activity" className="w-6 h-6 text-rose-400"></i>
+                      <Icon name="activity" className="w-6 h-6 text-rose-400" />
                       Self-Healing Health & Watchdog Telemetry
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">Live monitoring of system uptime, database connection watchdog, and circuit breakers.</p>
