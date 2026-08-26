@@ -50,7 +50,7 @@ fn default_top_k() -> usize {
 }
 
 pub async fn ai_report_handler(State(state): State<AppState>) -> impl IntoResponse {
-    let report = state.ai_tuner.generate_report(&state.registry);
+    let report = state.ai_tuner.generate_report(&state.registry).await;
     Json(json!({ "success": true, "report": report }))
 }
 

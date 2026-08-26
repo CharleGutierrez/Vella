@@ -1,3 +1,40 @@
+
+use crate::ai::tuner::IndexRecommendation;
+
+pub async fn call_gemini_db_advisor(schema_json: &str, query_stats: &str, api_key: &str) -> Option<Vec<IndexRecommendation>> {
+    let client = reqwest::Client::new();
+    let url = format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={}", api_key);
+    
+    let prompt = format!(
+        "You are an expert Senior Database Administrator AI.\n\
+        Analyze the following SQLite schemas and query statistics, and recommend highly optimized database indexes.\n\n\
+        Schemas:\n{}\n\n\
+        Query Access Frequencies:\n{}\n\n\
+        Generate a JSON array of objects with this structure exactly (NO Markdown):\n\
+        [{{\"id\":\"idx_name\",\"model\":\"ModelName\",\"table_name\":\"table\",\"column\":\"col\",\"reason\":\"why\",\"estimated_speedup\":\"2x\",\"ddl\":\"CREATE INDEX idx_name ON table(col);\",\"is_applied\":false}}]",
+        schema_json, query_stats
+    );
+
+    let payload = serde_json::json!({
+        "contents": [{"parts": [{"text": prompt}]}]
+    });
+
+    let res = client.post(&url).header("Content-Type", "application/json").json(&payload).send().await.ok()?;
+    let json: serde_json::Value = res.json().await.ok()?;
+    let text = json["candidates"][0]["content"]["parts"][0]["text"].as_str()?;
+    
+    let text = text.trim();
+    let text = if text.starts_with("`json") {
+        text.strip_prefix("`json").unwrap().strip_suffix("`").unwrap_or(text).trim()
+    } else if text.starts_with("`") {
+        text.strip_prefix("`").unwrap().strip_suffix("`").unwrap_or(text).trim()
+    } else {
+        text
+    };
+
+    serde_json::from_str::<Vec<IndexRecommendation>>(text).ok()
+}
+
 use crate::model::schema::ModelSchema;
 use crate::model::field::{Field, FieldType};
 

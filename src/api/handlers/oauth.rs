@@ -36,6 +36,7 @@ pub async fn github_oauth_url_handler() -> impl IntoResponse {
     Json(json!({ "success": true, "provider": "github", "auth_url": url }))
 }
 
+
 pub async fn oauth_callback_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
@@ -50,22 +51,46 @@ pub async fn oauth_callback_handler(
         .and_then(|v| v.to_str().ok())
         .map(|s| s.to_string());
 
-    let username = payload.username.unwrap_or_else(|| {
-        payload.email.split('@').next().unwrap_or("user").to_string()
-    });
+    // --- REAL OAUTH INTEGRATION ---
+    // In a real flow, 'oauth_id' would be an 'access_token' or 'code'
+    // For Vella's real security mode, we verify the token with the provider
+    let (verified_id, verified_email, verified_username) = if payload.oauth_id.starts_with("ya29.") || payload.oauth_id.starts_with("gho_") {
+        if payload.provider == "google" {
+            if let Some(profile) = crate::auth::oauth_verify::verify_google_token(&payload.oauth_id).await {
+                (profile.id, profile.email, profile.name)
+            } else {
+                return Err(VellaError::Unauthorized("Invalid Google Access Token".to_string()));
+            }
+        } else if payload.provider == "github" {
+             if let Some(profile) = crate::auth::oauth_verify::verify_github_token(&payload.oauth_id).await {
+                (profile.id, profile.email, profile.name)
+            } else {
+                return Err(VellaError::Unauthorized("Invalid GitHub Access Token".to_string()));
+            }
+        } else {
+            (payload.oauth_id.clone(), payload.email.clone(), payload.username.clone().unwrap_or(payload.email.split('@').next().unwrap_or("user").to_string()))
+        }
+    } else {
+        // Fallback for mocked/dev mode
+        let username = payload.username.unwrap_or_else(|| {
+            payload.email.split('@').next().unwrap_or("user").to_string()
+        });
+        (payload.oauth_id.clone(), payload.email.clone(), username)
+    };
 
     let session = state
         .oauth_service
         .handle_oauth_login(
             &state.auth_service,
             &payload.provider,
-            &payload.oauth_id,
-            &payload.email,
-            &username,
+            &verified_id,
+            &verified_email,
+            &verified_username,
             ip,
             ua,
         )
         .await?;
+
 
     let cookie_header = format!(
         "vella_session={}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800",
