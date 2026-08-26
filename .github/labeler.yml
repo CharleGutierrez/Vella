@@ -1,0 +1,25 @@
+# .github/labeler.yml
+core:
+  - changed-files:
+    - any-glob-to-any-file: 'src/core/**/*'
+
+ai:
+  - changed-files:
+    - any-glob-to-any-file: 'src/ai/**/*'
+
+web3:
+  - changed-files:
+    - any-glob-to-any-file: 'src/web3/**/*'
+
+hft:
+  - changed-files:
+    - any-glob-to-any-file: 'src/trading/**/*'
+
+scada:
+  - changed-files:
+    - any-glob-to-any-file: 'src/scada/**/*'
+
+docs:
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**/*'
+    - any-glob-to-any-file: '*.md'

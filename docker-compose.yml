@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  vella:
+    build: .
+    container_name: vella-edge
+    ports:
+      - "8080:8080"
+    environment:
+      - RUST_LOG=info
+      - VELLA_ENV=production
+    restart: unless-stopped
+    volumes:
+      - vella-data:/app/data
+
+volumes:
+  vella-data:

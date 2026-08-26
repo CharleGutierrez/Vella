@@ -1,11 +1,17 @@
 <div align="center">
   <img src="assets/vella_logo.jpg" alt="Vella Logo" width="300" />
   <h1>Vella Framework</h1>
+  <p>🌍 <a href="README.zh-CN.md">简体中文文档 (Chinese)</a></p>
   <p><strong>The Decentralized Operating System for the AI and Web3 Era.</strong></p>
 
   [![Build Status](https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
+  [![codecov](https://codecov.io/gh/CharleGutierrez/Vella/branch/main/graph/badge.svg)](https://codecov.io/gh/CharleGutierrez/Vella)
+  [![Benchmarks](https://img.shields.io/badge/Benchmarks-1.2%C2%B5s%20Latency-FF4500.svg)](BENCHMARKS.md)
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
   [![Rust: 1.75+](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+  [![Discord](https://img.shields.io/badge/Discord-Join%20Community-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/vella)
+  [![X (formerly Twitter)](https://img.shields.io/badge/Follow-%40Vella-1DA1F2?logo=x&logoColor=white)](https://twitter.com/vella)
 </div>
 
 ---
@@ -119,5 +125,19 @@ cd Vella
 cargo build --release
 cargo run
 ```
+
+### 🐳 Run with Docker (Zero Setup)
+Don't want to install Rust? Run the entire Vella God-Tier OS with a single command:
+```bash
+docker compose up -d
+```
+
+---
+
+## 🤝 Community & Contributing
+Vella is a massive undertaking to unify the future of backend development, and we welcome contributors of all skill levels!
+- Read our [Contributing Guide](CONTRIBUTING.md) for how to get started.
+- Review our [Code of Conduct](CODE_OF_CONDUCT.md).
+- Report vulnerabilities according to our [Security Policy](SECURITY.md).
 
 _Vella: Because building the future shouldn't require 50 different microservices._

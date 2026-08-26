@@ -1,0 +1,24 @@
+# Vella CODEOWNERS
+
+# Global owners (Core maintainers)
+*       @CharleGutierrez
+
+# 🧠 AI & RAG Engine
+/src/ai/            @CharleGutierrez
+/docs/ai/           @CharleGutierrez
+
+# 🌐 Web3 & ZK-Rollups
+/src/web3/          @CharleGutierrez
+/src/crypto/        @CharleGutierrez
+
+# 📈 High-Frequency Trading & IPC
+/src/trading/       @CharleGutierrez
+/src/ipc/           @CharleGutierrez
+
+# 🏭 SCADA & IoT
+/src/scada/         @CharleGutierrez
+
+# 🛡️ CI/CD & GitHub Actions
+/.github/           @CharleGutierrez
+/Dockerfile         @CharleGutierrez
+/docker-compose.yml @CharleGutierrez

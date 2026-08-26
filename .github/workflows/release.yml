@@ -1,0 +1,49 @@
+name: Release Auto-Build
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-release:
+    name: Build Release Binaries
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: vella-linux-amd64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            name: vella-darwin-amd64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: vella-windows-amd64.exe
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build Binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Rename Binary (Linux/Mac)
+        if: matrix.os != 'windows-latest'
+        run: mv target/${{ matrix.target }}/release/vella target/${{ matrix.target }}/release/${{ matrix.name }}
+
+      - name: Rename Binary (Windows)
+        if: matrix.os == 'windows-latest'
+        run: mv target/${{ matrix.target }}/release/vella.exe target/${{ matrix.target }}/release/${{ matrix.name }}
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/${{ matrix.target }}/release/${{ matrix.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,41 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: '🧠 AI Engine'
+    labels:
+      - 'ai'
+  - title: '🌐 Web3 & Crypto'
+    labels:
+      - 'web3'
+  - title: '📈 High-Frequency Trading'
+    labels:
+      - 'hft'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bug'
+  - title: '🧰 Maintenance & CI'
+    labels:
+      - 'chore'
+      - 'ci'
+      - 'dependencies'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+template: |
+  ## Vella God-Tier OS Release - $RESOLVED_VERSION
+
+  $CHANGES
