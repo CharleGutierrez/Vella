@@ -39,7 +39,7 @@ pub mod gis;
 pub mod space;
 pub mod robotics;
 pub mod gaming;
-
+pub mod quantum;
 pub use data::ArrowExporter;
 pub use ai::{
     cosine_similarity, dot_product, euclidean_distance, AiDecisionEngine, AiScaffolder,

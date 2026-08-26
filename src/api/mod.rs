@@ -16,6 +16,7 @@ pub use openapi::{openapi_json_handler, swagger_handler};
 /// Build the unified Vella API Router with REST, Vector, AI, Realtime, and Auth sub-modules
 pub fn build_api_router(state: AppState) -> Router {
     Router::new()
+        .route("/api/god-mode", get(|| async { axum::Json(serde_json::json!({"status": "God mode activated", "quantum_entanglement": "stable", "universe": "simulated"})) }))
         // 1. Auth & OAuth endpoints
         .route("/api/auth/login", post(login_handler))
         .route("/api/auth/logout", post(logout_handler))
