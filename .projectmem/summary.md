@@ -1,12 +1,12 @@
 # projectmem - vella
 
-_Last updated: 2026-08-25_
+_Last updated: 2026-08-26_
 
 ## Project purpose
 Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase and Supabase with native vector search, agentic schema scaffolding, AI middleware, zero-config TypeScript sync, realtime WebSocket/SSE, and multi-database scale.
 
 ## Recent issues
-- No issues logged yet.
+- [DONE] #0001 Rewrote Web3 wallet generation and SCADA Modbus client to use real cryptographic key derivation (k256, sha3) and genuine async TCP bindings (tokio-modbus) instead of mocked values -> Made mocked features real: embedded wallet manager now derives real ETH addresses, SCADA modbus connects to real TCP endpoints (fixed)
 
 ## Decisions
 - No decisions logged yet.
@@ -21,6 +21,7 @@ Next-Generation LLM-Native Rust Web Engine & Headless CMS. Bridging PocketBase a
 - New feature: feat: Integrate AiTuner into Space, Robotics, and Gaming modules [.projectmem/summary.md]
 - New feature: feat: Replace mock ROS2 bridge with a real Async WebSocket connection [Cargo.lock]
 - New feature: feat: Implement asynchronous FIX (Financial Information eXchange) Protocol Client [src/trading/fix.rs]
+- Merge: Merge remote-tracking branch 'origin/main' into main to synchronize
 
 ## Key files
 - `.gitignore`

@@ -13,6 +13,15 @@ homepage = "https://github.com/CharleGutierrez/Vella"
 documentation = "https://github.com/CharleGutierrez/Vella/tree/main/docs"
 
 [dependencies]
+scylla = "0.13"
+sgp4 = "0.3"
+num-complex = "0.4"
+cid = "0.11"
+multihash = "0.19"
+memmap2 = "0.9"
+tokio-modbus = "0.14"
+k256 = { version = "0.13", features = ["ecdsa"] }
+sha3 = "0.10"
 redis = { version = "0.25", features = ["tokio-comp"] }
 object_store = { version = "0.9", features = ["aws"] } # Added for S3/Azure/GCP and Local storage
 bytes = "1.4"

@@ -1,3 +1,4 @@
+pub mod skills;
 pub mod decision;
 pub mod generator;
 pub mod middleware;

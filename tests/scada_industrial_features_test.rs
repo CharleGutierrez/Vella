@@ -4,15 +4,18 @@ use vella::ui::hmi::HmiCanvasBuilder;
 use vella::ai::AiTuner;
 use std::sync::Arc;
 
-#[test]
-fn test_industrial_protocol_driver() {
+#[tokio::test]
+async fn test_industrial_protocol_driver() {
     let driver = ScadaDriver::new(IndustrialProtocol::ModbusTcp { 
         ip: "192.168.1.50".to_string(), 
         port: 502 
     });
     
-    let register_val = driver.read_holding_register(40001);
-    assert_eq!(register_val, 4096, "Modbus driver failed to read physical register");
+    // Now returns a Result indicating a real connection attempt (which will time out or refuse since IP is fake)
+    let res = driver.read_holding_register(40001).await;
+    assert!(res.is_err(), "Modbus driver should fail to connect to fake IP");
+    let err_msg = res.unwrap_err();
+    assert!(err_msg.contains("timed out") || err_msg.contains("refused") || err_msg.contains("unreachable"), "Unexpected error: {}", err_msg);
 }
 
 #[test]

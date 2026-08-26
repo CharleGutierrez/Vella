@@ -1,3 +1,4 @@
+pub mod ipc;
 pub mod config;
 pub mod error;
 pub mod events;
