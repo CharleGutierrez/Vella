@@ -1395,6 +1395,40 @@ pub fn admin_react_spa_html(site_name: &str) -> String {
                             onChange={(e) => setFormData({ ...formData, [f.name]: e.target.value })}
                             className="glass-input w-full px-4 py-2.5 rounded-xl text-sm text-white"
                           ></textarea>
+                        ) : f.field_type?.kind === 'Image' || f.field_type?.kind === 'File' ? (
+                          <div className="space-y-2">
+                            {formData[f.name] && typeof formData[f.name] === 'string' && (
+                              <div className="text-xs text-sky-400 mb-2 truncate">
+                                Current: <a href={formData[f.name]} target="_blank" rel="noreferrer" className="underline hover:text-sky-300">{formData[f.name]}</a>
+                              </div>
+                            )}
+                            <input
+                              type="file"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const fd = new FormData();
+                                fd.append('file', file);
+                                try {
+                                  const res = await fetch('/api/cdn/upload', {
+                                    method: 'POST',
+                                    body: fd,
+                                  });
+                                  const data = await res.json();
+                                  if (data.url) {
+                                    setFormData({ ...formData, [f.name]: data.url });
+                                    setToast({ message: 'File uploaded successfully', type: 'success' });
+                                  } else {
+                                    setToast({ message: 'Upload failed: no URL returned', type: 'error' });
+                                  }
+                                } catch (err) {
+                                  console.error('Upload error', err);
+                                  setToast({ message: 'Upload failed', type: 'error' });
+                                }
+                              }}
+                              className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700"
+                            />
+                          </div>
                         ) : (
                           <input
                             type={f.field_type?.kind === 'Integer' || f.field_type?.kind === 'Float' ? 'number' : 'text'}

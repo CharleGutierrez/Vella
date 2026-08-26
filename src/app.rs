@@ -134,6 +134,9 @@ impl VellaApp {
         let prompt_logger = Arc::new(PromptLogger::default());
         let semantic_cache = Arc::new(SemanticCache::new(self.config.semantic_cache_threshold, ai_tuner.clone()));
 
+        // --- BACKGROUND JOB QUEUE ---
+        let job_queue = crate::jobs::queue::JobQueue::new(ai_tuner.clone()).await.map_err(|e| VellaError::Internal(e.to_string()))?;
+        let job_queue = Arc::new(tokio::sync::Mutex::new(job_queue));
 
         // --- INJECT TRUE SERVERLESS DYNAMIC SCRIPTING ---
         let mut all_hooks = self.hooks;
@@ -160,6 +163,7 @@ impl VellaApp {
             token_limiter,
             prompt_logger,
             semantic_cache,
+            job_queue,
         };
 
         let ui_config = Arc::new(UiConfig {
@@ -229,7 +233,10 @@ impl VellaApp {
         let db_url_str = self.config.database_url.clone();
         let db_type = DatabaseType::from_url(&db_url_str);
 
-        let (app, _) = self.build_router().await?;
+        let (app, app_state) = self.build_router().await?;
+
+        // START BACKGROUND JOB QUEUE
+        app_state.job_queue.lock().await.start().await.map_err(|e| VellaError::Internal(e.to_string()))?;
 
         let addr: SocketAddr = bind_addr_str.parse().map_err(|e: std::net::AddrParseError| {
             VellaError::Internal(format!("Invalid bind address: {}", e))

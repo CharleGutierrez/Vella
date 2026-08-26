@@ -8,6 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use tower_http::services::ServeDir;
 use handlers::*;
 
 pub use handlers::AppState;
@@ -66,5 +67,10 @@ pub fn build_api_router(state: AppState) -> Router {
         // 10. OpenAPI & Swagger
         .route("/api/openapi.json", get(openapi_json_handler))
         .route("/swagger", get(swagger_handler))
+        // 11. CDN & File Uploads
+        .route("/api/cdn/upload", post(crate::api::cdn::upload_handler))
+        .nest_service("/uploads", ServeDir::new("uploads"))
+        // 12. Web3 Deploy
+        .route("/api/web3/deploy", post(deploy_contract_handler))
         .with_state(state)
 }
