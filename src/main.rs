@@ -64,7 +64,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 };
 
                 println!("\n✨ [Vella Agentic Scaffolder] Generating model '{}' from prompt:\n   \"{}\"\n", name, ai);
-                let scaffold = AiScaffolder::scaffold(&name, &ai, db_type);
+                let scaffold = AiScaffolder::scaffold(&name, &ai, db_type).await;
 
                 println!("📦 Detected Features:");
                 for f in &scaffold.detected_features {

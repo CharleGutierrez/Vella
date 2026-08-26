@@ -18,7 +18,17 @@ pub struct AiScaffolder;
 
 impl AiScaffolder {
     /// Generate a full ModelSchema from a natural language prompt
-    pub fn generate_schema(model_name: &str, prompt: &str) -> ModelSchema {
+    
+    pub async fn generate_schema(model_name: &str, prompt: &str) -> ModelSchema {
+        if let Ok(api_key) = std::env::var("GEMINI_API_KEY") {
+            if let Some(schema) = crate::ai::gemini_scaffolder::call_gemini_schema(model_name, prompt, &api_key).await {
+                return schema;
+            }
+        }
+        Self::generate_schema_mock(model_name, prompt)
+    }
+
+    pub fn generate_schema_mock(model_name: &str, prompt: &str) -> ModelSchema {
         let p_lower = prompt.to_lowercase();
         let name_clean = if model_name.is_empty() { "Entity" } else { model_name };
         let mut schema = ModelSchema::new(name_clean);
@@ -234,8 +244,8 @@ impl AiScaffolder {
     }
 
     /// Generate complete scaffold result with detected features
-    pub fn scaffold(model_name: &str, prompt: &str, db_type: DatabaseType) -> GeneratedScaffoldResult {
-        let schema = Self::generate_schema(model_name, prompt);
+    pub async fn scaffold(model_name: &str, prompt: &str, db_type: DatabaseType) -> GeneratedScaffoldResult {
+        let schema = Self::generate_schema(model_name, prompt).await;
         let rust_code = Self::generate_rust_code(&schema);
         let sql_ddl = crate::db::SqlDialect::create_table_ddl(db_type, &schema);
         let typescript_definition = crate::types::TypeScriptGenerator::generate_model_interface(&schema);
