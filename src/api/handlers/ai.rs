@@ -98,7 +98,7 @@ pub async fn generate_model_handler(
     Json(payload): Json<GenerateModelPayload>,
 ) -> impl IntoResponse {
     let db_type = DatabaseType::from_url(&state.config.database_url);
-    let scaffold_result = AiScaffolder::scaffold(&payload.name, &payload.prompt, db_type);
+    let scaffold_result = AiScaffolder::scaffold(&payload.name, &payload.prompt, db_type).await;
 
     Json(json!({
         "success": true,
@@ -110,13 +110,22 @@ pub async fn generate_model_handler(
 pub async fn rag_query_handler(
     State(state): State<AppState>,
     OptionalAuthUser(user): OptionalAuthUser,
-    Json(payload): Json<RagQueryPayload>,
+    Json(mut payload): Json<RagQueryPayload>,
 ) -> Result<impl IntoResponse, VellaError> {
     let start = std::time::Instant::now();
     let user_id = user.as_ref().map(|u| u.id);
     let identifier = user.as_ref().map(|u| u.username.as_str()).unwrap_or("anonymous");
 
+
+    // 0. Generate real query vector using Gemini
+        if payload.query_vector.is_empty() {
+        if let Ok(vec) = crate::ai::gemini_scaffolder::call_gemini_embedding(&payload.query).await {
+            payload.query_vector = vec;
+        }
+    }
+
     // 1. Rate Limiting Check
+
     state.token_limiter.check_and_consume(identifier, 500)?;
 
     // 2. Check Semantic Cache
@@ -139,7 +148,12 @@ pub async fn rag_query_handler(
         }
     }
 
+
+    // 2.5 Generate real query vector using Gemini
+    
+
     // 3. Perform Vector Search retrieval across target model
+
     let schema = state
         .registry
         .get(&payload.model_name)
