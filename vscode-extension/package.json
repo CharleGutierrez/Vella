@@ -149,7 +149,7 @@
         {
           "id": "vella-explorer",
           "title": "Vella",
-          "icon": "$(rocket)"
+          "icon": "vella-icon.svg"
         }
       ]
     },

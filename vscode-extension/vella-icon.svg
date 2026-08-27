@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <!-- Core Engine (Rust Orange) -->
+    <linearGradient id="rustGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4b1f" />
+      <stop offset="100%" stop-color="#ff9068" />
+    </linearGradient>
+    
+    <!-- AI / Neural Net (Neon Purple to Pink) -->
+    <linearGradient id="aiGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8a2387" />
+      <stop offset="50%" stop-color="#e94057" />
+      <stop offset="100%" stop-color="#f27121" />
+    </linearGradient>
+    
+    <!-- Edge / Realtime (Electric Blue) -->
+    <linearGradient id="edgeGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#00c6ff" />
+      <stop offset="100%" stop-color="#0072ff" />
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="glow-light" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Space Cyberpunk Background -->
+  <rect width="100%" height="100%" fill="#0A0F1A" rx="24"/>
+
+  <!-- GLOBAL STREAMING & DISTRIBUTED COMPUTE (Orbital Rings) -->
+  <circle cx="400" cy="250" r="160" fill="none" stroke="url(#edgeGrad)" stroke-width="2" opacity="0.3" stroke-dasharray="10 15"/>
+  <circle cx="400" cy="250" r="200" fill="none" stroke="url(#aiGrad)" stroke-width="1" opacity="0.2" stroke-dasharray="40 20 5 20"/>
+
+  <!-- AI NEURAL NET & GRAPH DB (Connected Nodes) -->
+  <path d="M 240 250 L 400 50 L 560 250 L 400 450 Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.05"/>
+  <path d="M 286 136 L 514 136 L 514 364 L 286 364 Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.05"/>
+
+  <circle cx="240" cy="250" r="5" fill="#00c6ff" filter="url(#glow-light)"/>
+  <circle cx="560" cy="250" r="5" fill="#00c6ff" filter="url(#glow-light)"/>
+  <circle cx="400" cy="50" r="6" fill="#e94057" filter="url(#glow-light)"/>
+  <circle cx="400" cy="450" r="6" fill="#ff4b1f" filter="url(#glow-light)"/>
+  
+  <circle cx="286" cy="136" r="4" fill="#8a2387"/>
+  <circle cx="514" cy="136" r="4" fill="#8a2387"/>
+  <circle cx="286" cy="364" r="4" fill="#8a2387"/>
+  <circle cx="514" cy="364" r="4" fill="#8a2387"/>
+
+  <!-- INDUSTRIAL SCADA & TMR (Reinforced Hexagon Core) -->
+  <polygon points="400,110 521,180 521,320 400,390 279,320 279,180" fill="none" stroke="url(#aiGrad)" stroke-width="5" opacity="0.9" filter="url(#glow)"/>
+  <polygon points="400,125 508,187 508,312 400,375 292,312 292,187" fill="none" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- THE 'V' (Foundation / Stability) -->
+  <path d="M 310 180 L 400 340 L 490 180 L 440 180 L 400 260 L 360 180 Z" fill="url(#edgeGrad)" filter="url(#glow)"/>
+
+  <!-- THE LIGHTNING BOLT (Microsecond Latency / F1 RTOS / Speed) -->
+  <path d="M 420 130 L 340 250 L 410 250 L 370 360 L 470 210 L 400 210 Z" fill="url(#rustGrad)" filter="url(#glow)"/>
+
+  <!-- TYPOGRAPHY -->
+  <text x="400" y="520" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="76" fill="#FFFFFF" text-anchor="middle" letter-spacing="14">VELLA</text>
+  <text x="400" y="560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="16" fill="#94A3B8" text-anchor="middle" letter-spacing="8">THE AUTONOMOUS ENGINE</text>
+</svg>
