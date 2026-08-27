@@ -631,6 +631,46 @@ jobs:
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
 
+    const autocompleteProvider = vscode.languages.registerCompletionItemProvider('rust', {
+        provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
+            const linePrefix = document.lineAt(position).text.substring(0, position.character);
+            if (!linePrefix.endsWith('vella::')) {
+                return undefined;
+            }
+
+            const hft = new vscode.CompletionItem('hft', vscode.CompletionItemKind.Module);
+            hft.detail = 'High-Frequency Trading Module';
+            hft.documentation = new vscode.MarkdownString('Provides ultra-low latency order matching and execution.');
+
+            const web3 = new vscode.CompletionItem('web3', vscode.CompletionItemKind.Module);
+            web3.detail = 'Zero-Knowledge & Blockchain Module';
+            web3.documentation = new vscode.MarkdownString('Includes smart contract deployment and ZK rollups.');
+
+            const erp = new vscode.CompletionItem('erp', vscode.CompletionItemKind.Module);
+            erp.detail = 'Double-Entry Ledgers Module';
+            erp.documentation = new vscode.MarkdownString('Enterprise resource planning and accounting primitives.');
+
+            const scada = new vscode.CompletionItem('scada', vscode.CompletionItemKind.Module);
+            scada.detail = 'IoT Telemetry Module';
+            scada.documentation = new vscode.MarkdownString('SCADA systems, telemetry, and hardware-in-the-loop.');
+
+            return [hft, web3, erp, scada];
+        }
+    }, ':');
+
+    const hoverProvider = vscode.languages.registerHoverProvider('rust', {
+        provideHover(document: vscode.TextDocument, position: vscode.Position) {
+            const range = document.getWordRangeAtPosition(position);
+            const word = document.getText(range);
+
+            if (word === 'FixEngine') {
+                return new vscode.Hover(new vscode.MarkdownString('**FixEngine**\n\nVella High-Frequency Trading FIX Protocol Engine. Handles concurrent session decoding.'));
+            } else if (word === 'EthDeployer') {
+                return new vscode.Hover(new vscode.MarkdownString('**EthDeployer**\n\nDeploys compiled EVM bytecode directly to the Vella localized rollup.'));
+            }
+        }
+    });
+
     context.subscriptions.push(
         syncSdkDisposable,
         generateWalletDisposable,
@@ -663,7 +703,9 @@ jobs:
         enterSpatialModeDisposable,
         openQuantumSimulatorDisposable,
         connectBciTelemetryDisposable,
-        statusBarItem
+        statusBarItem,
+        autocompleteProvider,
+        hoverProvider
     );
 }
 
