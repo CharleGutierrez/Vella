@@ -144,6 +144,26 @@
         "title": "Vella: Connect BCI Telemetry"
       }
     ],
+    "configuration": {
+      "title": "Vella",
+      "properties": {
+        "vella.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "Vella Server URL"
+        },
+        "vella.web3RpcUrl": {
+          "type": "string",
+          "default": "http://localhost:8545",
+          "description": "Web3 RPC URL"
+        },
+        "vella.aiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "AI API Key"
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {

@@ -452,7 +452,42 @@ impl ScadaState {
 
     // --- NEW FEATURES ---
 
-    class DatabaseExplorerProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+    const serverUrl = vscode.workspace.getConfiguration('vella').get('serverUrl');
+    vscode.window.showInformationMessage(`Vella Extension Activated. Server URL: ${serverUrl}`);
+
+    const testController = vscode.tests.createTestController('vellaTestController', 'Vella Test Explorer');
+    const hftTestItem = testController.createTestItem('hft_latency', 'HFT Latency Test');
+    testController.items.add(hftTestItem);
+    context.subscriptions.push(testController);
+
+    const codeLensProvider = vscode.languages.registerCodeLensProvider('rust', {
+        provideCodeLenses(document: vscode.TextDocument): vscode.CodeLens[] {
+            const lenses: vscode.CodeLens[] = [];
+            const text = document.getText();
+            const lines = text.split('\\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.includes('async fn main')) {
+                    lenses.push(new vscode.CodeLens(new vscode.Range(i, 0, i, 0), {
+                        title: "☁ Deploy to Web3",
+                        command: "vella.deployToCloud"
+                    }));
+                } else if (line.includes('fn test_')) {
+                    lenses.push(new vscode.CodeLens(new vscode.Range(i, 0, i, 0), {
+                        title: "▶ Run Vella Engine",
+                        command: "vella.runHftBacktest"
+                    }));
+                }
+            }
+            return lenses;
+        }
+    });
+    context.subscriptions.push(codeLensProvider);
+
+    class DatabaseExplorerProvider implements vscode.TreeDataProvider<vscode.TreeItem>, vscode.TreeDragAndDropController<vscode.TreeItem> {
+        dropMimeTypes = ['text/uri-list'];
+        dragMimeTypes = [];
+
         getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
             return element;
         }
@@ -464,9 +499,21 @@ impl ScadaState {
                 new vscode.TreeItem('LimitOrders', vscode.TreeItemCollapsibleState.None)
             ]);
         }
+
+        async handleDrop(target: vscode.TreeItem | undefined, dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+            const uriList = dataTransfer.get('text/uri-list');
+            if (uriList) {
+                const urlString = await uriList.asString();
+                vscode.window.showInformationMessage(`Vella: Dropped file into DB explorer: ${urlString}`);
+            }
+        }
     }
     const dbExplorerProvider = new DatabaseExplorerProvider();
-    vscode.window.registerTreeDataProvider('vella.databaseExplorer', dbExplorerProvider);
+    const treeView = vscode.window.createTreeView('vella.databaseExplorer', {
+        treeDataProvider: dbExplorerProvider,
+        dragAndDropController: dbExplorerProvider
+    });
+    context.subscriptions.push(treeView);
 
     let openCopilotDisposable = vscode.commands.registerCommand('vella.openCopilot', () => {
         const panel = vscode.window.createWebviewPanel('vellaCopilot', 'Vella AI Copilot', vscode.ViewColumn.Beside, { enableScripts: true });

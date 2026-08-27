@@ -433,7 +433,39 @@ impl ScadaState {
         await vscode.window.showTextDocument(doc);
     });
     // --- NEW FEATURES ---
+    const serverUrl = vscode.workspace.getConfiguration('vella').get('serverUrl');
+    vscode.window.showInformationMessage(`Vella Extension Activated. Server URL: ${serverUrl}`);
+    const testController = vscode.tests.createTestController('vellaTestController', 'Vella Test Explorer');
+    const hftTestItem = testController.createTestItem('hft_latency', 'HFT Latency Test');
+    testController.items.add(hftTestItem);
+    context.subscriptions.push(testController);
+    const codeLensProvider = vscode.languages.registerCodeLensProvider('rust', {
+        provideCodeLenses(document) {
+            const lenses = [];
+            const text = document.getText();
+            const lines = text.split('\\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.includes('async fn main')) {
+                    lenses.push(new vscode.CodeLens(new vscode.Range(i, 0, i, 0), {
+                        title: "☁ Deploy to Web3",
+                        command: "vella.deployToCloud"
+                    }));
+                }
+                else if (line.includes('fn test_')) {
+                    lenses.push(new vscode.CodeLens(new vscode.Range(i, 0, i, 0), {
+                        title: "▶ Run Vella Engine",
+                        command: "vella.runHftBacktest"
+                    }));
+                }
+            }
+            return lenses;
+        }
+    });
+    context.subscriptions.push(codeLensProvider);
     class DatabaseExplorerProvider {
+        dropMimeTypes = ['text/uri-list'];
+        dragMimeTypes = [];
         getTreeItem(element) {
             return element;
         }
@@ -446,9 +478,20 @@ impl ScadaState {
                 new vscode.TreeItem('LimitOrders', vscode.TreeItemCollapsibleState.None)
             ]);
         }
+        async handleDrop(target, dataTransfer, token) {
+            const uriList = dataTransfer.get('text/uri-list');
+            if (uriList) {
+                const urlString = await uriList.asString();
+                vscode.window.showInformationMessage(`Vella: Dropped file into DB explorer: ${urlString}`);
+            }
+        }
     }
     const dbExplorerProvider = new DatabaseExplorerProvider();
-    vscode.window.registerTreeDataProvider('vella.databaseExplorer', dbExplorerProvider);
+    const treeView = vscode.window.createTreeView('vella.databaseExplorer', {
+        treeDataProvider: dbExplorerProvider,
+        dragAndDropController: dbExplorerProvider
+    });
+    context.subscriptions.push(treeView);
     let openCopilotDisposable = vscode.commands.registerCommand('vella.openCopilot', () => {
         const panel = vscode.window.createWebviewPanel('vellaCopilot', 'Vella AI Copilot', vscode.ViewColumn.Beside, { enableScripts: true });
         panel.webview.html = getCopilotWebviewContent();
@@ -585,7 +628,40 @@ jobs:
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
-    context.subscriptions.push(syncSdkDisposable, generateWalletDisposable, openSchemaBuilderDisposable, scaffoldReactDisposable, scaffoldVueDisposable, scaffoldAngularDisposable, scaffoldErpSchemasDisposable, scaffoldDoubleEntryLedgerDisposable, scaffoldLimitOrderBookDisposable, scaffoldTradingStrategyDisposable, scaffoldSmartContractDeployerDisposable, scaffoldWalletGeneratorDisposable, scaffoldUdpTelemetryDisposable, scaffoldScadaStateMachineDisposable, openCopilotDisposable, openTelemetryDashboardDisposable, deployToCloudDisposable, runHftBacktestDisposable, openWeb3NetworkMapDisposable, setupCiCdDisposable, openAgentSwarmDisposable, openHardwareSimulatorDisposable, openMarketplaceDisposable, startMultiplayerSessionDisposable, startTimeTravelDebuggerDisposable, openAdminPanelDisposable, exportArchitectureDiagramDisposable, generateSqlQueryDisposable, enterSpatialModeDisposable, openQuantumSimulatorDisposable, connectBciTelemetryDisposable, statusBarItem);
+    const autocompleteProvider = vscode.languages.registerCompletionItemProvider('rust', {
+        provideCompletionItems(document, position) {
+            const linePrefix = document.lineAt(position).text.substring(0, position.character);
+            if (!linePrefix.endsWith('vella::')) {
+                return undefined;
+            }
+            const hft = new vscode.CompletionItem('hft', vscode.CompletionItemKind.Module);
+            hft.detail = 'High-Frequency Trading Module';
+            hft.documentation = new vscode.MarkdownString('Provides ultra-low latency order matching and execution.');
+            const web3 = new vscode.CompletionItem('web3', vscode.CompletionItemKind.Module);
+            web3.detail = 'Zero-Knowledge & Blockchain Module';
+            web3.documentation = new vscode.MarkdownString('Includes smart contract deployment and ZK rollups.');
+            const erp = new vscode.CompletionItem('erp', vscode.CompletionItemKind.Module);
+            erp.detail = 'Double-Entry Ledgers Module';
+            erp.documentation = new vscode.MarkdownString('Enterprise resource planning and accounting primitives.');
+            const scada = new vscode.CompletionItem('scada', vscode.CompletionItemKind.Module);
+            scada.detail = 'IoT Telemetry Module';
+            scada.documentation = new vscode.MarkdownString('SCADA systems, telemetry, and hardware-in-the-loop.');
+            return [hft, web3, erp, scada];
+        }
+    }, ':');
+    const hoverProvider = vscode.languages.registerHoverProvider('rust', {
+        provideHover(document, position) {
+            const range = document.getWordRangeAtPosition(position);
+            const word = document.getText(range);
+            if (word === 'FixEngine') {
+                return new vscode.Hover(new vscode.MarkdownString('**FixEngine**\n\nVella High-Frequency Trading FIX Protocol Engine. Handles concurrent session decoding.'));
+            }
+            else if (word === 'EthDeployer') {
+                return new vscode.Hover(new vscode.MarkdownString('**EthDeployer**\n\nDeploys compiled EVM bytecode directly to the Vella localized rollup.'));
+            }
+        }
+    });
+    context.subscriptions.push(syncSdkDisposable, generateWalletDisposable, openSchemaBuilderDisposable, scaffoldReactDisposable, scaffoldVueDisposable, scaffoldAngularDisposable, scaffoldErpSchemasDisposable, scaffoldDoubleEntryLedgerDisposable, scaffoldLimitOrderBookDisposable, scaffoldTradingStrategyDisposable, scaffoldSmartContractDeployerDisposable, scaffoldWalletGeneratorDisposable, scaffoldUdpTelemetryDisposable, scaffoldScadaStateMachineDisposable, openCopilotDisposable, openTelemetryDashboardDisposable, deployToCloudDisposable, runHftBacktestDisposable, openWeb3NetworkMapDisposable, setupCiCdDisposable, openAgentSwarmDisposable, openHardwareSimulatorDisposable, openMarketplaceDisposable, startMultiplayerSessionDisposable, startTimeTravelDebuggerDisposable, openAdminPanelDisposable, exportArchitectureDiagramDisposable, generateSqlQueryDisposable, enterSpatialModeDisposable, openQuantumSimulatorDisposable, connectBciTelemetryDisposable, statusBarItem, autocompleteProvider, hoverProvider);
 }
 function getWebviewContent() {
     return `<!DOCTYPE html>
