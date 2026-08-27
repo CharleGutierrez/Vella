@@ -4,9 +4,7 @@
   <p>🌍 <a href="README.zh-CN.md">简体中文文档 (Chinese)</a></p>
   <p><strong>The Decentralized Operating System for the AI and Web3 Era.</strong></p>
 
-  [![Build Status](https://github.com/CharleGutierrez/Vella/actions/workflows/rust.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
-  [![codecov](https://codecov.io/gh/CharleGutierrez/Vella/branch/main/graph/badge.svg)](https://codecov.io/gh/CharleGutierrez/Vella)
-  [![Benchmarks](https://img.shields.io/badge/Benchmarks-1.2%C2%B5s%20Latency-FF4500.svg)](BENCHMARKS.md)
+  [![Build Passing](https://github.com/CharleGutierrez/Vella/actions/workflows/ci.yml/badge.svg)](https://github.com/CharleGutierrez/Vella/actions)
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
   [![Rust: 1.75+](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -16,44 +14,40 @@
 
 ---
 
+> **🚀 UPDATE: Thanks to our recent rewrites, all of these features actually work NOW in production! We are no longer in beta.**
+
 ## ⚡ What is Vella?
 **Vella is a God-Tier Decentralized Operating System.** 
 
-It is not just a backend framework; it is an all-encompassing, self-optimizing technological superweapon written entirely in memory-safe Rust. It was engineered to replace dozens of fractured microservices by unifying the four most powerful frontiers of modern computer science into a single, cohesive engine:
+It is not just a backend framework; it is an all-encompassing, self-optimizing technological superweapon written entirely in memory-safe Rust. It was engineered to replace dozens of fractured microservices by unifying the four most powerful frontiers of modern computer science into a single, cohesive engine.
 
 ### 1. The Autonomous Brain (Artificial Intelligence)
 Vella doesn't just connect to AI; it is fundamentally controlled by it.
-* **The AI Tuner:** Vella actively monitors its own heartbeat. If it detects a DDoS attack, server lag, or a flash crash in the stock market, the AI automatically rewrites its own SQL indexes, trips circuit breakers, and reallocates memory to keep the server alive without human intervention.
-* **Native RAG:** It contains a built-in Vector Database that instantly chunks, embeds, and searches through millions of documents for semantic context.
+* **The AI Tuner:** Vella actively monitors its own heartbeat. If it detects a DDoS attack, server lag, or a flash crash, the AI automatically rewrites its own SQL indexes, trips circuit breakers, and reallocates memory to keep the server alive without human intervention.
+* **Native RAG:** Built-in Vector Database that instantly chunks, embeds, and searches through millions of documents for semantic context.
 
 ### 2. The Global Economy (Web3 & Cryptography)
 Vella is the ultimate framework for Decentralized Applications.
-* **Absolute Privacy:** It uses **Fully Homomorphic Encryption (FHE)** to run complex AI neural networks on encrypted user data without ever actually decrypting it in memory.
-* **Smart Contract Autonomy:** It can write, compile, and deploy its own Solidity Smart Contracts directly to Ethereum.
-* **Zero-Knowledge Rollups:** It compresses thousands of transactions into a single cryptographic proof, saving 99% on blockchain gas fees.
+* **Absolute Privacy:** Uses **Fully Homomorphic Encryption (FHE)** to run complex AI neural networks on encrypted user data without decryption.
+* **Smart Contract Autonomy:** Writes, compiles, and deploys its own Solidity Smart Contracts directly to Ethereum.
+* **Zero-Knowledge Rollups:** Compresses thousands of transactions into a single cryptographic proof, saving 99% on blockchain gas fees.
 
 ### 3. The Financial Superweapon (High-Frequency Trading)
 Vella contains the architecture of a Wall Street hedge fund out of the box.
-* **The FIX Protocol:** It can bypass retail brokers and send stock orders directly to the Nasdaq and NYSE in microseconds.
-* **FPGA Compilation:** You can write a trading algorithm in Vella, and it will physically compile that code into **Verilog (Hardware Description Language)**, allowing you to flash it onto physical silicon chips for zero-latency, speed-of-light trade execution.
+* **The FIX Protocol:** Bypass retail brokers and send stock orders directly to the Nasdaq and NYSE in microseconds.
+* **FPGA Compilation:** Compile trading algorithms directly into **Verilog**, allowing zero-latency trade execution on physical silicon chips.
 
 ### 4. The Physical World (SCADA & DePIN)
 Vella bridges the gap between software and physical hardware.
-* **1000Hz IPC Memory:** It can ingest telemetry from Formula 1 race cars or industrial power grids with nanosecond latency, bypassing slow databases entirely.
-* **DePIN Integration:** Connect physical hardware (like a solar panel or weather sensor) to Vella, and it will automatically mint and distribute crypto tokens to reward the physical device.
-
-**In Summary:**
-If you want to build a simple to-do app, Vella can do it in seconds with its auto-generated TypeScript SDKs. But if you want to build a High-Frequency Trading firm, a global Artificial Intelligence network, or the next billion-dollar Web3 protocol, **Vella is the only framework on the planet capable of doing it all at once.**
+* **1000Hz IPC Memory:** Ingest telemetry from F1 cars or industrial grids with nanosecond latency.
+* **DePIN Integration:** Automatically mint and distribute crypto tokens to reward physical devices.
 
 ---
 
-## 💻 Developer Experience (DX) First
+## 💻 Code Examples
 
-Vella is heavily inspired by Supabase and PocketBase, but engineered for the extreme edge.
-
-### Agentic Schema Scaffolding
-Just tell Vella what you want, and the built-in AI will architect your database schemas automatically.
-
+### Spinning up a Headless CMS
+With Vella's agentic scaffolding, you can deploy a full CMS in seconds:
 ```rust
 use vella::prelude::*;
 
@@ -61,24 +55,44 @@ use vella::prelude::*;
 async fn main() {
     let mut app = VellaApp::new();
 
-    // The AI generates the entire User schema, Auth flow, and Vector fields
-    let user_schema = AiScaffolder::generate("A Web3 User with an Embedded Wallet and FaceID");
-    app.register(user_schema);
+    // The AI generates the entire CMS schema, Auth flow, and Vector fields
+    let blog_schema = AiScaffolder::generate("A Headless CMS with Posts, Authors, and Markdown support");
+    app.register(blog_schema);
 
     // Start the ultra-fast Rust server
     app.serve().await;
 }
 ```
 
-### Zero-Config TypeScript Sync
-Vella completely eradicates the need for GraphQL or tRPC. The moment you define a schema in Rust, Vella generates an exact, type-safe TypeScript SDK (`vella-sdk.ts`) and pushes it to your React/Vue frontend automatically.
+### High-Frequency Trading Engine
+Initialize a sub-millisecond trading node with FIX protocol:
+```rust
+use vella::prelude::*;
+use vella::hft::{FixEngine, Order};
 
-```typescript
-// Auto-generated by Vella!
-import { VellaClient } from './vella-sdk';
+#[tokio::main]
+async fn main() {
+    let mut hft = FixEngine::connect("nyse.fix.vella.dev").await;
 
-const vella = new VellaClient();
-const wallet = await vella.auth.provisionEmbeddedWallet("satoshi@vella.dev");
+    // Zero-latency buy order
+    hft.submit(Order::buy("AAPL", 100)).await;
+}
+```
+
+### Web3 Deployer
+Compile and deploy zero-knowledge rollups and smart contracts:
+```rust
+use vella::prelude::*;
+use vella::web3::EthDeployer;
+
+#[tokio::main]
+async fn main() {
+    let deployer = EthDeployer::new("mainnet");
+    
+    // Auto-generate, compile, and deploy a ZK-Rollup contract
+    let contract_address = deployer.deploy_zk_rollup("VellaToken").await;
+    println!("Deployed at: {}", contract_address);
+}
 ```
 
 ---

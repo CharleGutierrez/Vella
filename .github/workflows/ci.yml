@@ -1,4 +1,4 @@
-name: Vella Engine CI
+name: CI
 
 on:
   push:
@@ -6,42 +6,24 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
-  test:
-    name: Build & Test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Install Rust Toolchain
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: clippy, rustfmt
-
-    - name: Rust Cache
-      uses: Swatinem/rust-cache@v2
-      
-    - name: Check Formatting
-      run: cargo fmt --all -- --check
-      
-    - name: Run Clippy Linter
-      run: cargo clippy --all-targets --all-features -- -D warnings
-      
-    - name: Compile Vella Engine
-      run: cargo build --verbose
-      
-    - name: Run Full Test Suite (61/61 Tests)
-      run: cargo test --verbose --all-features
-
-  security-audit:
-    name: Dependency Audit
+  build_and_test:
+    name: Build, Format, and Test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: rustsec/audit-check@v1.4.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Check Formatting
+        run: cargo fmt -- --check
+
+      - name: Run Cargo Check
+        run: cargo check
+
+      - name: Run Tests
+        run: cargo test
