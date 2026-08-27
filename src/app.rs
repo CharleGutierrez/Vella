@@ -116,7 +116,7 @@ impl VellaApp {
         let realtime_hub = Arc::new(RealtimeHub::default());
         realtime_hub.start_event_bridge(&event_bus, self.config.redis_url.clone());
 
-        let registry = SchemaRegistry::from_map(self.schemas);
+        let registry = SchemaRegistry::from_map(self.schemas.clone());
 
         // 3. Optional Auto-Export TypeScript definitions
         if self.config.auto_export_types {
@@ -170,6 +170,7 @@ impl VellaApp {
         let ui_config = Arc::new(UiConfig {
             site_name: self.config.site_name.clone(),
             base_url: format!("http://{}", self.config.bind_address),
+            schemas: self.schemas.values().cloned().collect(),
         });
 
         // 5. Construct Sub-Routers

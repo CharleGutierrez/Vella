@@ -231,12 +231,24 @@ impl AiTuner {
     // --- New Predictive AI Methods ---
 
     pub fn predict_optimal_delay(&self, base_cron: &str) -> u64 {
-        let load = self.current_system_load.load(Ordering::SeqCst);
-        if load > 80 {
-            warn!("AI Tuner: System load at {}%. Delaying background job by 15 minutes.", load);
+        let mut sys = sysinfo::System::new();
+        sys.refresh_cpu_usage();
+        // Give it a tiny sleep to get a real reading
+        std::thread::sleep(std::time::Duration::from_millis(50));
+        sys.refresh_cpu_usage();
+        
+        let cpus = sys.cpus();
+        let mut total_cpu = 0.0;
+        for cpu in cpus {
+            total_cpu += cpu.cpu_usage();
+        }
+        let load = if cpus.is_empty() { 0.0 } else { total_cpu / cpus.len() as f32 };
+        
+        if load > 80.0 {
+            warn!("AI Tuner: System load high at {:.1}%. Delaying background job by 15 minutes.", load);
             900
         } else {
-            info!("AI Tuner: System load optimal ({}%). Executing on schedule ({}).", load, base_cron);
+            info!("AI Tuner: System load optimal ({:.1}%). Executing on schedule ({}).", load, base_cron);
             0
         }
     }
@@ -299,12 +311,25 @@ impl AiTuner {
     }
 
     /// Dynamic SCADA Data Compression: Widens or tightens deviation thresholds based on disk space
-    pub fn tune_compression_deviation(&self, base_deviation: f64, disk_usage_percent: f64) -> f64 {
+    pub fn tune_compression_deviation(&self, base_deviation: f64, _disk_usage_percent: f64) -> f64 {
+        let disks = sysinfo::Disks::new_with_refreshed_list();
+        let mut total_space = 0;
+        let mut available_space = 0;
+        for disk in disks.iter() {
+            total_space += disk.total_space();
+            available_space += disk.available_space();
+        }
+        let disk_usage_percent = if total_space > 0 {
+            100.0 * (1.0 - (available_space as f64 / total_space as f64))
+        } else {
+            50.0
+        };
+
         if disk_usage_percent > 85.0 {
-            warn!("AI Tuner: Storage at {}%. Widening Swinging Door Compression tolerance to aggressively drop sensor packets.", disk_usage_percent);
+            warn!("AI Tuner: Storage at {:.2}%. Widening Swinging Door Compression tolerance to aggressively drop sensor packets.", disk_usage_percent);
             base_deviation * 2.0
         } else if disk_usage_percent < 40.0 {
-            info!("AI Tuner: Storage plentiful. Tightening compression tolerance to increase Historian data fidelity.");
+            info!("AI Tuner: Storage plentiful at {:.2}%. Tightening compression tolerance to increase Historian data fidelity.", disk_usage_percent);
             base_deviation * 0.5
         } else {
             base_deviation
@@ -391,20 +416,29 @@ impl AiTuner {
 
     // --- Frontier Expansion Auto-Tuning (Space, Robotics, Gaming) ---
 
-    /// Dynamically adjusts Delay Tolerant Networking (DTN) latency thresholds based on Solar Weather / Link Quality
-    pub fn tune_dtn_latency_tolerance(&self, solar_flare_activity_index: f64, base_tolerance: u64) -> u64 {
-        if solar_flare_activity_index > 7.0 {
-            warn!("AI Tuner: High solar flare activity ({}) detected. Increasing deep space DTN queue tolerance by 4 hours.", solar_flare_activity_index);
+    /// Dynamically adjusts Delay Tolerant Networking (DTN) latency thresholds based on System Network/Swap
+    pub fn tune_dtn_latency_tolerance(&self, _solar_flare_activity_index: f64, base_tolerance: u64) -> u64 {
+        let mut sys = sysinfo::System::new();
+        sys.refresh_memory();
+        let swap_usage = if sys.total_swap() > 0 { sys.used_swap() as f64 / sys.total_swap() as f64 } else { 0.0 };
+        let synthetic_solar_flare = swap_usage * 10.0;
+        
+        if synthetic_solar_flare > 7.0 {
+            warn!("AI Tuner: High system swap usage ({:.2}) mimicking solar flare activity. Increasing deep space DTN queue tolerance by 4 hours.", synthetic_solar_flare);
             base_tolerance + 14400 
         } else {
             base_tolerance
         }
     }
 
-    /// Dynamically scales Lidar/SLAM point cloud downsampling to maintain server stability during rapid drone movement
-    pub fn tune_slam_downsample_rate(&self, drone_velocity_ms: f64) -> usize {
-        if drone_velocity_ms > 20.0 {
-            warn!("AI Tuner: Drone fleet moving at extreme velocity ({}m/s). Downsampling point cloud by 4x to preserve processing bandwidth.", drone_velocity_ms);
+    /// Dynamically scales Lidar/SLAM point cloud downsampling to maintain server stability
+    pub fn tune_slam_downsample_rate(&self, _drone_velocity_ms: f64) -> usize {
+        let mut sys = sysinfo::System::new();
+        sys.refresh_memory();
+        let mem_usage_percent = 100.0 * (sys.used_memory() as f64 / std::cmp::max(1, sys.total_memory()) as f64);
+        
+        if mem_usage_percent > 70.0 {
+            warn!("AI Tuner: Memory usage high ({:.2}%). Downsampling point cloud by 4x to preserve processing bandwidth.", mem_usage_percent);
             4
         } else {
             1

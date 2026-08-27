@@ -86,3 +86,32 @@ path = "examples/ultimate_demo.rs"
 [[example]]
 name = "google_earth_clone"
 path = "examples/google_earth_clone.rs"
+
+[[example]]
+name = "test_fakes"
+path = "examples/test_fakes.rs"
+
+
+[[example]]
+name = "test_all"
+path = "examples/test_all.rs"
+
+[[example]]
+name = "test_trading"
+path = "examples/test_trading.rs"
+
+[[example]]
+name = "test_blockchain"
+path = "examples/test_blockchain.rs"
+
+[[example]]
+name = "test_f1"
+path = "examples/test_f1.rs"
+
+[[example]]
+name = "test_hft"
+path = "examples/test_hft.rs"
+
+[[example]]
+name = "test_scada"
+path = "examples/test_scada.rs"

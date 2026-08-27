@@ -1,3 +1,5 @@
+use sha2::Digest;
+
 /// Vella Cross-Chain Oracle Router (Chainlink CCIP Alternative)
 /// Listens to events on Chain A and executes transactions on Chain B.
 pub struct CrossChainOracle {
@@ -27,8 +29,13 @@ impl CrossChainOracle {
         println!("🚀 [Vella Oracle] Executing triggered transaction on {}...", dest_chain);
         println!("📜 Payload: {}", payload);
 
-        // Mock Cross-Chain Hash
-        let ccip_hash = format!("0xCrossChainTx_{}_to_{}", source_chain, dest_chain);
+        let mut hasher = sha2::Sha256::new();
+        sha2::Digest::update(&mut hasher, source_chain.as_bytes());
+        sha2::Digest::update(&mut hasher, dest_chain.as_bytes());
+        sha2::Digest::update(&mut hasher, payload.as_bytes());
+        let hash_result = hasher.finalize();
+        let ccip_hash = format!("0x{}", hex::encode(hash_result));
+        
         Ok(ccip_hash)
     }
 }

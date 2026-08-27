@@ -1,5 +1,14 @@
 /// Auto-generated Angular 17+ Signals SDK for Vella backend.
-pub fn generate_angular_sdk(base_url: &str) -> String {
+use crate::types::TypeScriptGenerator;
+use crate::model::schema::ModelSchema;
+
+pub fn generate_angular_sdk(base_url: &str, schemas: &[ModelSchema]) -> String {
+    let mut interfaces = String::new();
+    for schema in schemas {
+        interfaces.push_str(&TypeScriptGenerator::generate_model_interface(schema));
+        interfaces.push_str("\n\n");
+    }
+
     format!(
         r#"/**
  * ⚡ Vella Angular 17+ Client SDK (Signals & Injectable Services)
@@ -8,6 +17,7 @@ pub fn generate_angular_sdk(base_url: &str) -> String {
 
 import {{ Injectable, signal, computed }} from '@angular/core';
 
+{interfaces}
 export interface VellaUser {{
   id: number;
   username: string;

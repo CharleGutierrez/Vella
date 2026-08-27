@@ -1,5 +1,14 @@
 /// Auto-generated Vue 3 Composition API SDK for Vella backend.
-pub fn generate_vue_sdk(base_url: &str) -> String {
+use crate::types::TypeScriptGenerator;
+use crate::model::schema::ModelSchema;
+
+pub fn generate_vue_sdk(base_url: &str, schemas: &[ModelSchema]) -> String {
+    let mut interfaces = String::new();
+    for schema in schemas {
+        interfaces.push_str(&TypeScriptGenerator::generate_model_interface(schema));
+        interfaces.push_str("\n\n");
+    }
+
     format!(
         r#"/**
  * ⚡ Vella Vue 3 SDK (Composition API & Pinia Ready)
@@ -8,6 +17,7 @@ pub fn generate_vue_sdk(base_url: &str) -> String {
 
 import {{ ref, shallowRef, onMounted, onUnmounted, watch }} from 'vue';
 
+{interfaces}
 export interface VellaUser {{
   id: number;
   username: string;

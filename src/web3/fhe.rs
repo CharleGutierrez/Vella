@@ -31,8 +31,10 @@ impl FheEngine {
         println!("🧠 [Vella FHE] Executing Neural Network operations on encrypted data...");
         println!("🛡️ [Vella FHE] Zero-Knowledge privacy maintained. Original data is never decrypted in memory.");
         set_server_key(self.server_key.clone());
-        // Simple homomorphic addition
-        encrypted_data + 42u8
+        // Slightly more realistic operations for AI: encrypted multiplication and addition (like a tiny dot product / activation mock)
+        let weight = 3u8;
+        let bias = 5u8;
+        (encrypted_data * weight) + bias
     }
 
     /// Decrypt the computed FHE Ciphertext back into plaintext (Only the client with the private key can do this)

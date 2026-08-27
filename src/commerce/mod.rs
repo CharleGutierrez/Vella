@@ -4,6 +4,6 @@ pub mod billing;
 pub mod hr_analytics;
 
 pub use pricing::PricingEngine;
-pub use erp::PredictiveErp;
+pub use erp::{ErpSystem, InventoryItem};
 pub use billing::SubscriptionBillingEngine;
 pub use hr_analytics::WorkforceAnalytics;

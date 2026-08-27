@@ -98,4 +98,45 @@ impl FixClient {
             Err("Not connected to exchange".to_string())
         }
     }
+
+    /// Parses a raw FIX message, extracting the MsgType and validating the checksum.
+    pub fn parse_message(msg: &str) -> Result<ParsedFixMessage, String> {
+        let fields: Vec<&str> = msg.split('\x01').collect();
+        let mut msg_type = String::new();
+        let mut provided_checksum = String::new();
+        let mut msg_without_checksum_len = 0;
+
+        for field in &fields {
+            if field.starts_with("35=") {
+                msg_type = field[3..].to_string();
+            } else if field.starts_with("10=") {
+                provided_checksum = field[3..].to_string();
+                if let Some(idx) = msg.find("10=") {
+                    msg_without_checksum_len = idx;
+                }
+            }
+        }
+
+        if msg_type.is_empty() {
+            return Err("Missing MsgType (35=)".to_string());
+        }
+        if provided_checksum.is_empty() {
+            return Err("Missing Checksum (10=)".to_string());
+        }
+
+        let calculated_checksum = Self::calculate_checksum(&msg[..msg_without_checksum_len]);
+        let valid_checksum = calculated_checksum == provided_checksum;
+
+        Ok(ParsedFixMessage {
+            msg_type,
+            valid_checksum,
+        })
+    }
+}
+
+/// Represents the parsed structure of a FIX message
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParsedFixMessage {
+    pub msg_type: String,
+    pub valid_checksum: bool,
 }

@@ -17,6 +17,7 @@ use std::sync::Arc;
 pub struct UiConfig {
     pub site_name: String,
     pub base_url: String,
+    pub schemas: Vec<crate::model::schema::ModelSchema>,
 }
 
 pub async fn admin_ui_handler(
@@ -50,7 +51,7 @@ pub async fn todo_showcase_handler(
 pub async fn react_sdk_handler(
     axum::extract::State(config): axum::extract::State<Arc<UiConfig>>,
 ) -> Response {
-    let sdk_ts = react_sdk::generate_react_sdk(&config.base_url);
+    let sdk_ts = react_sdk::generate_react_sdk(&config.base_url, &config.schemas);
     (
         StatusCode::OK,
         [(header::CONTENT_TYPE, "application/typescript; charset=utf-8")],
@@ -62,7 +63,7 @@ pub async fn react_sdk_handler(
 pub async fn vue_sdk_handler(
     axum::extract::State(config): axum::extract::State<Arc<UiConfig>>,
 ) -> Response {
-    let sdk_ts = vue_sdk::generate_vue_sdk(&config.base_url);
+    let sdk_ts = vue_sdk::generate_vue_sdk(&config.base_url, &config.schemas);
     (
         StatusCode::OK,
         [(header::CONTENT_TYPE, "application/typescript; charset=utf-8")],
@@ -74,7 +75,7 @@ pub async fn vue_sdk_handler(
 pub async fn angular_sdk_handler(
     axum::extract::State(config): axum::extract::State<Arc<UiConfig>>,
 ) -> Response {
-    let sdk_ts = angular_sdk::generate_angular_sdk(&config.base_url);
+    let sdk_ts = angular_sdk::generate_angular_sdk(&config.base_url, &config.schemas);
     (
         StatusCode::OK,
         [(header::CONTENT_TYPE, "application/typescript; charset=utf-8")],

@@ -4,14 +4,20 @@ use std::fs;
 #[derive(LogicBlock)]
 pub struct TradeSignal {
     pub price: Signal<In, Bits<32>>,
+    pub threshold: Signal<In, Bits<32>>,
+    pub volatility: Signal<In, Bits<32>>,
     pub buy_signal: Signal<Out, Bit>,
+    pub sell_signal: Signal<Out, Bit>,
 }
 
 impl Default for TradeSignal {
     fn default() -> Self {
         Self {
             price: Default::default(),
+            threshold: Default::default(),
+            volatility: Default::default(),
             buy_signal: Default::default(),
+            sell_signal: Default::default(),
         }
     }
 }
@@ -19,10 +25,19 @@ impl Default for TradeSignal {
 impl Logic for TradeSignal {
     #[hdl_gen]
     fn update(&mut self) {
-        if self.price.val() < 50000_u64 {
+        // Buy if price is significantly below threshold based on volatility
+        if self.price.val() + self.volatility.val() < self.threshold.val() {
             self.buy_signal.next = true;
-        } else {
+            self.sell_signal.next = false;
+        } 
+        // Sell if price is significantly above threshold based on volatility
+        else if self.price.val() > self.threshold.val() + self.volatility.val() {
             self.buy_signal.next = false;
+            self.sell_signal.next = true;
+        } 
+        else {
+            self.buy_signal.next = false;
+            self.sell_signal.next = false;
         }
     }
 }

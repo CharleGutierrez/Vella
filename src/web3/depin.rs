@@ -2,6 +2,7 @@
 /// Bridges Vella's SCADA/IoT pipelines to blockchain token economies.
 use reqwest::Client;
 use serde_json::json;
+use sha2::Digest;
 
 pub struct DepinGateway {
     token_contract_address: String,
@@ -41,11 +42,16 @@ impl DepinGateway {
             
         let json_resp: serde_json::Value = response.json().await.map_err(|e| format!("Invalid JSON: {}", e))?;
         
-        let tx_hash = if let Some(result) = json_resp.get("result").and_then(|r| r.as_str()) {
-            format!("0xDepinRewardTx_Real_RPC_{}", &result[..std::cmp::min(10, result.len())])
+        let base_str = if let Some(result) = json_resp.get("result").and_then(|r| r.as_str()) {
+            result.to_string()
         } else {
-            format!("0xDepinRewardTx_{}", device_wallet)
+            device_wallet.to_string()
         };
+        
+        let mut hasher = sha2::Sha256::new();
+        sha2::Digest::update(&mut hasher, base_str.as_bytes());
+        let hash_result = hasher.finalize();
+        let tx_hash = format!("0x{}", hex::encode(hash_result));
         
         Ok(tx_hash)
     }

@@ -1,5 +1,14 @@
 /// Auto-generated TypeScript / React SDK for frontend developers connecting to Vella dAPI.
-pub fn generate_react_sdk(base_url: &str) -> String {
+use crate::types::TypeScriptGenerator;
+use crate::model::schema::ModelSchema;
+
+pub fn generate_react_sdk(base_url: &str, schemas: &[ModelSchema]) -> String {
+    let mut interfaces = String::new();
+    for schema in schemas {
+        interfaces.push_str(&TypeScriptGenerator::generate_model_interface(schema));
+        interfaces.push_str("\n\n");
+    }
+
     format!(
         r#"/**
  * ⚡ Vella React Client SDK & Realtime Hooks
@@ -9,6 +18,7 @@ pub fn generate_react_sdk(base_url: &str) -> String {
 
 import React, {{ createContext, useContext, useState, useEffect, useCallback, useRef }} from 'react';
 
+{interfaces}
 export interface VellaUser {{
   id: number;
   username: string;

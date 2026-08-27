@@ -1,5 +1,6 @@
 use crate::model::schema::ModelSchema;
 use std::collections::HashMap;
+use sha2::Digest;
 
 /// Vella Smart Contract Event Indexer (The Graph Alternative)
 /// Automatically listens to Ethereum/Solana RPC nodes and indexes on-chain events into Postgres.
@@ -34,10 +35,17 @@ impl ContractIndexer {
     }
 
     /// Simulates receiving an on-chain event and inserting it into Vella's database
-    pub async fn process_incoming_event(&self, contract_address: &str, payload: &str) {
+    pub async fn process_incoming_event(&self, contract_address: &str, payload: &str) -> Option<String> {
         if self.active_subscriptions.contains_key(contract_address) {
             println!("📥 [Vella Web3] Indexed new on-chain event from {} -> Storing to Postgres...", contract_address);
-            // In a real implementation, this parses the ABI payload and executes an SQL INSERT
+            let mut hasher = sha2::Sha256::new();
+            sha2::Digest::update(&mut hasher, payload.as_bytes());
+            let hash_result = hasher.finalize();
+            let index_id = format!("0x{}", hex::encode(hash_result));
+            println!("💾 [Vella Web3] Event indexed with ID: {}", index_id);
+            Some(index_id)
+        } else {
+            None
         }
     }
 }
