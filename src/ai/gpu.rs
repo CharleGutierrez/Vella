@@ -60,4 +60,8 @@ impl HardwareAccelerator {
             HardwareAcceleratorType::CpuSimd => info!("Executing {} via AVX-512 CPU SIMD", operation),
         }
     }
+
+    pub fn simulate_overheat(&self) {
+        warn!("Simulating GPU overheat...");
+    }
 }
