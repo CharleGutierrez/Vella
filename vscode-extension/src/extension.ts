@@ -30,11 +30,178 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage(`Vella: New Web3 Wallet Generated: ${walletAddress}`);
     });
 
+    let openSchemaBuilderDisposable = vscode.commands.registerCommand('vella.openSchemaBuilder', () => {
+        const panel = vscode.window.createWebviewPanel(
+            'vellaSchemaBuilder',
+            'Vella Schema Builder',
+            vscode.ViewColumn.One,
+            { enableScripts: true }
+        );
+
+        panel.webview.html = getWebviewContent();
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
 
-    context.subscriptions.push(syncSdkDisposable, generateWalletDisposable, statusBarItem);
+    context.subscriptions.push(syncSdkDisposable, generateWalletDisposable, openSchemaBuilderDisposable, statusBarItem);
+}
+
+function getWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vella Schema Builder</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #61afef;
+        }
+        button {
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #1177bb;
+        }
+        .canvas {
+            background-color: #252526;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        .node {
+            background-color: #2d2d30;
+            border: 1px solid #555;
+            border-radius: 6px;
+            width: 250px;
+            position: absolute;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .node-header {
+            background-color: #3f3f46;
+            padding: 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .node-content {
+            padding: 10px;
+        }
+        .field {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .field-name {
+            color: #9cdcfe;
+        }
+        .field-type {
+            color: #4ec9b0;
+        }
+        .connection {
+            position: absolute;
+            border-top: 2px dashed #61afef;
+            width: 150px;
+            top: 150px;
+            left: 280px;
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vella Visual Schema Builder</h1>
+        <div>
+            <button>Add Model</button>
+            <button>Save Schema</button>
+        </div>
+    </div>
+    
+    <div class="canvas">
+        <div class="node" style="top: 50px; left: 50px;">
+            <div class="node-header">
+                <span>User</span>
+                <span style="font-size: 12px; color: #aaa;">@model</span>
+            </div>
+            <div class="node-content">
+                <div class="field">
+                    <span class="field-name">id</span>
+                    <span class="field-type">String @id</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">username</span>
+                    <span class="field-type">String @unique</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">balance</span>
+                    <span class="field-type">Float</span>
+                </div>
+                <div class="field" style="margin-top: 10px; text-align: center; color: #888; cursor: pointer;">
+                    + Add Field
+                </div>
+            </div>
+        </div>
+
+        <div class="connection"></div>
+
+        <div class="node" style="top: 180px; left: 400px;">
+            <div class="node-header">
+                <span>Invoice</span>
+                <span style="font-size: 12px; color: #aaa;">@model</span>
+            </div>
+            <div class="node-content">
+                <div class="field">
+                    <span class="field-name">id</span>
+                    <span class="field-type">String @id</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">amount</span>
+                    <span class="field-type">Float</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">userId</span>
+                    <span class="field-type">String</span>
+                </div>
+                <div class="field" style="margin-top: 10px; text-align: center; color: #888; cursor: pointer;">
+                    + Add Field
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>\`;
 }
 
 export function deactivate() {}

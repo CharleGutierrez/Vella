@@ -21,6 +21,10 @@
       {
         "command": "vella.generateWallet",
         "title": "Vella: Generate Wallet"
+      },
+      {
+        "command": "vella.openSchemaBuilder",
+        "title": "Vella: Open Visual Schema Builder"
       }
     ]
   },
