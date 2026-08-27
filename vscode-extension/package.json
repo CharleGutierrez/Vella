@@ -25,6 +25,18 @@
       {
         "command": "vella.openSchemaBuilder",
         "title": "Vella: Open Visual Schema Builder"
+      },
+      {
+        "command": "vella.scaffoldReact",
+        "title": "Vella: Scaffold React Boilerplate"
+      },
+      {
+        "command": "vella.scaffoldVue",
+        "title": "Vella: Scaffold Vue Boilerplate"
+      },
+      {
+        "command": "vella.scaffoldAngular",
+        "title": "Vella: Scaffold Angular Boilerplate"
       }
     ]
   },

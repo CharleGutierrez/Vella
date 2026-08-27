@@ -41,11 +41,117 @@ export function activate(context: vscode.ExtensionContext) {
         panel.webview.html = getWebviewContent();
     });
 
+    let scaffoldReactDisposable = vscode.commands.registerCommand('vella.scaffoldReact', async () => {
+        const content = `import React from 'react';
+import { useVellaQuery } from '@vella/sdk';
+
+export function VellaComponent() {
+  const { data, loading, error } = useVellaQuery('your-query');
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      {data?.map((item: any) => (
+        <div key={item.id}>{item.name}</div>
+      ))}
+    </div>
+  );
+}`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'typescriptreact' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldVueDisposable = vscode.commands.registerCommand('vella.scaffoldVue', async () => {
+        const content = `<template>
+  <div>
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">Error: {{ error.message }}</div>
+    <div v-else>
+      <div v-for="item in data" :key="item.id">
+        {{ item.name }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { vellaClient } from '@vella/sdk';
+
+const data = ref<any[]>([]);
+const loading = ref(true);
+const error = ref<any>(null);
+
+onMounted(async () => {
+  try {
+    data.value = await vellaClient.query('your-query');
+  } catch (err) {
+    error.value = err;
+  } finally {
+    loading.value = false;
+  }
+});
+</script>`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'vue' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldAngularDisposable = vscode.commands.registerCommand('vella.scaffoldAngular', async () => {
+        const content = `import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { VellaService } from '@vella/sdk/angular';
+
+@Component({
+  selector: 'app-vella-component',
+  standalone: true,
+  imports: [CommonModule],
+  template: \`
+    <div *ngIf="loading()">Loading...</div>
+    <div *ngIf="error()">Error: {{ error()?.message }}</div>
+    <div *ngIf="!loading() && !error()">
+      <div *ngFor="let item of data()">
+        {{ item.name }}
+      </div>
+    </div>
+  \`
+})
+export class VellaComponent implements OnInit {
+  data = signal<any[]>([]);
+  loading = signal<boolean>(true);
+  error = signal<any>(null);
+
+  constructor(private vella: VellaService) {}
+
+  async ngOnInit() {
+    try {
+      const result = await this.vella.query('your-query');
+      this.data.set(result);
+    } catch (err) {
+      this.error.set(err);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+}`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'typescript' });
+        await vscode.window.showTextDocument(doc);
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
 
-    context.subscriptions.push(syncSdkDisposable, generateWalletDisposable, openSchemaBuilderDisposable, statusBarItem);
+    context.subscriptions.push(
+        syncSdkDisposable,
+        generateWalletDisposable,
+        openSchemaBuilderDisposable,
+        scaffoldReactDisposable,
+        scaffoldVueDisposable,
+        scaffoldAngularDisposable,
+        statusBarItem
+    );
 }
 
 function getWebviewContent() {
