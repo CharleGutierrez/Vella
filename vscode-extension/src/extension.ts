@@ -949,19 +949,209 @@ function getCopilotWebviewContent() {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
-        .chat-box { height: 300px; border: 1px solid #3c3c3c; margin-bottom: 10px; padding: 10px; overflow-y: auto; background-color: #252526; border-radius: 5px; }
-        .bubble { background: #0e639c; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; background-color: #3c3c3c; color: white; border: 1px solid #555; border-radius: 4px; }
+        :root {
+            --vella-bg: #0d0d12;
+            --vella-surface: #1a1a24;
+            --vella-primary: #8a2be2;
+            --vella-secondary: #00d2ff;
+            --vella-text: #e2e2e2;
+            --vella-muted: #888899;
+            --glow: 0 0 10px rgba(138, 43, 226, 0.5), 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+        body { 
+            background-color: var(--vella-bg); 
+            color: var(--vella-text); 
+            font-family: system-ui, -apple-system, Inter, sans-serif; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .header {
+            padding: 15px 20px;
+            background-color: var(--vella-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--vella-secondary), var(--vella-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.2);
+        }
+        .chat-container { 
+            flex: 1;
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+        .message.user {
+            align-self: flex-end;
+        }
+        .message.ai {
+            align-self: flex-start;
+        }
+        .message-sender {
+            font-size: 12px;
+            color: var(--vella-muted);
+            margin-bottom: 6px;
+            margin-left: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .message.user .message-sender {
+            text-align: right;
+            margin-right: 4px;
+        }
+        .bubble { 
+            padding: 12px 16px; 
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .message.user .bubble {
+            background: linear-gradient(135deg, var(--vella-primary), #5a189a);
+            color: white;
+            border-bottom-right-radius: 2px;
+            box-shadow: var(--glow);
+        }
+        .message.ai .bubble {
+            background-color: var(--vella-surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-bottom-left-radius: 2px;
+        }
+        .code-block {
+            background-color: #050508;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-family: 'Fira Code', Consolas, monospace;
+            font-size: 13px;
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            color: #a6accd;
+            overflow-x: auto;
+        }
+        .code-block .keyword { color: #c792ea; }
+        .code-block .function { color: #82aaff; }
+        .code-block .string { color: #c3e88d; }
+        .code-block .comment { color: #546e7a; font-style: italic; }
+        
+        .input-container {
+            padding: 15px 20px;
+            background-color: var(--vella-surface);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+        }
+        .input-box {
+            flex: 1;
+            position: relative;
+        }
+        input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            box-sizing: border-box; 
+            background-color: rgba(255,255,255,0.03); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; 
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--vella-secondary);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            background-color: rgba(255,255,255,0.05);
+        }
+        .send-btn {
+            background: linear-gradient(135deg, var(--vella-secondary), var(--vella-primary));
+            border: none;
+            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            box-shadow: var(--glow);
+            transition: transform 0.1s;
+        }
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
     </style>
 </head>
 <body>
-    <h3>Vella AI Copilot</h3>
-    <div class="chat-box">
-        <div class="bubble">How can I help you build with Vella today?</div>
+    <div class="header">
+        <h3>Vella AI Copilot</h3>
     </div>
-    <input type="text" placeholder="Ask Vella AI..." />
+    <div class="chat-container">
+        <div class="message ai">
+            <div class="message-sender">Vella AI</div>
+            <div class="bubble">System initialized. Quantum node connected. How can I assist you with your architecture today?</div>
+        </div>
+        <div class="message user">
+            <div class="message-sender">You</div>
+            <div class="bubble">Generate a trading algorithm</div>
+        </div>
+        <div class="message ai">
+            <div class="message-sender">Vella AI</div>
+            <div class="bubble">
+                I've synthesized a high-frequency mean reversion algorithm for you, optimized for sub-millisecond execution on the Vella Engine.
+                <div class="code-block">
+<span class="keyword">pub fn</span> <span class="function">mean_reversion</span>(ticks: <span class="keyword">&amp;</span>[Tick]) -&gt; <span class="keyword">f64</span> {
+    <span class="keyword">let mut</span> pnl = <span class="function">0.0</span>;
+    <span class="keyword">let mut</span> pos = <span class="function">0.0</span>;
+    <span class="keyword">for</span> t <span class="keyword">in</span> ticks {
+        <span class="keyword">if</span> t.price &lt; t.vwap {
+            pos += <span class="function">1.0</span>; <span class="comment">// Buy</span>
+        } <span class="keyword">else if</span> t.price &gt; t.vwap {
+            pos -= <span class="function">1.0</span>; <span class="comment">// Sell</span>
+        }
+    }
+    pnl
+}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="input-container">
+        <div class="input-box">
+            <input type="text" placeholder="Ask Vella AI..." />
+        </div>
+        <button class="send-btn">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+        </button>
+    </div>
 </body>
 </html>`;
 }
