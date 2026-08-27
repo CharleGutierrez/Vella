@@ -574,6 +574,23 @@ jobs:
         }
     });
 
+    let enterSpatialModeDisposable = vscode.commands.registerCommand('vella.enterSpatialMode', () => {
+        vscode.window.showInformationMessage('Vella: WebXR Spatial Mode engaged. Put on your VR/AR headset.');
+        const panel = vscode.window.createWebviewPanel('vellaSpatialMode', 'VR/AR Spatial Visualizer', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getSpatialModeWebviewContent();
+    });
+
+    let openQuantumSimulatorDisposable = vscode.commands.registerCommand('vella.openQuantumSimulator', () => {
+        const panel = vscode.window.createWebviewPanel('vellaQuantumSimulator', 'Quantum Qubit Simulator', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getQuantumSimulatorWebviewContent();
+    });
+
+    let connectBciTelemetryDisposable = vscode.commands.registerCommand('vella.connectBciTelemetry', () => {
+        vscode.window.showInformationMessage('Vella: Scanning Bluetooth for Neural Interface Headset...');
+        const panel = vscode.window.createWebviewPanel('vellaBciTelemetry', 'Neural-Interface BCI Telemetry', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getBciTelemetryWebviewContent();
+    });
+
     const diagnosticCollection = vscode.languages.createDiagnosticCollection('vella');
     context.subscriptions.push(diagnosticCollection);
 
@@ -631,6 +648,9 @@ jobs:
         openAdminPanelDisposable,
         exportArchitectureDiagramDisposable,
         generateSqlQueryDisposable,
+        enterSpatialModeDisposable,
+        openQuantumSimulatorDisposable,
+        connectBciTelemetryDisposable,
         statusBarItem
     );
 }
@@ -1019,6 +1039,92 @@ function getAdminPanelWebviewContent() {
             <div class="stat">8,930</div>
             <p style="color: #aaa; font-size: 12px; margin-bottom: 0;">In 5 warehouses</p>
         </div>
+    </div>
+</body>
+</html>`;
+}
+
+function getSpatialModeWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; color: #00ffcc; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; perspective: 1000px; }
+        .cube { width: 200px; height: 200px; position: relative; transform-style: preserve-3d; animation: spin 5s infinite linear; }
+        .face { position: absolute; width: 200px; height: 200px; background: rgba(0, 255, 204, 0.1); border: 2px solid #00ffcc; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 0 20px #00ffcc inset; }
+        .front { transform: translateZ(100px); }
+        .back { transform: rotateY(180deg) translateZ(100px); }
+        .left { transform: rotateY(-90deg) translateZ(100px); }
+        .right { transform: rotateY(90deg) translateZ(100px); }
+        .top { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+        @keyframes spin { from { transform: rotateX(0deg) rotateY(0deg); } to { transform: rotateX(360deg) rotateY(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="cube">
+        <div class="face front">Web3</div>
+        <div class="face back">ERP</div>
+        <div class="face left">Spatial</div>
+        <div class="face right">AR/VR</div>
+        <div class="face top">Code</div>
+        <div class="face bottom">Vella</div>
+    </div>
+</body>
+</html>`;
+}
+
+function getQuantumSimulatorWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #0a0a0a; color: #ff00ff; font-family: sans-serif; padding: 20px; text-align: center; }
+        .lattice { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-width: 400px; margin: 0 auto; }
+        .qubit { width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle, #ff00ff, #330033); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; box-shadow: 0 0 15px #ff00ff; animation: pulse 2s infinite alternate; }
+        @keyframes pulse { from { transform: scale(0.9); opacity: 0.8; } to { transform: scale(1.1); opacity: 1; } }
+        .metrics { margin-top: 40px; border: 1px solid #ff00ff; padding: 20px; border-radius: 8px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h2>16-Qubit Processing Lattice</h2>
+    <div class="lattice">
+        <div class="qubit">|0&rang;</div><div class="qubit">|1&rang;</div><div class="qubit">|+&rang;</div><div class="qubit">|-&rang;</div>
+        <div class="qubit">|0&rang;</div><div class="qubit">|1&rang;</div><div class="qubit">|+&rang;</div><div class="qubit">|-&rang;</div>
+        <div class="qubit">|0&rang;</div><div class="qubit">|1&rang;</div><div class="qubit">|+&rang;</div><div class="qubit">|-&rang;</div>
+        <div class="qubit">|0&rang;</div><div class="qubit">|1&rang;</div><div class="qubit">|+&rang;</div><div class="qubit">|-&rang;</div>
+    </div>
+    <div class="metrics">
+        <h3>Entanglement Metrics (Post-Quantum Crypto)</h3>
+        <p>Coherence Time: 145 &mu;s</p>
+        <p>Fidelity: 99.9%</p>
+    </div>
+</body>
+</html>`;
+}
+
+function getBciTelemetryWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #111; color: #00ff00; font-family: sans-serif; padding: 20px; }
+        .chart { height: 150px; background: repeating-linear-gradient(90deg, #111, #111 20px, #222 20px, #222 40px); border: 1px solid #00ff00; border-radius: 4px; margin-top: 10px; position: relative; overflow: hidden; }
+        .wave { position: absolute; width: 200%; height: 100%; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 0 50 Q 25 0 50 50 T 100 50" stroke="%2300ff00" stroke-width="2" fill="none"/></svg>') repeat-x; animation: scroll 3s linear infinite; }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .meter { width: 100%; height: 30px; background: #333; border-radius: 15px; margin-top: 30px; overflow: hidden; border: 1px solid #00ff00; }
+        .fill { width: 85%; height: 100%; background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000); }
+    </style>
+</head>
+<body>
+    <h2>Neural-Interface BCI Telemetry</h2>
+    <h4>EEG Brainwave (Alpha/Beta)</h4>
+    <div class="chart">
+        <div class="wave"></div>
+    </div>
+    <h4>Focus Level (85%)</h4>
+    <div class="meter">
+        <div class="fill"></div>
     </div>
 </body>
 </html>`;

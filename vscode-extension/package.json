@@ -125,6 +125,18 @@
       {
         "command": "vella.generateSqlQuery",
         "title": "Vella: Generate AI SQL Query"
+      },
+      {
+        "command": "vella.enterSpatialMode",
+        "title": "Vella: Enter Spatial VR/AR Mode"
+      },
+      {
+        "command": "vella.openQuantumSimulator",
+        "title": "Vella: Open Quantum Simulator"
+      },
+      {
+        "command": "vella.connectBciTelemetry",
+        "title": "Vella: Connect BCI Telemetry"
       }
     ],
     "viewsContainers": {
