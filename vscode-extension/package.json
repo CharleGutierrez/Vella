@@ -109,6 +109,22 @@
       {
         "command": "vella.startMultiplayerSession",
         "title": "Vella: Start Multiplayer Database Design Session"
+      },
+      {
+        "command": "vella.startTimeTravelDebugger",
+        "title": "Vella: Start Time-Travel Debugger"
+      },
+      {
+        "command": "vella.openAdminPanel",
+        "title": "Vella: Open Production Admin Panel"
+      },
+      {
+        "command": "vella.exportArchitectureDiagram",
+        "title": "Vella: Export Architecture Graph"
+      },
+      {
+        "command": "vella.generateSqlQuery",
+        "title": "Vella: Generate AI SQL Query"
       }
     ],
     "viewsContainers": {
