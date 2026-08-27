@@ -24,6 +24,70 @@
         "title": "Vella: Sync SDK"
       },
       {
+        "command": "vella.networkSocketAnalyzer",
+        "title": "Vella NetOps: Analyze Local Socket Bindings (Port Conflicts)"
+      },
+      {
+        "command": "vella.networkLatencyProfiler",
+        "title": "Vella NetOps: Run TCP Latency Profiler (Ping/Jitter)"
+      },
+      {
+        "command": "vella.scaffoldKubernetes",
+        "title": "Vella Cloud: Generate K8s High-Availability Fleet"
+      },
+      {
+        "command": "vella.scaffoldTerraform",
+        "title": "Vella Cloud: Scaffold Terraform AWS Architecture"
+      },
+      {
+        "command": "vella.testApiEndpoint",
+        "title": "Vella: Test Local API Endpoint (REST/JSON)"
+      },
+      {
+        "command": "vella.seedDatabase",
+        "title": "Vella: Seed Database with Mock Data"
+      },
+      {
+        "command": "vella.nuclearDeterminismCheck",
+        "title": "Vella Nuclear: Run Hard Real-Time Determinism Audit"
+      },
+      {
+        "command": "vella.nuclearCoreSimulator",
+        "title": "Vella Nuclear: Simulate Reactor Core Telemetry (Neutron Flux)"
+      },
+      {
+        "command": "vella.scadaModbusPing",
+        "title": "Vella SCADA: Ping Modbus TCP PLC (Read Registers)"
+      },
+      {
+        "command": "vella.scadaAnomalyInjector",
+        "title": "Vella SCADA: Inject Predictive Maintenance Anomaly"
+      },
+      {
+        "command": "vella.f1UdpReplayer",
+        "title": "Vella F1: Start High-Frequency UDP Telemetry Replay"
+      },
+      {
+        "command": "vella.f1EcuCompiler",
+        "title": "Vella F1: Cross-Compile Firmware to Car ECU (ARM Cortex)"
+      },
+      {
+        "command": "vella.cryptoTool",
+        "title": "Vella Blockchain: Cryptographic Multi-Tool (Hex/Hash/Sign)"
+      },
+      {
+        "command": "vella.scaffoldZkCircuit",
+        "title": "Vella Blockchain: Scaffold ZK-Proof Circuit (Halo2/Circom)"
+      },
+      {
+        "command": "vella.web3RpcInspector",
+        "title": "Vella Web3: Inspect Live ETH Network State (RPC)"
+      },
+      {
+        "command": "vella.generateWeb3Bindings",
+        "title": "Vella Web3: Generate TS Bindings from ABI"
+      },
+      {
         "command": "vella.generateWallet",
         "title": "Vella: Generate Wallet"
       },
@@ -42,6 +106,18 @@
       {
         "command": "vella.scaffoldAngular",
         "title": "Vella: Scaffold Angular Boilerplate"
+      },
+      {
+        "command": "vella.exportTypes",
+        "title": "Vella: Export TypeScript Interfaces from Rust Structs"
+      },
+      {
+        "command": "vella.generateFrontendClient",
+        "title": "Vella: Generate Frontend API Hooks (React/Vue)"
+      },
+      {
+        "command": "vella.validateErpLedger",
+        "title": "Vella ERP: Validate Double-Entry Ledger Integrity"
       },
       {
         "command": "vella.scaffoldErpSchemas",
@@ -78,6 +154,10 @@
       {
         "command": "vella.openCopilot",
         "title": "Vella: Open AI Copilot"
+      },
+      {
+        "command": "vella.openAiTuner",
+        "title": "Vella: Run AI Performance Tuner"
       },
       {
         "command": "vella.openTelemetryDashboard",
