@@ -115,3 +115,6 @@ path = "examples/test_hft.rs"
 [[example]]
 name = "test_scada"
 path = "examples/test_scada.rs"
+[[example]]
+name = "test_crypto"
+path = "examples/test_crypto.rs"

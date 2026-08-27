@@ -15,3 +15,5 @@ pub use compiler::ContractDeployer;
 pub use fhe::FheEngine;
 pub use depin::DepinGateway;
 pub use oracle::CrossChainOracle;
+pub mod crypto;
+pub use crypto::CryptoWallet;
