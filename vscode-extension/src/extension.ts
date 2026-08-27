@@ -308,6 +308,84 @@ pub fn run_mean_reversion_strategy(ticks: &[TickData]) -> f64 {
         await vscode.window.showTextDocument(doc);
     });
 
+    let scaffoldSmartContractDeployerDisposable = vscode.commands.registerCommand('vella.scaffoldSmartContractDeployer', async () => {
+        const content = `use reqwest::Client;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::new();
+    // Replace with your local node URL (e.g., Hardhat or Anvil)
+    let node_url = "http://localhost:8545";
+    
+    // Example bytecode of a compiled smart contract
+    let bytecode = "0x608060405234801561001057600080fd5b506040516020806100f283398101806040528101908080519060200190929190505050806000819055505060a8806100536000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80636d4ce63c14602d575b600080fd5b60336049565b6040518082815260200191505060405180910390f35b6000805490509056fea26469706673582212204c356942cbaefb702b36ff5c18e19c30f40cfd9237cdfb743787ddf3f7e0ef6b64736f6c634300081a0033";
+
+    let payload = json!({
+        "jsonrpc": "2.0",
+        "method": "eth_sendTransaction",
+        "params": [{
+            "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // Example local account
+            "data": bytecode
+        }],
+        "id": 1
+    });
+
+    println!("Sending deployment transaction...");
+    let res = client.post(node_url)
+        .json(&payload)
+        .send()
+        .await?;
+
+    let response_body: serde_json::Value = res.json().await?;
+    println!("Response: {:#?}", response_body);
+
+    Ok(())
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldWalletGeneratorDisposable = vscode.commands.registerCommand('vella.scaffoldWalletGenerator', async () => {
+        const content = `use k256::ecdsa::{SigningKey, VerifyingKey};
+use rand_core::OsRng;
+use sha3::{Digest, Keccak256};
+use hex;
+
+pub fn generate_web3_wallet() -> (String, String) {
+    // Generate a new secure ECDSA secp256k1 private key
+    let signing_key = SigningKey::random(&mut OsRng);
+    let private_key_bytes = signing_key.to_bytes();
+    let private_key_hex = hex::encode(private_key_bytes);
+
+    // Derive the public key (verifying key)
+    let verifying_key = VerifyingKey::from(&signing_key);
+    let public_key_point = verifying_key.to_encoded_point(false);
+    let public_key_bytes = public_key_point.as_bytes();
+
+    // Ethereum address is the last 20 bytes of the Keccak256 hash of the uncompressed public key (excluding the 0x04 prefix)
+    let mut hasher = Keccak256::new();
+    hasher.update(&public_key_bytes[1..]);
+    let result = hasher.finalize();
+
+    let address_bytes = &result[12..];
+    let address_hex = format!("0x{}", hex::encode(address_bytes));
+
+    (private_key_hex, address_hex)
+}
+
+fn main() {
+    let (private_key, address) = generate_web3_wallet();
+    println!("New Web3 Wallet Generated:");
+    println!("Private Key: {}", private_key);
+    println!("Address:     {}", address);
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -323,6 +401,8 @@ pub fn run_mean_reversion_strategy(ticks: &[TickData]) -> f64 {
         scaffoldDoubleEntryLedgerDisposable,
         scaffoldLimitOrderBookDisposable,
         scaffoldTradingStrategyDisposable,
+        scaffoldSmartContractDeployerDisposable,
+        scaffoldWalletGeneratorDisposable,
         statusBarItem
     );
 }

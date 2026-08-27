@@ -53,6 +53,14 @@
       {
         "command": "vella.scaffoldTradingStrategy",
         "title": "Vella: Scaffold Quantitative Trading Strategy"
+      },
+      {
+        "command": "vella.scaffoldSmartContractDeployer",
+        "title": "Vella: Scaffold Smart Contract Deployer"
+      },
+      {
+        "command": "vella.scaffoldWalletGenerator",
+        "title": "Vella: Scaffold Web3 Wallet Generator"
       }
     ]
   },
