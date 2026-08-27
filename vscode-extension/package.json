@@ -180,7 +180,64 @@
           "name": "Vella Database Explorer"
         }
       ]
-    }
+    },
+    "customEditors": [
+      {
+        "viewType": "vella.schemaEditor",
+        "displayName": "Vella Visual Schema Builder",
+        "selector": [
+          {
+            "filenamePattern": "*.vella"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "vella.onboarding",
+        "title": "Get Started with Vella",
+        "description": "Onboarding for Vella ecosystem",
+        "steps": [
+          {
+            "id": "step1",
+            "title": "Install SDK",
+            "description": "Sync your SDK.",
+            "media": {
+              "markdown": "install.md"
+            }
+          },
+          {
+            "id": "step2",
+            "title": "Generate Wallet",
+            "description": "Generate Web3 Wallet.",
+            "media": {
+              "markdown": "wallet.md"
+            }
+          },
+          {
+            "id": "step3",
+            "title": "Start Coding",
+            "description": "Build with Vella.",
+            "media": {
+              "markdown": "build.md"
+            }
+          }
+        ]
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "vella",
+        "required": [],
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "The vella task to run"
+          }
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

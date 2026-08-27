@@ -433,6 +433,30 @@ impl ScadaState {
         await vscode.window.showTextDocument(doc);
     });
     // --- NEW FEATURES ---
+    // Custom Editor
+    const customEditorProvider = vscode.window.registerCustomEditorProvider('vella.schemaEditor', {
+        async resolveCustomTextEditor(document, webviewPanel, token) {
+            webviewPanel.webview.options = { enableScripts: true };
+            webviewPanel.webview.html = getWebviewContent();
+        }
+    });
+    context.subscriptions.push(customEditorProvider);
+    // Task Provider
+    const taskProvider = vscode.tasks.registerTaskProvider('vella', {
+        provideTasks: () => {
+            return [
+                new vscode.Task({ type: 'vella', task: 'build' }, vscode.TaskScope.Workspace, 'Build Vella Project', 'vella', new vscode.ShellExecution('cargo build --release'))
+            ];
+        },
+        resolveTask: (task) => {
+            return task;
+        }
+    });
+    context.subscriptions.push(taskProvider);
+    // Decentralized SCM
+    const scm = vscode.scm.createSourceControl('vella-scm', 'Vella IPFS');
+    scm.inputBox.placeholder = "Commit to Decentralized IPFS Network...";
+    context.subscriptions.push(scm);
     const serverUrl = vscode.workspace.getConfiguration('vella').get('serverUrl');
     vscode.window.showInformationMessage(`Vella Extension Activated. Server URL: ${serverUrl}`);
     const testController = vscode.tests.createTestController('vellaTestController', 'Vella Test Explorer');
