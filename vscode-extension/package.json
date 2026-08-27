@@ -45,6 +45,14 @@
       {
         "command": "vella.scaffoldDoubleEntryLedger",
         "title": "Vella: Scaffold Double-Entry Ledger Logic"
+      },
+      {
+        "command": "vella.scaffoldLimitOrderBook",
+        "title": "Vella: Scaffold Limit Order Book"
+      },
+      {
+        "command": "vella.scaffoldTradingStrategy",
+        "title": "Vella: Scaffold Quantitative Trading Strategy"
       }
     ]
   },

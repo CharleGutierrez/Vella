@@ -214,6 +214,100 @@ pub async fn process_sale(
         await vscode.window.showTextDocument(doc);
     });
 
+    let scaffoldLimitOrderBookDisposable = vscode.commands.registerCommand('vella.scaffoldLimitOrderBook', async () => {
+        const content = `use std::collections::VecDeque;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Side {
+    Buy,
+    Sell,
+}
+
+#[derive(Debug, Clone)]
+pub struct Order {
+    pub id: u64,
+    pub price: u64,
+    pub quantity: u64,
+    pub side: Side,
+}
+
+pub struct LimitOrderBook {
+    pub bids: VecDeque<Order>,
+    pub asks: VecDeque<Order>,
+}
+
+impl LimitOrderBook {
+    pub fn new() -> Self {
+        Self {
+            bids: VecDeque::new(),
+            asks: VecDeque::new(),
+        }
+    }
+
+    pub fn add_order(&mut self, order: Order) {
+        // Price-Time Priority FIFO crossing logic placeholder
+        match order.side {
+            Side::Buy => self.bids.push_back(order),
+            Side::Sell => self.asks.push_back(order),
+        }
+        self.match_orders();
+    }
+
+    fn match_orders(&mut self) {
+        // TODO: Implement crossing logic
+    }
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldTradingStrategyDisposable = vscode.commands.registerCommand('vella.scaffoldTradingStrategy', async () => {
+        const content = `pub struct TickData {
+    pub timestamp: i64,
+    pub price: f64,
+    pub volume: f64,
+}
+
+pub fn run_mean_reversion_strategy(ticks: &[TickData]) -> f64 {
+    let mut pnl = 0.0;
+    let mut position = 0.0;
+    let mut moving_average = 0.0;
+    let window_size = 10;
+    let mut sum = 0.0;
+    
+    for (i, tick) in ticks.iter().enumerate() {
+        sum += tick.price;
+        
+        if i >= window_size {
+            sum -= ticks[i - window_size].price;
+            moving_average = sum / window_size as f64;
+            
+            // Simple mean reversion logic
+            if tick.price < moving_average {
+                // Buy signal
+                position += 1.0;
+                pnl -= tick.price;
+            } else if tick.price > moving_average && position > 0.0 {
+                // Sell signal
+                position -= 1.0;
+                pnl += tick.price;
+            }
+        }
+    }
+    
+    // Close position at the last price
+    if position > 0.0 {
+        pnl += position * ticks.last().unwrap().price;
+    }
+    
+    pnl
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -227,6 +321,8 @@ pub async fn process_sale(
         scaffoldAngularDisposable,
         scaffoldErpSchemasDisposable,
         scaffoldDoubleEntryLedgerDisposable,
+        scaffoldLimitOrderBookDisposable,
+        scaffoldTradingStrategyDisposable,
         statusBarItem
     );
 }
