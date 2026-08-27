@@ -81,6 +81,18 @@
       {
         "command": "vella.deployToCloud",
         "title": "Vella: 1-Click Cloud Deploy"
+      },
+      {
+        "command": "vella.runHftBacktest",
+        "title": "Vella: Run HFT Backtest Sandbox"
+      },
+      {
+        "command": "vella.openWeb3NetworkMap",
+        "title": "Vella: Open Web3 Network Map"
+      },
+      {
+        "command": "vella.setupCiCd",
+        "title": "Vella: Generate CI/CD Pipeline"
       }
     ],
     "viewsContainers": {

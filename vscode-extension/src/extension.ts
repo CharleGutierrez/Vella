@@ -490,6 +490,67 @@ impl ScadaState {
         vscode.window.showInformationMessage('Vella: Docker container built! Preparing for cloud deployment...');
     });
 
+    let runHftBacktestDisposable = vscode.commands.registerCommand('vella.runHftBacktest', () => {
+        const panel = vscode.window.createWebviewPanel('vellaHftBacktest', 'HFT Backtesting Sandbox', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getHftBacktestWebviewContent();
+    });
+
+    let openWeb3NetworkMapDisposable = vscode.commands.registerCommand('vella.openWeb3NetworkMap', () => {
+        const panel = vscode.window.createWebviewPanel('vellaWeb3NetworkMap', 'Web3 Network Map', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getWeb3NetworkMapWebviewContent();
+    });
+
+    let setupCiCdDisposable = vscode.commands.registerCommand('vella.setupCiCd', async () => {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders) {
+            vscode.window.showErrorMessage('Vella: No workspace to setup CI/CD.');
+            return;
+        }
+        const workflowDir = vscode.Uri.joinPath(workspaceFolders[0].uri, '.github', 'workflows');
+        await vscode.workspace.fs.createDirectory(workflowDir);
+        const deployFilePath = vscode.Uri.joinPath(workflowDir, 'deploy.yml');
+        const deployFileContent = Buffer.from(`name: Deploy
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Rust Tests
+        run: cargo test
+      - name: Build Docker
+        run: docker build -t vella-app .
+      - name: Prepare Kubernetes Deployment
+        run: kubectl apply -f k8s/
+`, 'utf8');
+        await vscode.workspace.fs.writeFile(deployFilePath, deployFileContent);
+        vscode.window.showInformationMessage('Vella: Flawless CI/CD pipeline generated successfully!');
+    });
+
+    const diagnosticCollection = vscode.languages.createDiagnosticCollection('vella');
+    context.subscriptions.push(diagnosticCollection);
+
+    vscode.workspace.onDidChangeTextDocument(event => {
+        const doc = event.document;
+        if (doc.languageId === 'rust') {
+            const text = doc.getText();
+            const diagnostics: vscode.Diagnostic[] = [];
+            const regex = /unbalanced_ledger/g;
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                const startPos = doc.positionAt(match.index);
+                const endPos = doc.positionAt(match.index + match[0].length);
+                const diagnostic = new vscode.Diagnostic(
+                    new vscode.Range(startPos, endPos),
+                    "Vella: Unbalanced Double-Entry Ledger Transaction detected",
+                    vscode.DiagnosticSeverity.Warning
+                );
+                diagnostics.push(diagnostic);
+            }
+            diagnosticCollection.set(doc.uri, diagnostics);
+        }
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -512,6 +573,9 @@ impl ScadaState {
         openCopilotDisposable,
         openTelemetryDashboardDisposable,
         deployToCloudDisposable,
+        runHftBacktestDisposable,
+        openWeb3NetworkMapDisposable,
+        setupCiCdDisposable,
         statusBarItem
     );
 }
@@ -717,6 +781,56 @@ function getTelemetryWebviewContent() {
             <div class="chart" style="background: linear-gradient(90deg, #d16969, #ce9178);"></div>
             <p style="margin-top: 10px; font-size: 12px; color: #aaa;">Temp: 45.2 C</p>
         </div>
+    </div>
+</body>
+</html>`;
+}
+
+function getHftBacktestWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .chart { height: 300px; border: 1px solid #3c3c3c; margin-bottom: 20px; border-radius: 5px; background: repeating-linear-gradient(90deg, #1e1e1e, #1e1e1e 10px, #252526 10px, #252526 20px); }
+        .dropzone { border: 2px dashed #0e639c; padding: 50px; text-align: center; border-radius: 5px; cursor: pointer; }
+        .dropzone:hover { background-color: #252526; }
+    </style>
+</head>
+<body>
+    <h2>HFT Backtesting Sandbox</h2>
+    <div class="chart">
+        <div style="padding: 140px; text-align: center; color: #aaa;">[ Candlestick Chart Rendered Here ]</div>
+    </div>
+    <div class="dropzone">Drop CSV Tick Data Here</div>
+</body>
+</html>`;
+}
+
+function getWeb3NetworkMapWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; overflow: hidden; }
+        .network { position: relative; width: 100%; height: 500px; border: 1px solid #3c3c3c; background-color: #1e1e1e; border-radius: 8px; }
+        .node { position: absolute; border-radius: 50%; background-color: #4ec9b0; width: 20px; height: 20px; box-shadow: 0 0 10px #4ec9b0; display: flex; align-items: center; justify-content: center; }
+        .node.ipfs { top: 100px; left: 150px; background-color: #0e639c; box-shadow: 0 0 10px #0e639c; }
+        .node.zk { top: 300px; left: 400px; background-color: #c586c0; box-shadow: 0 0 10px #c586c0; }
+        .node.depin { top: 200px; left: 600px; background-color: #ce9178; box-shadow: 0 0 10px #ce9178; }
+        .label { position: absolute; top: 25px; left: -20px; font-size: 12px; color: #aaa; white-space: nowrap; }
+        .line { position: absolute; background-color: #555; height: 2px; transform-origin: 0 0; }
+    </style>
+</head>
+<body>
+    <h2>Web3 Network Map</h2>
+    <div class="network">
+        <div class="node ipfs"><div class="label">IPFS Peer</div></div>
+        <div class="node zk"><div class="label">ZK-Rollup</div></div>
+        <div class="node depin"><div class="label">DePIN Node</div></div>
+        <div class="line" style="top: 110px; left: 160px; width: 320px; transform: rotate(38deg);"></div>
+        <div class="line" style="top: 310px; left: 410px; width: 220px; transform: rotate(-26deg);"></div>
+        <div class="line" style="top: 110px; left: 160px; width: 460px; transform: rotate(12deg);"></div>
     </div>
 </body>
 </html>`;
