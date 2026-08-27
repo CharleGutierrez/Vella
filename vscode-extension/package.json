@@ -37,6 +37,14 @@
       {
         "command": "vella.scaffoldAngular",
         "title": "Vella: Scaffold Angular Boilerplate"
+      },
+      {
+        "command": "vella.scaffoldErpSchemas",
+        "title": "Vella: Scaffold ERP Schemas"
+      },
+      {
+        "command": "vella.scaffoldDoubleEntryLedger",
+        "title": "Vella: Scaffold Double-Entry Ledger Logic"
       }
     ]
   },

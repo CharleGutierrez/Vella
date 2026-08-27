@@ -139,6 +139,81 @@ export class VellaComponent implements OnInit {
         await vscode.window.showTextDocument(doc);
     });
 
+    let scaffoldErpSchemasDisposable = vscode.commands.registerCommand('vella.scaffoldErpSchemas', async () => {
+        const content = `use vella::prelude::*;
+
+#[derive(ModelSchema)]
+pub struct Invoice {
+    pub id: Id,
+    pub amount: Field<Money>,
+    pub status: Field<String>,
+    pub created_at: Field<DateTime>,
+}
+
+#[derive(ModelSchema)]
+pub struct Ledger {
+    pub id: Id,
+    pub account_id: Field<String>,
+    pub debit: Field<Money>,
+    pub credit: Field<Money>,
+    pub timestamp: Field<DateTime>,
+}
+
+#[derive(ModelSchema)]
+pub struct InventoryItem {
+    pub id: Id,
+    pub sku: Field<String>,
+    pub quantity: Field<i32>,
+    pub price: Field<Money>,
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldDoubleEntryLedgerDisposable = vscode.commands.registerCommand('vella.scaffoldDoubleEntryLedger', async () => {
+        const content = `use vella::prelude::*;
+use vella::db::Transaction;
+
+pub async fn process_sale(
+    tx: &mut Transaction,
+    item_id: &str,
+    qty: i32,
+    price: Money
+) -> Result<(), Error> {
+    // Deduct inventory
+    let mut item = InventoryItem::find(tx, item_id).await?;
+    if item.quantity.get() < qty {
+        return Err(Error::new("Insufficient inventory"));
+    }
+    item.quantity.set(item.quantity.get() - qty);
+    item.save(tx).await?;
+
+    let total_amount = price * qty;
+
+    // Double-entry bookkeeping
+    
+    // Debit Cash (Increase Asset)
+    Ledger::create(tx, Ledger {
+        account_id: "Cash".to_string(),
+        debit: total_amount,
+        credit: Money::zero(),
+    }).await?;
+
+    // Credit Revenue (Increase Income)
+    Ledger::create(tx, Ledger {
+        account_id: "Revenue".to_string(),
+        debit: Money::zero(),
+        credit: total_amount,
+    }).await?;
+
+    Ok(())
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -150,6 +225,8 @@ export class VellaComponent implements OnInit {
         scaffoldReactDisposable,
         scaffoldVueDisposable,
         scaffoldAngularDisposable,
+        scaffoldErpSchemasDisposable,
+        scaffoldDoubleEntryLedgerDisposable,
         statusBarItem
     );
 }
