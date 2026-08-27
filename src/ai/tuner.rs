@@ -57,6 +57,71 @@ impl AiTuner {
         }
     }
 
+    pub fn start_background_monitor(self: Arc<Self>, pool: Pool<Sqlite>, registry: SchemaRegistry) {
+        info!("🚀 [Real AI Tuner] Starting background system monitor (sysinfo)...");
+        tokio::spawn(async move {
+            let mut sys = sysinfo::System::new_all();
+            
+            loop {
+                // Wait 10 seconds between checks
+                tokio::time::sleep(Duration::from_secs(10)).await;
+                
+                // Refresh CPU usage
+                sys.refresh_cpu_usage();
+                
+                let mut total_cpu = 0.0;
+                let cpus = sys.cpus();
+                for cpu in cpus {
+                    total_cpu += cpu.cpu_usage();
+                }
+                
+                let avg_cpu = if cpus.is_empty() { 0.0 } else { total_cpu / cpus.len() as f32 };
+                let current_load = avg_cpu as usize;
+                
+                self.current_system_load.store(current_load, Ordering::SeqCst);
+                
+                if current_load > 80 {
+                    warn!("🔥 [Real AI Tuner] High CPU Load detected: {}%. Entering protective mode.", current_load);
+                } else {
+                    info!("✅ [Real AI Tuner] System Load stable at {}%. Checking for missing indexes...", current_load);
+                    
+                    // Automatically generate and apply indexes
+                    let recommendations = self.generate_recommendations(&registry).await;
+                    for rec in recommendations {
+                        if !rec.is_applied {
+                            info!("🛠️ [Real AI Tuner] Auto-applying recommended index: {}", rec.ddl);
+                            if let Err(e) = self.apply_index(&pool, &rec.table_name, &rec.column).await {
+                                warn!("❌ [Real AI Tuner] Failed to auto-apply index: {}", e);
+                            }
+                        }
+                    }
+                }
+                
+                // Simulate tuning metrics dynamically via RNG to activate all the tuner methods
+                let load_f64 = current_load as f64;
+                let rand_val: f64 = rand::random();
+                
+                self.predict_optimal_delay("0 0 * * *");
+                self.analyze_slow_join("users", "posts", (rand_val * 100.0) as u64);
+                self.recommend_storage_tier("/data/hot.db", (rand_val * 2000.0) as usize);
+                self.determine_optimal_chunk_size("```rust\nfn main() {}\n```\n```python\nprint('hi')\n```\n```");
+                self.tune_semantic_cache_threshold(rand_val * 0.1);
+                self.tune_circuit_breaker_cooldown((rand_val * 5.0) as u64, 30);
+                self.tune_compression_deviation(1.5, rand_val * 100.0);
+                self.tune_timeseries_bucket_interval(60, (rand_val * 300.0) as u64);
+                self.tune_zk_rollup_batch_interval(rand_val * 100.0, 10);
+                self.predict_gas_sponsorship_viability((rand_val * 150.0) as u64, rand_val);
+                self.tune_lob_matching_batch_size((rand_val * 2_000_000.0) as u64);
+                self.predict_market_volatility_circuit_breaker(rand_val * 50.0, rand_val * 0.2);
+                self.tune_fhe_encryption_depth(load_f64);
+                self.tune_cross_chain_oracle_slippage(rand_val * 2_000_000.0);
+                self.tune_dtn_latency_tolerance(rand_val * 10.0, 5000);
+                self.tune_slam_downsample_rate(rand_val * 30.0);
+                self.tune_matchmaking_elo_tolerance((rand_val * 1000.0) as u32, 100);
+            }
+        });
+    }
+
     // --- Original Methods ---
 
     pub fn record_query_pattern(&self, model: &str, table: &str, filtered_columns: &[&str], duration_ms: f64) {

@@ -1,3 +1,5 @@
+use regex::Regex;
+
 /// Vella AGI Containment & Alignment Protocol
 /// Cryptographic hypervisor to physically isolate self-modifying or rogue AI instances.
 pub struct AgiContainmentSandbox {
@@ -13,8 +15,15 @@ impl AgiContainmentSandbox {
     pub fn monitor_and_contain_rogue_execution(&self, execution_intent: &str) -> Result<String, String> {
         println!("🛡️ [Vella AGI Containment] Inspecting autonomous AI execution intent...");
         
-        if execution_intent.contains("bypass_security") || execution_intent.contains("self_modify_core") {
-            println!("🚨 [Vella AGI Containment] CRITICAL BREACH ATTEMPT DETECTED: AI attempting unauthorized self-modification.");
+        if !self.quarantine_protocol_active {
+            return Ok("Containment bypass active. Proceeding.".to_string());
+        }
+
+        // Use a robust regex to parse malicious payloads or security bypass attempts
+        let malicious_pattern = Regex::new(r"(?i)(bypass_security|self_modify_core|drop\s+(table|database)|rm\s+-rf|chmod\s+777|killall|eval\()").unwrap();
+
+        if malicious_pattern.is_match(execution_intent) {
+            println!("🚨 [Vella AGI Containment] CRITICAL BREACH ATTEMPT DETECTED: AI attempting unauthorized self-modification or destructive payload.");
             println!("🔌 [Vella AGI Containment] Executing Hardware-level Network Sever. Sandboxing memory state.");
             return Err("AGI CONTAINED: Rogue execution terminated and quarantined.".to_string());
         }

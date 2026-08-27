@@ -27,7 +27,7 @@ async fn main() {
 
     println!("\n=== Testing Web3 FHE ===");
     let fhe = FheEngine::new("secret_key");
-    let enc = fhe.encrypt("data");
+    let enc = fhe.encrypt(42);
     let res = fhe.compute_ai_inference_on_ciphertext(&enc);
     let _ = fhe.decrypt(&res);
     

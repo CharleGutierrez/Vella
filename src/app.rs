@@ -129,6 +129,7 @@ impl VellaApp {
         let watchdog = Arc::new(SystemWatchdog::default());
         watchdog.start(db.pool.clone());
         let ai_tuner = Arc::new(AiTuner::new());
+        ai_tuner.clone().start_background_monitor(db.pool.clone(), registry.clone());
         let circuit_breaker = Arc::new(CircuitBreaker::new("vella_global_breaker", 5, 10, ai_tuner.clone()));
         let token_limiter = Arc::new(TokenRateLimiter::new(self.config.token_rate_limit_per_minute));
         let prompt_logger = Arc::new(PromptLogger::default());

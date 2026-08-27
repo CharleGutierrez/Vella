@@ -1,3 +1,32 @@
+use rust_hdl::prelude::*;
+use std::fs;
+
+#[derive(LogicBlock)]
+pub struct TradeSignal {
+    pub price: Signal<In, Bits<32>>,
+    pub buy_signal: Signal<Out, Bit>,
+}
+
+impl Default for TradeSignal {
+    fn default() -> Self {
+        Self {
+            price: Default::default(),
+            buy_signal: Default::default(),
+        }
+    }
+}
+
+impl Logic for TradeSignal {
+    #[hdl_gen]
+    fn update(&mut self) {
+        if self.price.val() < 50000_u64 {
+            self.buy_signal.next = true;
+        } else {
+            self.buy_signal.next = false;
+        }
+    }
+}
+
 /// Vella Hardware Description Language (HDL) Compiler
 /// Translates Rust trading strategies into raw Verilog for FPGA flashing.
 pub struct FpgaCompiler;
@@ -8,13 +37,15 @@ impl FpgaCompiler {
         println!("🖲️ [Vella FPGA] Analyzing Rust trading strategy '{}'...", strategy_name);
         println!("🛠️ [Vella FPGA] Transpiling logic gates to Verilog HDL...");
         
-        // Mock Verilog Code
-        let verilog = format!(
-            "module {}(\n    input wire clk,\n    input wire [31:0] price,\n    output reg buy_signal\n);\n    always @(posedge clk) begin\n        if (price < 50000) buy_signal <= 1;\n    end\nendmodule",
-            strategy_name
-        );
+        let mut uut = TradeSignal::default();
+        uut.connect_all();
+        let verilog = generate_verilog(&uut);
         
-        println!("🔥 [Vella FPGA] Verilog compilation successful. Ready for Zero-Latency Hardware Flashing!");
+        if let Err(e) = fs::write("strategy.v", &verilog) {
+            return Err(format!("Failed to write Verilog file: {}", e));
+        }
+        
+        println!("🔥 [Vella FPGA] Verilog compilation successful. Saved to strategy.v. Ready for Zero-Latency Hardware Flashing!");
         Ok(verilog)
     }
 }

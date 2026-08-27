@@ -1,35 +1,43 @@
+use tfhe::prelude::*;
+use tfhe::{generate_keys, set_server_key, ConfigBuilder, FheUint8, ClientKey, ServerKey};
+
 /// Vella Fully Homomorphic Encryption (FHE) Engine
 /// Allows mathematical and AI operations to be performed on encrypted data without decrypting it.
 pub struct FheEngine {
-    encryption_key: String,
+    client_key: ClientKey,
+    server_key: ServerKey,
 }
 
 impl FheEngine {
-    pub fn new(key: impl Into<String>) -> Self {
+    pub fn new(_key: impl Into<String>) -> Self {
+        println!("🔑 [Vella FHE] Generating TFHE keys...");
+        let config = ConfigBuilder::default().build();
+        let (client_key, server_key) = generate_keys(config);
+        
         Self {
-            encryption_key: key.into(),
+            client_key,
+            server_key,
         }
     }
 
     /// Encrypt plaintext data into an FHE Ciphertext
-    pub fn encrypt(&self, plaintext: &str) -> Vec<u8> {
+    pub fn encrypt(&self, plaintext: u8) -> FheUint8 {
         println!("🔒 [Vella FHE] Encrypting data into Homomorphic Ciphertext...");
-        // Mock encryption payload
-        vec![0x01, 0x02, 0x03, 0x04]
+        FheUint8::encrypt(plaintext, &self.client_key)
     }
 
     /// Perform secure AI matrix multiplication directly on encrypted ciphertexts
-    pub fn compute_ai_inference_on_ciphertext(&self, _encrypted_data: &[u8]) -> Vec<u8> {
+    pub fn compute_ai_inference_on_ciphertext(&self, encrypted_data: &FheUint8) -> FheUint8 {
         println!("🧠 [Vella FHE] Executing Neural Network operations on encrypted data...");
         println!("🛡️ [Vella FHE] Zero-Knowledge privacy maintained. Original data is never decrypted in memory.");
-        
-        // Mock computed encrypted output
-        vec![0xFF, 0xAA, 0xBB, 0xCC]
+        set_server_key(self.server_key.clone());
+        // Simple homomorphic addition
+        encrypted_data + 42u8
     }
 
     /// Decrypt the computed FHE Ciphertext back into plaintext (Only the client with the private key can do this)
-    pub fn decrypt(&self, _ciphertext: &[u8]) -> String {
+    pub fn decrypt(&self, ciphertext: &FheUint8) -> u8 {
         println!("🔓 [Vella FHE] Decrypting computed result...");
-        "FHE_COMPUTED_RESULT_OK".to_string()
+        ciphertext.decrypt(&self.client_key)
     }
 }
