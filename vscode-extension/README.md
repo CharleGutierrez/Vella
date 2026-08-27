@@ -1,46 +1,84 @@
-<div align="center"><img src="vella-logo.jpg" width="150" alt="Vella Logo"/><br/><h1>Vella VS Code Extension</h1></div>
+<div align="center">
+  <img src="vella-logo.jpg" width="150" alt="Vella Logo"/>
+  <br/>
+  <h1>Vella VS Code Extension: The Ultimate Guide</h1>
+</div>
 
-## 🚀 What it is
-Vella is the ultimate God-Tier IDE extension for the Vella ecosystem. Designed for hyper-productive developers, it seamlessly integrates groundbreaking capabilities directly into your favorite editor. Whether you're building next-gen scalable apps, diving deep into blockchain, or optimizing quantitative trading algorithms, Vella provides unparalleled tooling to supercharge your workflow.
+Welcome to the Vella extension! This isn't just a code formatter—it is a "God-Tier" development toolkit built directly into VS Code. It bridges your IDE physically to your local database, your network layer, and powerful AI models.
 
-## 🔥 Extreme Features
-* **🤖 AI Copilot:** Your hyper-intelligent coding companion, always ready to assist, optimize, and generate complex logic at the speed of thought.
-* **🏗️ Schema Builder:** Visual database modeling reinvented. Architect your data structures visually and intuitively.
-* **📈 HFT Sandbox:** A built-in high-frequency trading sandbox. Backtest and refine your quantitative trading algorithms instantly with zero friction.
-* **🌐 Web3 Network Maps:** Explore decentralized networks and smart contract architectures spatially in an interactive network map.
+---
 
-## ⚡ Command Reference
-Unleash the full power of Vella using these God-Tier commands from the Command Palette:
-* `Vella: Sync SDK` - Synchronize and update the Vella SDK.
-* `Vella: Generate Wallet` - Generate a new secure Web3 wallet instantly.
-* `Vella: Open Visual Schema Builder` - Launch the interactive database schema architect.
-* `Vella: Scaffold React Boilerplate` - Kickstart a new React project with extreme defaults.
-* `Vella: Scaffold Vue Boilerplate` - Kickstart a new Vue project configured for scale.
-* `Vella: Scaffold Angular Boilerplate` - Kickstart an enterprise-ready Angular project.
-* `Vella: Scaffold ERP Schemas` - Bootstrap foundational ERP data structures.
-* `Vella: Scaffold Double-Entry Ledger Logic` - Inject robust financial accounting logic.
-* `Vella: Scaffold Limit Order Book` - Generate a high-performance limit order book core.
-* `Vella: Scaffold Quantitative Trading Strategy` - Set up the scaffolding for your next quant strategy.
-* `Vella: Scaffold Smart Contract Deployer` - Prepare your Web3 smart contract deployment pipeline.
-* `Vella: Scaffold Web3 Wallet Generator` - Build custom wallet generation tools.
-* `Vella: Scaffold UDP Telemetry Ingestion` - Set up ultra-fast UDP data pipelines.
-* `Vella: Scaffold SCADA State Machine` - Model complex industrial control systems.
-* `Vella: Open AI Copilot` - Engage with your AI pair programmer.
-* `Vella: Open Telemetry Dashboard` - Monitor system metrics and performance in real-time.
-* `Vella: 1-Click Cloud Deploy` - Ship your code to production instantly.
-* `Vella: Run HFT Backtest Sandbox` - Execute your trading strategies in the sandbox.
-* `Vella: Open Web3 Network Map` - Visualize decentralized topologies.
-* `Vella: Generate CI/CD Pipeline` - Automate your deployments effortlessly.
-* `Vella: Open Agent Swarm Orchestrator` - Manage complex AI multi-agent systems.
-* `Vella: Open Hardware-in-the-Loop Simulator` - Bridge software with physical hardware testing.
-* `Vella: Open Plugin Marketplace` - Discover and install extensions for Vella.
-* `Vella: Start Multiplayer Database Design Session` - Collaborate on database schemas in real-time.
-* `Vella: Start Time-Travel Debugger` - Debug across time states and pinpoint subtle bugs.
-* `Vella: Open Production Admin Panel` - Access live production controls securely.
-* `Vella: Export Architecture Graph` - Generate and export a complete system topology graph.
-* `Vella: Generate AI SQL Query` - Write complex SQL instantly using natural language.
-* `Vella: Enter Spatial VR/AR Mode` - Immerse yourself in spatial computing environments.
-* `Vella: Open Quantum Simulator` - Explore quantum computing algorithms locally.
-* `Vella: Connect BCI Telemetry` - Interface directly with Brain-Computer Interface streams.
+## 🚀 Step 1: Installation
+If you haven't installed it yet, it only takes one second.
+1. Open your terminal in the root of the Vella repository.
+2. Run the following command to install the packaged extension directly into your IDE:
+   ```bash
+   code --install-extension vscode-extension/vella-vscode-0.0.2.vsix
+   ```
+3. Restart VS Code (or press `F5` if you are running it in a development host).
 
-Elevate your development experience to a God-Tier level with Vella!
+---
+
+## 🤖 Step 2: Configuring the AI Copilot
+The Vella AI Copilot lives directly inside your editor and can write code, debug errors, and generate algorithms. Best of all, **it is completely model-agnostic.**
+
+Open your VS Code Settings (Press `Ctrl + ,` or `Cmd + ,`), search for **"Vella"**, and configure your AI based on your preference:
+
+### Option A: Using Google Gemini (Recommended)
+1. **Vella: Ai Endpoint:** Paste `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent` *(Do not open this link in a browser, just paste it here!)*
+2. **Vella: Ai Api Key:** Paste your Google AI Studio API Key.
+
+### Option B: Using OpenAI (ChatGPT)
+1. **Vella: Ai Endpoint:** Paste `https://api.openai.com/v1/chat/completions`
+2. **Vella: Ai Model:** Type `gpt-4o` or `gpt-3.5-turbo`
+3. **Vella: Ai Api Key:** Paste your OpenAI API Key.
+
+### Option C: Using Local Ollama (Free & Offline)
+1. **Vella: Ai Endpoint:** Paste `http://localhost:11434/v1/chat/completions`
+2. **Vella: Ai Model:** Type your local model name (e.g., `llama3` or `mistral`).
+3. **Vella: Ai Api Key:** *(Leave this completely blank)*.
+
+**How to use it:** Open the Command Palette (`Ctrl+Shift+P`) and type `Vella: Open AI Copilot`.
+
+---
+
+## 🛠️ Step 3: Core Workflow Features
+Once installed, open the VS Code Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and type `Vella:` to see the massive list of tools. Here is how to use the most important ones:
+
+### 1. The "Zero-Context-Switching" API Tester
+*   **Command:** `Vella: Test Local API Endpoint`
+*   **What it does:** Replaces Postman. It asks you for a route (e.g., `GET /api/users`), physically hits your local Vella server, measures the exact millisecond latency, and opens the beautifully formatted JSON response right next to your code.
+
+### 2. Full-Stack Syncing (For React/Vue Developers)
+*   **Command:** `Vella: Export TypeScript Interfaces`
+    *   *What it does:* Scans your backend Rust code and instantly writes a `vella-types.d.ts` file so your Frontend has perfect Autocomplete matching your database.
+*   **Command:** `Vella: Generate Frontend API Hooks`
+    *   *What it does:* Automatically writes fully-typed React (`useSWR`) or Vue Composables wired to your Vella API endpoints.
+
+### 3. Database Management (For Backend Engineers)
+*   **The Vella Explorer:** Look at the left Activity Bar in VS Code. Click the Vella icon. It actively queries your local `vella.db` SQLite file, showing you a live tree of every table and column type in your database.
+*   **Command:** `Vella: Seed Database with Mock Data`
+    *   *What it does:* Instantly injects 5 rows of random, realistic mock data into your selected database table. 
+
+### 4. Network Operations (For DevOps & Cloud)
+*   **Command:** `Vella NetOps: Analyze Local Socket Bindings`
+    *   *What it does:* If your server won't start because of an `Address already in use` error, run this. It executes `lsof`/`netstat` and tells you exactly which process is blocking your ports.
+*   **Command:** `Vella Cloud: Scaffold Terraform / Kubernetes`
+    *   *What it does:* Instantly writes production-grade AWS Terraform architecture or Kubernetes Deployment/HPA YAMLs into your workspace.
+
+### 5. Web3 & Blockchain Tooling
+*   **Command:** `Vella Web3: Inspect Live ETH Network State`
+    *   *What it does:* Enter any Ethereum address, and it will execute a raw JSON-RPC call to Cloudflare's node to fetch the live Mainnet ETH balance.
+*   **Command:** `Vella Web3: Generate TS Bindings from ABI`
+    *   *What it does:* Finds compiled `.json` smart contracts in your workspace and auto-generates perfect TypeScript frontend bindings.
+
+---
+
+## 🔮 Step 4: The Visual "God-Tier" Tools
+Vella includes several interactive, visually stunning UI tools built directly into VS Code:
+
+*   **Vella: Open Visual Schema Builder:** Opens an interactive canvas. You can click and drag your database tables around. Click "Save Schema" to permanently write the layout back to your hard drive.
+*   **Vella: Agent Swarm Orchestrator:** Opens an animated dashboard. Click "Dispatch Task", and watch as the extension physically writes a Rust file to your hard drive, runs `cargo check` in the background, and reports the compiler success/failure in real-time.
+*   **Vella: Enter Spatial VR/AR Mode:** Renders a gorgeous, mouse-interactive 3D physics map of your software architecture.
+
+**You are now a Vella Master.** Enjoy building highly optimized, full-stack software faster than ever before!
