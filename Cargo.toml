@@ -23,7 +23,7 @@ tokio-modbus = "0.14"
 k256 = { version = "0.13", features = ["ecdsa"] }
 sha3 = "0.10"
 redis = { version = "0.25", features = ["tokio-comp"] }
-object_store = { version = "0.9", features = ["aws"] } # Added for S3/Azure/GCP and Local storage
+object_store = { version = "0.14", features = ["aws"] } # Added for S3/Azure/GCP and Local storage
 bytes = "1.4"
 rhai = { version = "1.18", features = ["serde", "sync"] } # Embedded scripting engine for zero-recompile extensibility
 tokio-cron-scheduler = "0.10" # Background jobs and task scheduling
