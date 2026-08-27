@@ -386,6 +386,70 @@ fn main() {
         await vscode.window.showTextDocument(doc);
     });
 
+    let scaffoldUdpTelemetryDisposable = vscode.commands.registerCommand('vella.scaffoldUdpTelemetry', async () => {
+        const content = `use std::net::UdpSocket;
+use std::io;
+
+pub fn start_telemetry_listener(address: &str) -> io::Result<()> {
+    let socket = UdpSocket::bind(address)?;
+    socket.set_nonblocking(true)?;
+    
+    let mut buf = [0u8; 1024];
+    
+    loop {
+        match socket.recv_from(&mut buf) {
+            Ok((size, _src)) => {
+                // Process high-throughput telemetry data bypassing TCP overhead
+                // e.g., F1 car telemetry or Oil Rig pressure gauges
+                let _data = &buf[..size];
+                // TODO: deserialize and process _data
+            }
+            Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+                // No data available, could yield or sleep briefly
+                continue;
+            }
+            Err(e) => return Err(e),
+        }
+    }
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
+    let scaffoldScadaStateMachineDisposable = vscode.commands.registerCommand('vella.scaffoldScadaStateMachine', async () => {
+        const content = `pub struct ScadaState {
+    pub core_temperature: f64,
+    pub cooling_system_active: bool,
+}
+
+impl ScadaState {
+    pub fn new() -> Self {
+        Self {
+            core_temperature: 0.0,
+            cooling_system_active: false,
+        }
+    }
+
+    pub fn update(&mut self, new_temp: f64) {
+        self.core_temperature = new_temp;
+        
+        let threshold = 100.0;
+        let hysteresis = 5.0;
+
+        // Basic PID-style software state machine logic
+        if self.core_temperature > threshold {
+            self.cooling_system_active = true;
+        } else if self.core_temperature < (threshold - hysteresis) {
+            self.cooling_system_active = false;
+        }
+    }
+}
+`;
+        const doc = await vscode.workspace.openTextDocument({ content, language: 'rust' });
+        await vscode.window.showTextDocument(doc);
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -403,6 +467,8 @@ fn main() {
         scaffoldTradingStrategyDisposable,
         scaffoldSmartContractDeployerDisposable,
         scaffoldWalletGeneratorDisposable,
+        scaffoldUdpTelemetryDisposable,
+        scaffoldScadaStateMachineDisposable,
         statusBarItem
     );
 }

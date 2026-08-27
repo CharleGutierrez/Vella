@@ -61,6 +61,14 @@
       {
         "command": "vella.scaffoldWalletGenerator",
         "title": "Vella: Scaffold Web3 Wallet Generator"
+      },
+      {
+        "command": "vella.scaffoldUdpTelemetry",
+        "title": "Vella: Scaffold UDP Telemetry Ingestion"
+      },
+      {
+        "command": "vella.scaffoldScadaStateMachine",
+        "title": "Vella: Scaffold SCADA State Machine"
       }
     ]
   },
