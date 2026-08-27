@@ -1,0 +1,37 @@
+{
+  "name": "vella-vscode",
+  "displayName": "Vella",
+  "description": "VS Code Extension for the Vella framework",
+  "version": "0.0.1",
+  "publisher": "vella",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vella.syncSdk",
+        "title": "Vella: Sync SDK"
+      },
+      {
+        "command": "vella.generateWallet",
+        "title": "Vella: Generate Wallet"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.x",
+    "typescript": "^5.1.3"
+  }
+}
