@@ -475,7 +475,11 @@ impl ScadaState {
 
     let openTelemetryDashboardDisposable = vscode.commands.registerCommand('vella.openTelemetryDashboard', () => {
         const panel = vscode.window.createWebviewPanel('vellaTelemetry', 'Vella Telemetry Dashboard', vscode.ViewColumn.One, { enableScripts: true });
-        panel.webview.html = getTelemetryWebviewContent();
+        panel.webview.html = getTelemetryWebviewContent('Running cargo run --example test_scada...');
+        
+        cp.exec('cargo run --example test_scada', { cwd: vscode.workspace.workspaceFolders?.[0].uri.fsPath }, (err, stdout, stderr) => {
+            panel.webview.html = getTelemetryWebviewContent(stdout || stderr || 'No output');
+        });
     });
 
     let deployToCloudDisposable = vscode.commands.registerCommand('vella.deployToCloud', async () => {
@@ -492,12 +496,20 @@ impl ScadaState {
 
     let runHftBacktestDisposable = vscode.commands.registerCommand('vella.runHftBacktest', () => {
         const panel = vscode.window.createWebviewPanel('vellaHftBacktest', 'HFT Backtesting Sandbox', vscode.ViewColumn.One, { enableScripts: true });
-        panel.webview.html = getHftBacktestWebviewContent();
+        panel.webview.html = getHftBacktestWebviewContent('Running cargo run --example test_hft...');
+        
+        cp.exec('cargo run --example test_hft', { cwd: vscode.workspace.workspaceFolders?.[0].uri.fsPath }, (err, stdout, stderr) => {
+            panel.webview.html = getHftBacktestWebviewContent(stdout || stderr || 'No output');
+        });
     });
 
     let openWeb3NetworkMapDisposable = vscode.commands.registerCommand('vella.openWeb3NetworkMap', () => {
         const panel = vscode.window.createWebviewPanel('vellaWeb3NetworkMap', 'Web3 Network Map', vscode.ViewColumn.One, { enableScripts: true });
-        panel.webview.html = getWeb3NetworkMapWebviewContent();
+        panel.webview.html = getWeb3NetworkMapWebviewContent('Running cargo run --example test_blockchain...');
+        
+        cp.exec('cargo run --example test_blockchain', { cwd: vscode.workspace.workspaceFolders?.[0].uri.fsPath }, (err, stdout, stderr) => {
+            panel.webview.html = getWeb3NetworkMapWebviewContent(stdout || stderr || 'No output');
+        });
     });
 
     let setupCiCdDisposable = vscode.commands.registerCommand('vella.setupCiCd', async () => {
@@ -832,7 +844,7 @@ function getCopilotWebviewContent() {
 </html>`;
 }
 
-function getTelemetryWebviewContent() {
+function getTelemetryWebviewContent(logs: string = '') {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -841,6 +853,7 @@ function getTelemetryWebviewContent() {
         .container { display: flex; gap: 20px; }
         .panel { border: 1px solid #3c3c3c; padding: 20px; flex: 1; border-radius: 5px; background-color: #252526; }
         .chart { height: 100px; border-radius: 4px; margin-top: 10px; }
+        pre { background: #000; color: #0f0; padding: 10px; border-radius: 5px; overflow-x: auto; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -857,11 +870,13 @@ function getTelemetryWebviewContent() {
             <p style="margin-top: 10px; font-size: 12px; color: #aaa;">Temp: 45.2 C</p>
         </div>
     </div>
+    <h3>Backend Execution Logs</h3>
+    <pre>${logs}</pre>
 </body>
 </html>`;
 }
 
-function getHftBacktestWebviewContent() {
+function getHftBacktestWebviewContent(logs: string = '') {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -870,6 +885,7 @@ function getHftBacktestWebviewContent() {
         .chart { height: 300px; border: 1px solid #3c3c3c; margin-bottom: 20px; border-radius: 5px; background: repeating-linear-gradient(90deg, #1e1e1e, #1e1e1e 10px, #252526 10px, #252526 20px); }
         .dropzone { border: 2px dashed #0e639c; padding: 50px; text-align: center; border-radius: 5px; cursor: pointer; }
         .dropzone:hover { background-color: #252526; }
+        pre { background: #000; color: #0f0; padding: 10px; border-radius: 5px; overflow-x: auto; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -878,23 +894,26 @@ function getHftBacktestWebviewContent() {
         <div style="padding: 140px; text-align: center; color: #aaa;">[ Candlestick Chart Rendered Here ]</div>
     </div>
     <div class="dropzone">Drop CSV Tick Data Here</div>
+    <h3>Backend Execution Logs</h3>
+    <pre>${logs}</pre>
 </body>
 </html>`;
 }
 
-function getWeb3NetworkMapWebviewContent() {
+function getWeb3NetworkMapWebviewContent(logs: string = '') {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <style>
-        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; overflow: hidden; }
-        .network { position: relative; width: 100%; height: 500px; border: 1px solid #3c3c3c; background-color: #1e1e1e; border-radius: 8px; }
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .network { position: relative; width: 100%; height: 300px; border: 1px solid #3c3c3c; background-color: #1e1e1e; border-radius: 8px; }
         .node { position: absolute; border-radius: 50%; background-color: #4ec9b0; width: 20px; height: 20px; box-shadow: 0 0 10px #4ec9b0; display: flex; align-items: center; justify-content: center; }
         .node.ipfs { top: 100px; left: 150px; background-color: #0e639c; box-shadow: 0 0 10px #0e639c; }
-        .node.zk { top: 300px; left: 400px; background-color: #c586c0; box-shadow: 0 0 10px #c586c0; }
-        .node.depin { top: 200px; left: 600px; background-color: #ce9178; box-shadow: 0 0 10px #ce9178; }
+        .node.zk { top: 200px; left: 400px; background-color: #c586c0; box-shadow: 0 0 10px #c586c0; }
+        .node.depin { top: 150px; left: 600px; background-color: #ce9178; box-shadow: 0 0 10px #ce9178; }
         .label { position: absolute; top: 25px; left: -20px; font-size: 12px; color: #aaa; white-space: nowrap; }
         .line { position: absolute; background-color: #555; height: 2px; transform-origin: 0 0; }
+        pre { background: #000; color: #0f0; padding: 10px; border-radius: 5px; overflow-x: auto; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -903,10 +922,12 @@ function getWeb3NetworkMapWebviewContent() {
         <div class="node ipfs"><div class="label">IPFS Peer</div></div>
         <div class="node zk"><div class="label">ZK-Rollup</div></div>
         <div class="node depin"><div class="label">DePIN Node</div></div>
-        <div class="line" style="top: 110px; left: 160px; width: 320px; transform: rotate(38deg);"></div>
-        <div class="line" style="top: 310px; left: 410px; width: 220px; transform: rotate(-26deg);"></div>
-        <div class="line" style="top: 110px; left: 160px; width: 460px; transform: rotate(12deg);"></div>
+        <div class="line" style="top: 110px; left: 160px; width: 320px; transform: rotate(15deg);"></div>
+        <div class="line" style="top: 210px; left: 410px; width: 220px; transform: rotate(-15deg);"></div>
+        <div class="line" style="top: 110px; left: 160px; width: 460px; transform: rotate(5deg);"></div>
     </div>
+    <h3>Backend Execution Logs</h3>
+    <pre>${logs}</pre>
 </body>
 </html>`;
 }
