@@ -1,9 +1,14 @@
 {
   "name": "vella-vscode",
   "displayName": "Vella",
-  "description": "VS Code Extension for the Vella framework",
+  "description": "The ultimate God-Tier IDE extension for the Vella ecosystem",
+  "icon": "vella-logo.jpg",
   "version": "0.0.1",
   "publisher": "vella",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vella/vella-vscode.git"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
