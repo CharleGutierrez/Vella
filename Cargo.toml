@@ -30,7 +30,7 @@ tokio-cron-scheduler = "0.10" # Background jobs and task scheduling
 # candle-core = "0.5" # Temporarily disabled due to rand v0.8/0.9 trait conflicts
 regex = "1.10" # Used for document chunking
 text-splitter = "0.13" # Chunking algorithm for RAG
-reqwest = { version = "0.11", features = ["json"] } # AI Gateway HTTP client
+reqwest = { version = "0.13", features = ["json"] } # AI Gateway HTTP client
 opentelemetry = "0.22"
 opentelemetry_sdk = { version = "0.22", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.15", features = ["tonic"] }
