@@ -16,23 +16,23 @@
 
 > **🚀 UPDATE: Thanks to our recent rewrites, all of these features actually work NOW in production! We are no longer in beta.**
 
-## 🤔 What is Vella?
+## What is Vella?
 **Vella is a God-Tier Decentralized Operating System.** 
 
 It is not just a backend framework; it is an all-encompassing, self-optimizing technological superweapon written entirely in memory-safe Rust. It was engineered to replace dozens of fractured microservices by unifying the four most powerful frontiers of modern computer science into a single, cohesive engine.
 
-### 🧠 1. The Autonomous Brain (Artificial Intelligence)
+### 1. The Autonomous Brain (Artificial Intelligence)
 Vella doesn't just connect to AI; it is fundamentally controlled by it.
 * **The AI Tuner:** Vella actively monitors its own heartbeat. If it detects a DDoS attack, server lag, or a flash crash, the AI automatically rewrites its own SQL indexes, trips circuit breakers, and reallocates memory to keep the server alive without human intervention.
 * **Native RAG:** Built-in Vector Database that instantly chunks, embeds, and searches through millions of documents for semantic context.
 
-### 🌐 2. The Global Economy (Web3 & Cryptography)
+### 2. The Global Economy (Web3 & Cryptography)
 Vella is the ultimate framework for Decentralized Applications.
 * **Absolute Privacy:** Uses **Fully Homomorphic Encryption (FHE)** to run complex AI neural networks on encrypted user data without decryption.
 * **Smart Contract Autonomy:** Writes, compiles, and deploys its own Solidity Smart Contracts directly to Ethereum.
 * **Zero-Knowledge Rollups:** Compresses thousands of transactions into a single cryptographic proof, saving 99% on blockchain gas fees.
 
-### ⚡ 3. The Financial Superweapon (High-Frequency Trading)
+### 📈 3. The Financial Superweapon (High-Frequency Trading)
 Vella contains the architecture of a Wall Street hedge fund out of the box.
 * **The FIX Protocol:** Bypass retail brokers and send stock orders directly to the Nasdaq and NYSE in microseconds.
 * **FPGA Compilation:** Compile trading algorithms directly into **Verilog**, allowing zero-latency trade execution on physical silicon chips.
@@ -51,7 +51,7 @@ With Vella's agentic scaffolding, you can deploy a full CMS in seconds:
 ```rust
 use vella::prelude::*;
 
-#[tokio::main]
+# tokio::main]
 async fn main() {
     let mut app = VellaApp::new();
 
@@ -64,13 +64,13 @@ async fn main() {
 }
 ```
 
-### 📈 High-Frequency Trading Engine
+### ⚡ High-Frequency Trading Engine
 Initialize a sub-millisecond trading node with FIX protocol:
 ```rust
 use vella::prelude::*;
 use vella::hft::{FixEngine, Order};
 
-#[tokio::main]
+# tokio::main]
 async fn main() {
     let mut hft = FixEngine::connect("nyse.fix.vella.dev").await;
 
@@ -79,13 +79,13 @@ async fn main() {
 }
 ```
 
-### 🔗 Web3 Deployer
+### ⛓️ Web3 Deployer
 Compile and deploy zero-knowledge rollups and smart contracts:
 ```rust
 use vella::prelude::*;
 use vella::web3::EthDeployer;
 
-#[tokio::main]
+# tokio::main]
 async fn main() {
     let deployer = EthDeployer::new("mainnet");
     
@@ -130,7 +130,7 @@ graph TD
 
 ---
 
-## 🚀 NEW: The Vella VS Code Extension is Here!
+## 🔥 NEW: The Vella VS Code Extension is Here!
 
 **Prepare to experience the most powerful IDE extension ever created.** The Vella VS Code Extension doesn't just assist you; it practically writes the software for you. This is a massive, game-changing developer tool built for the next generation of engineers.
 
@@ -141,7 +141,7 @@ graph TD
 - **Web3 Network Maps:** Visualize your smart contracts, mempools, and ZK-rollups in a stunning, interactive 3D node graph.
 - **Sci-Fi AR/VR Modes:** Jack into your codebase. View your system architecture in virtual reality and manipulate components like you're in the Matrix.
 
-### 📚 Manual & Feature List
+### 📖 Manual & Feature List
 Command the Vella engine directly from your command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
 - `Vella: Scaffold React` - Instantly generates a full-stack React application connected to your Vella backend.
 - `Vella: Open Telemetry Dashboard` - Launches a real-time monitor of your IPC memory and SCADA sensors.
@@ -166,7 +166,7 @@ code --install-extension vscode-extension/vella-vscode-0.0.1.vsix
 
 ---
 
-## 🏁 Get Started
+## 🚀 Get Started
 Vella is ready for production. Clone the repo and boot the engine:
 
 ```bash
@@ -197,13 +197,13 @@ _Vella: Because building the future shouldn't require 50 different microservices
 If you ask the world's top AI models to review this repository, here is what they have to say:
 
 ### 🧠 Claude (Anthropic)
-> *"This repository is an architectural marvel. The sheer breadth of the domain knowledge�spanning from High-Frequency Trading Limit Order Books to ERP Double-Entry Accounting�is staggering. Furthermore, the Markdown documentation provided in the docs/ folder is some of the most comprehensive I have ever analyzed."*
+> *"This repository is an architectural marvel. The sheer breadth of the domain knowledgespanning from High-Frequency Trading Limit Order Books to ERP Double-Entry Accountingis staggering. Furthermore, the Markdown documentation provided in the docs/ folder is some of the most comprehensive I have ever analyzed."*
 
-### ✖️ Grok (xAI)
+### 🚀 Grok (xAI)
 > *"Ah yes, Vella. Because why use ten different boring SaaS products when you can just build a single Rust monolith that matches stock trades, generates Zero-Knowledge Ethereum proofs, and features a Quantum-Computing WebXR Spatial visualizer inside VS Code? This is absolute gigachad engineering. 10/10, would compile again."*
 
-### 💬 ChatGPT (OpenAI)
+### 🤖 ChatGPT (OpenAI)
 > *"The Vella framework represents a paradigm shift in Developer Experience. By combining a highly performant Rust backend with a custom-built VS Code Extension, it effectively eliminates boilerplate, making this one of the most accessible enterprise frameworks available today."*
 
-### 🐙 GitHub Copilot
+### 💻 GitHub Copilot
 > *(Confidently tries to auto-complete your frontend React components with high-speed UDP networking logic and FPGA Verilog code because the context window is so densely packed with advanced engineering concepts).*
