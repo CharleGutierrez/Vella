@@ -527,6 +527,25 @@ jobs:
         vscode.window.showInformationMessage('Vella: Flawless CI/CD pipeline generated successfully!');
     });
 
+    let openAgentSwarmDisposable = vscode.commands.registerCommand('vella.openAgentSwarm', () => {
+        const panel = vscode.window.createWebviewPanel('vellaAgentSwarm', 'Agent Swarm Orchestrator', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getAgentSwarmWebviewContent();
+    });
+
+    let openHardwareSimulatorDisposable = vscode.commands.registerCommand('vella.openHardwareSimulator', () => {
+        const panel = vscode.window.createWebviewPanel('vellaHardwareSimulator', 'Hardware-in-the-Loop Simulator', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getHardwareSimulatorWebviewContent();
+    });
+
+    let openMarketplaceDisposable = vscode.commands.registerCommand('vella.openMarketplace', () => {
+        const panel = vscode.window.createWebviewPanel('vellaMarketplace', 'Plugin Marketplace', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getMarketplaceWebviewContent();
+    });
+
+    let startMultiplayerSessionDisposable = vscode.commands.registerCommand('vella.startMultiplayerSession', () => {
+        vscode.window.showInformationMessage("Vella: Multiplayer session started! Share this Session ID (vella-mp-789xyz) with your team to collaborate on the Visual Schema Builder in real-time.");
+    });
+
     const diagnosticCollection = vscode.languages.createDiagnosticCollection('vella');
     context.subscriptions.push(diagnosticCollection);
 
@@ -576,6 +595,10 @@ jobs:
         runHftBacktestDisposable,
         openWeb3NetworkMapDisposable,
         setupCiCdDisposable,
+        openAgentSwarmDisposable,
+        openHardwareSimulatorDisposable,
+        openMarketplaceDisposable,
+        startMultiplayerSessionDisposable,
         statusBarItem
     );
 }
@@ -831,6 +854,89 @@ function getWeb3NetworkMapWebviewContent() {
         <div class="line" style="top: 110px; left: 160px; width: 320px; transform: rotate(38deg);"></div>
         <div class="line" style="top: 310px; left: 410px; width: 220px; transform: rotate(-26deg);"></div>
         <div class="line" style="top: 110px; left: 160px; width: 460px; transform: rotate(12deg);"></div>
+    </div>
+</body>
+</html>`;
+}
+
+function getAgentSwarmWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; text-align: center; }
+        .node { padding: 15px; border-radius: 8px; border: 1px solid #555; display: inline-block; margin: 20px; background-color: #2d2d30; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-weight: bold; }
+        .line { height: 2px; background: #61afef; width: 50px; display: inline-block; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <h2 style="color: #61afef; margin-bottom: 40px;">Agent Swarm Orchestrator</h2>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <div class="node">Coder Agent</div>
+        <div class="line"></div>
+        <div class="node">QA Agent</div>
+        <div class="line"></div>
+        <div class="node">Architect Agent</div>
+    </div>
+</body>
+</html>`;
+}
+
+function getHardwareSimulatorWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .slider-container { margin: 20px 0; background-color: #252526; padding: 20px; border-radius: 8px; border: 1px solid #3c3c3c; }
+        input[type=range] { width: 100%; margin-top: 10px; cursor: pointer; }
+        label { font-weight: bold; color: #9cdcfe; }
+        .val { float: right; color: #ce9178; }
+    </style>
+</head>
+<body>
+    <h2 style="color: #4ec9b0;">Hardware-in-the-Loop Simulator</h2>
+    <p>Simulating physical PLC hardware connection to the SCADA engine.</p>
+    <div class="slider-container">
+        <label>Core Temperature</label><span class="val">45 °C</span>
+        <input type="range" min="0" max="100" value="45">
+    </div>
+    <div class="slider-container">
+        <label>Pipeline Pressure</label><span class="val">500 PSI</span>
+        <input type="range" min="0" max="1000" value="500">
+    </div>
+</body>
+</html>`;
+}
+
+function getMarketplaceWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .plugin { border: 1px solid #3c3c3c; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #252526; display: flex; justify-content: space-between; align-items: center; }
+        .plugin h3 { margin: 0 0 5px 0; color: #dcdcaa; }
+        .plugin p { margin: 0; color: #999; font-size: 14px; }
+        button { background-color: #0e639c; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #1177bb; }
+    </style>
+</head>
+<body>
+    <h2 style="color: #c586c0; margin-bottom: 20px;">Vella Plugin Marketplace</h2>
+    <div class="plugin">
+        <div>
+            <h3>Stripe Payments Integrator</h3>
+            <p>Easily add Stripe payments to your app.</p>
+        </div>
+        <button>1-Click Install</button>
+    </div>
+    <div class="plugin">
+        <div>
+            <h3>Solana Smart Contracts</h3>
+            <p>Deploy to Solana instantly.</p>
+        </div>
+        <button>1-Click Install</button>
     </div>
 </body>
 </html>`;

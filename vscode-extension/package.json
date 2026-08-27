@@ -93,6 +93,22 @@
       {
         "command": "vella.setupCiCd",
         "title": "Vella: Generate CI/CD Pipeline"
+      },
+      {
+        "command": "vella.openAgentSwarm",
+        "title": "Vella: Open Agent Swarm Orchestrator"
+      },
+      {
+        "command": "vella.openHardwareSimulator",
+        "title": "Vella: Open Hardware-in-the-Loop Simulator"
+      },
+      {
+        "command": "vella.openMarketplace",
+        "title": "Vella: Open Plugin Marketplace"
+      },
+      {
+        "command": "vella.startMultiplayerSession",
+        "title": "Vella: Start Multiplayer Database Design Session"
       }
     ],
     "viewsContainers": {
