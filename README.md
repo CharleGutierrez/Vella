@@ -130,6 +130,42 @@ graph TD
 
 ---
 
+## 🚀 NEW: The Vella VS Code Extension is Here!
+
+**Prepare to experience the most powerful IDE extension ever created.** The Vella VS Code Extension doesn't just assist you; it practically writes the software for you. This is a massive, game-changing developer tool built for the next generation of engineers.
+
+### 🌌 Extreme Features
+- **AI Copilot Sidebar:** A sentient companion that lives in your editor, ready to refactor millions of lines of code, write tests, and debug in real-time.
+- **Visual Schema Builder:** Drag and drop your database architectures and let Vella automatically generate the underlying Rust code.
+- **HFT Backtesting Sandbox:** Simulate high-frequency trading algorithms with zero-latency precision directly within your IDE.
+- **Web3 Network Maps:** Visualize your smart contracts, mempools, and ZK-rollups in a stunning, interactive 3D node graph.
+- **Sci-Fi AR/VR Modes:** Jack into your codebase. View your system architecture in virtual reality and manipulate components like you're in the Matrix.
+
+### 📖 Manual & Feature List
+Command the Vella engine directly from your command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
+- `Vella: Scaffold React` - Instantly generates a full-stack React application connected to your Vella backend.
+- `Vella: Open Telemetry Dashboard` - Launches a real-time monitor of your IPC memory and SCADA sensors.
+- `Vella: Deploy Smart Contract` - Compiles and pushes your Solidity code to the Ethereum mainnet in one click.
+- `Vella: Run HFT Simulation` - Boot up the backtesting sandbox to stress-test your trading algos.
+- `Vella: Engage AR/VR Mode` - Switch your editor into an immersive 3D architectural view.
+
+### 🛠️ Installation Guide
+Ready to supercharge your workflow? Install the extension today:
+
+**Method 1: Manual Installation (UI)**
+1. Open Visual Studio Code.
+2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) to open the Command Palette.
+3. Type `Extensions: Install from VSIX...` and select it.
+4. Navigate to the `vscode-extension/vella-vscode-0.0.1.vsix` file in your repository and hit install.
+
+**Method 2: Terminal Installation**
+Run the following command directly in your terminal:
+```bash
+code --install-extension vscode-extension/vella-vscode-0.0.1.vsix
+```
+
+---
+
 ## 🏁 Get Started
 Vella is ready for production. Clone the repo and boot the engine:
 
