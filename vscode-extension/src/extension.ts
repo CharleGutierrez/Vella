@@ -808,7 +808,7 @@ function getWebviewContent() {
         </div>
     </div>
 </body>
-</html>\`;
+</html>`;
 }
 
 function getCopilotWebviewContent() {
