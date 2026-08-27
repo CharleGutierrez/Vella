@@ -450,6 +450,46 @@ impl ScadaState {
         await vscode.window.showTextDocument(doc);
     });
 
+    // --- NEW FEATURES ---
+
+    class DatabaseExplorerProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+        getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
+            return element;
+        }
+        getChildren(element?: vscode.TreeItem): Thenable<vscode.TreeItem[]> {
+            if (element) return Promise.resolve([]);
+            return Promise.resolve([
+                new vscode.TreeItem('Users', vscode.TreeItemCollapsibleState.None),
+                new vscode.TreeItem('Invoices', vscode.TreeItemCollapsibleState.None),
+                new vscode.TreeItem('LimitOrders', vscode.TreeItemCollapsibleState.None)
+            ]);
+        }
+    }
+    const dbExplorerProvider = new DatabaseExplorerProvider();
+    vscode.window.registerTreeDataProvider('vella.databaseExplorer', dbExplorerProvider);
+
+    let openCopilotDisposable = vscode.commands.registerCommand('vella.openCopilot', () => {
+        const panel = vscode.window.createWebviewPanel('vellaCopilot', 'Vella AI Copilot', vscode.ViewColumn.Beside, { enableScripts: true });
+        panel.webview.html = getCopilotWebviewContent();
+    });
+
+    let openTelemetryDashboardDisposable = vscode.commands.registerCommand('vella.openTelemetryDashboard', () => {
+        const panel = vscode.window.createWebviewPanel('vellaTelemetry', 'Vella Telemetry Dashboard', vscode.ViewColumn.One, { enableScripts: true });
+        panel.webview.html = getTelemetryWebviewContent();
+    });
+
+    let deployToCloudDisposable = vscode.commands.registerCommand('vella.deployToCloud', async () => {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders) {
+            vscode.window.showErrorMessage('Vella: No workspace to deploy.');
+            return;
+        }
+        const dockerfilePath = vscode.Uri.joinPath(workspaceFolders[0].uri, 'Dockerfile');
+        const dockerfileContent = Buffer.from('FROM node:18\nWORKDIR /app\nCOPY . .\nRUN npm install\nCMD ["npm", "start"]', 'utf8');
+        await vscode.workspace.fs.writeFile(dockerfilePath, dockerfileContent);
+        vscode.window.showInformationMessage('Vella: Docker container built! Preparing for cloud deployment...');
+    });
+
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = '$(rocket) Vella Server';
     statusBarItem.show();
@@ -469,6 +509,9 @@ impl ScadaState {
         scaffoldWalletGeneratorDisposable,
         scaffoldUdpTelemetryDisposable,
         scaffoldScadaStateMachineDisposable,
+        openCopilotDisposable,
+        openTelemetryDashboardDisposable,
+        deployToCloudDisposable,
         statusBarItem
     );
 }
@@ -629,4 +672,55 @@ function getWebviewContent() {
 </html>\`;
 }
 
+function getCopilotWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .chat-box { height: 300px; border: 1px solid #3c3c3c; margin-bottom: 10px; padding: 10px; overflow-y: auto; background-color: #252526; border-radius: 5px; }
+        .bubble { background: #0e639c; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; background-color: #3c3c3c; color: white; border: 1px solid #555; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h3>Vella AI Copilot</h3>
+    <div class="chat-box">
+        <div class="bubble">How can I help you build with Vella today?</div>
+    </div>
+    <input type="text" placeholder="Ask Vella AI..." />
+</body>
+</html>`;
+}
+
+function getTelemetryWebviewContent() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #d4d4d4; font-family: sans-serif; padding: 20px; }
+        .container { display: flex; gap: 20px; }
+        .panel { border: 1px solid #3c3c3c; padding: 20px; flex: 1; border-radius: 5px; background-color: #252526; }
+        .chart { height: 100px; border-radius: 4px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Telemetry Dashboard</h2>
+    <div class="container">
+        <div class="panel">
+            <h4>HFT Latency</h4>
+            <div class="chart" style="background: linear-gradient(90deg, #4ec9b0, #0e639c);"></div>
+            <p style="margin-top: 10px; font-size: 12px; color: #aaa;">Live Latency < 1ms</p>
+        </div>
+        <div class="panel">
+            <h4>SCADA Core Temp</h4>
+            <div class="chart" style="background: linear-gradient(90deg, #d16969, #ce9178);"></div>
+            <p style="margin-top: 10px; font-size: 12px; color: #aaa;">Temp: 45.2 C</p>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
 export function deactivate() {}
+

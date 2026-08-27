@@ -69,8 +69,37 @@
       {
         "command": "vella.scaffoldScadaStateMachine",
         "title": "Vella: Scaffold SCADA State Machine"
+      },
+      {
+        "command": "vella.openCopilot",
+        "title": "Vella: Open AI Copilot"
+      },
+      {
+        "command": "vella.openTelemetryDashboard",
+        "title": "Vella: Open Telemetry Dashboard"
+      },
+      {
+        "command": "vella.deployToCloud",
+        "title": "Vella: 1-Click Cloud Deploy"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vella-explorer",
+          "title": "Vella",
+          "icon": "$(rocket)"
+        }
+      ]
+    },
+    "views": {
+      "vella-explorer": [
+        {
+          "id": "vella.databaseExplorer",
+          "name": "Vella Database Explorer"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
