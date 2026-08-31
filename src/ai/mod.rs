@@ -18,7 +18,7 @@ pub use chunking::DocumentSplitter;
 pub use local_llm::{LocalLlmEngine, OllamaChatMessage};
 pub use registry::ModelRegistry;
 pub use gpu::HardwareAccelerator;
-pub use gateway::{UnifiedAiGateway, AiConfig, AiProvider};
+pub use gateway::{UnifiedAiGateway, AiConfig, AiProvider, AiRequest, AiMessage};
 pub use rag::RagEngine;
 pub use swarm::AgentSwarm;
 pub use decision::{AiDecisionEngine, RiskAssessment, RiskLevel};

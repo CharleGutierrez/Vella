@@ -61,7 +61,7 @@ impl UnifiedAiGateway {
         }
     }
 
-    /// Backwards compatible simple generation
+    /// Simple generation — returns the assistant's text directly (not raw JSON).
     pub async fn generate(&self, config: &AiConfig, prompt: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         let req = AiRequest {
             messages: vec![AiMessage { role: "user".to_string(), content: Some(prompt.to_string()), name: None, tool_calls: None, tool_call_id: None, image_url: None }],
@@ -69,10 +69,53 @@ impl UnifiedAiGateway {
             response_format: None,
             temperature: 0.7,
         };
-        self.generate_advanced(config, req).await
+        self.generate_text(config, req).await
     }
 
-    /// Advanced generation supporting Tools, Multimodal, Structured Output, and Memory
+    /// Generate and extract the assistant's reply as a plain `String`.
+    /// Handles the different response envelopes for each provider automatically.
+    pub async fn generate_text(&self, config: &AiConfig, request: AiRequest) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+        let raw_json = self.generate_advanced(config, request).await?;
+        Ok(Self::extract_text_from_response(&config.provider, &raw_json))
+    }
+
+    /// Extract the assistant's reply text from a raw provider JSON response string.
+    pub fn extract_text_from_response(provider: &AiProvider, raw_json: &str) -> String {
+        let val: Value = match serde_json::from_str(raw_json) {
+            Ok(v) => v,
+            Err(_) => return raw_json.to_string(),
+        };
+        match provider {
+            // OpenAI-compatible envelope: choices[0].message.content
+            AiProvider::OpenAI
+            | AiProvider::DeepSeek
+            | AiProvider::Grok
+            | AiProvider::OllamaLocal => {
+                val["choices"][0]["message"]["content"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_string()
+            }
+            // Anthropic envelope: content[0].text
+            AiProvider::Anthropic => {
+                val["content"][0]["text"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_string()
+            }
+            // Gemini envelope: candidates[0].content.parts[0].text
+            AiProvider::Gemini => {
+                val["candidates"][0]["content"]["parts"][0]["text"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_string()
+            }
+        }
+    }
+
+    /// Low-level generation — returns the **raw provider JSON** as a String.
+    /// Prefer `generate()` or `generate_text()` for direct text extraction.
+    /// Use this when you need the full response envelope (e.g. for tool call parsing).
     pub async fn generate_advanced(&self, config: &AiConfig, request: AiRequest) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         info!("Unified Gateway: Advanced request to {:?} (Model: {})", config.provider, config.model);
 

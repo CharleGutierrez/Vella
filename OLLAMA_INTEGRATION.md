@@ -112,18 +112,32 @@ use vella::ai::RagEngine;
 let rag = RagEngine::new();
 
 // --- Ingest ---
-let schema = /* your ModelSchema */;
 let embedding = rag.ingest_document(&schema, "Your document text here...").await?;
-// embedding is a Vec<f64> ready to upsert into pgvector
+// embedding is a Vec<f64> — serialise to JSON and upsert via DatabaseAdapter::insert()
 
-// --- Search ---
-let results = rag.similarity_search(&schema, "What is Vella?", 5).await?;
+// --- Search (wired to SqliteDatabase::search_vectors) ---
+let results = rag.similarity_search(&db, &schema, "What is Vella?", 5).await?;
+for hit in results {
+    println!("score={:.4}  record={}", hit.score, hit.record);
+}
 
-// --- Generate answer from retrieved chunks ---
+// --- Full RAG pipeline in one call ---
+// Embeds question → searches DB → retrieves top-k records → generates answer
+let answer = rag.ask(
+    &db,          // SqliteDatabase
+    &schema,      // ModelSchema with an "embedding" vector field
+    "What is Vella used for?",
+    "content",    // the text field to use as LLM context
+    5,            // top-k results
+    "llama3.2",   // any Ollama chat model
+).await?;
+println!("{}", answer);
+
+// --- Manual: generate answer from retrieved chunks ---
 let answer = rag.generate_answer(
     "What is Vella used for?",
     &["Vella is a Rust web framework...", "It supports RAG and vector search..."],
-    "llama3.2",   // any Ollama chat model
+    "llama3.2",
 ).await?;
 println!("{}", answer);
 ```
