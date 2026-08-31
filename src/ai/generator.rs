@@ -20,12 +20,72 @@ impl AiScaffolder {
     /// Generate a full ModelSchema from a natural language prompt
     
     pub async fn generate_schema(model_name: &str, prompt: &str) -> ModelSchema {
+        // Priority 1: Gemini (cloud)
         if let Ok(api_key) = std::env::var("GEMINI_API_KEY") {
             if let Some(schema) = crate::ai::gemini_scaffolder::call_gemini_schema(model_name, prompt, &api_key).await {
                 return schema;
             }
         }
+
+        // Priority 2: Ollama (local) — set OLLAMA_SCAFFOLD_MODEL to enable
+        // e.g. OLLAMA_SCAFFOLD_MODEL=qwen2.5-coder
+        if let Ok(ollama_model) = std::env::var("OLLAMA_SCAFFOLD_MODEL") {
+            tracing::info!("🦙 [AiScaffolder] Using Ollama model '{}' for schema generation", ollama_model);
+            if let Some(schema) = Self::generate_schema_via_ollama(model_name, prompt, &ollama_model).await {
+                return schema;
+            }
+        }
+
+        // Priority 3: rule-based mock (offline fallback)
         Self::generate_schema_mock(model_name, prompt)
+    }
+
+    /// Ask a local Ollama model to emit a JSON schema definition, then parse it.
+    async fn generate_schema_via_ollama(
+        model_name: &str,
+        prompt: &str,
+        ollama_model: &str,
+    ) -> Option<crate::model::schema::ModelSchema> {
+        use crate::ai::local_llm::LocalLlmEngine;
+
+        let engine = LocalLlmEngine::new_ollama(ollama_model);
+
+        let system_prompt = format!(
+            "You are a Vella framework schema designer. \
+             Given a model name and description, output ONLY a valid JSON object with this shape:\n\
+             {{\"fields\": [{{\"name\": \"title\", \"type\": \"string\", \"required\": true, \"searchable\": true}}]}}\n\
+             Supported types: string, integer, float, boolean, email, password, markdown, html, \
+             image, file, json, vector, enum, foreign_key, money, datetime.\n\
+             Do not add explanation. Output only the JSON object.\n\n\
+             Model name: {}\nDescription: {}",
+            model_name, prompt
+        );
+
+        let raw = match engine.generate(&system_prompt).await {
+            Ok(r) => r,
+            Err(e) => {
+                tracing::warn!("🦙 [AiScaffolder] Ollama generation failed: {}. Falling back to mock.", e);
+                return None;
+            }
+        };
+
+        // Extract JSON from the response (Ollama sometimes wraps in markdown fences)
+        let json_str = extract_json(&raw);
+
+        match serde_json::from_str::<serde_json::Value>(&json_str) {
+            Ok(val) => {
+                tracing::info!("🦙 [AiScaffolder] Ollama returned parseable JSON schema.");
+                Some(json_to_schema(model_name, prompt, &val))
+            }
+            Err(e) => {
+                tracing::warn!(
+                    "🦙 [AiScaffolder] Could not parse Ollama JSON output ({}). \
+                     Raw response: {}. Falling back to mock.",
+                    e, &raw[..raw.len().min(200)]
+                );
+                None
+            }
+        }
     }
 
     pub fn generate_schema_mock(model_name: &str, prompt: &str) -> ModelSchema {
@@ -278,4 +338,93 @@ impl AiScaffolder {
             detected_features: features,
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// Helpers for Ollama JSON → ModelSchema parsing
+// ---------------------------------------------------------------------------
+
+/// Strip markdown code fences (` ```json … ``` `) from Ollama output and
+/// extract the first JSON object found.
+fn extract_json(raw: &str) -> String {
+    // Remove ```json / ``` fences if present
+    let stripped = raw
+        .trim()
+        .trim_start_matches("```json")
+        .trim_start_matches("```")
+        .trim_end_matches("```")
+        .trim();
+
+    // If there's a { ... } block, extract it
+    if let (Some(start), Some(end)) = (stripped.find('{'), stripped.rfind('}')) {
+        stripped[start..=end].to_string()
+    } else {
+        stripped.to_string()
+    }
+}
+
+/// Convert the JSON value returned by an Ollama schema-generation call into a
+/// `ModelSchema`.  Falls back gracefully when the model omits optional keys.
+fn json_to_schema(model_name: &str, prompt: &str, val: &serde_json::Value) -> ModelSchema {
+    let mut schema = ModelSchema::new(model_name)
+        .description(&format!("AI Scaffolding (Ollama): {}", prompt));
+
+    if let Some(fields) = val["fields"].as_array() {
+        for f in fields {
+            let name = match f["name"].as_str() {
+                Some(n) => n,
+                None => continue,
+            };
+            let type_str = f["type"].as_str().unwrap_or("string");
+            let required = f["required"].as_bool().unwrap_or(false);
+            let searchable = f["searchable"].as_bool().unwrap_or(false);
+            let unique = f["unique"].as_bool().unwrap_or(false);
+
+            let mut field = match type_str {
+                "integer" | "int" => Field::integer(name),
+                "float" | "number" => Field::float(name),
+                "boolean" | "bool" => Field::boolean(name),
+                "email" => Field::email(name),
+                "password" => Field::password(name),
+                "markdown" => Field::markdown(name),
+                "html" => Field::html(name),
+                "json" => Field::json(name),
+                "datetime" | "date" => Field::datetime(name),
+                "vector" => {
+                    let dims = f["dimensions"].as_u64().unwrap_or(768) as usize;
+                    Field::vector(name, dims)
+                }
+                "enum" => {
+                    let choices: Vec<&str> = f["choices"]
+                        .as_array()
+                        .map(|arr| arr.iter().filter_map(|v| v.as_str()).collect())
+                        .unwrap_or_else(|| vec!["Option1", "Option2"]);
+                    Field::r#enum(name, choices)
+                }
+                "foreign_key" | "relation" => {
+                    let target = f["target"].as_str().unwrap_or("Unknown");
+                    Field::foreign_key(name, target)
+                }
+                "money" => {
+                    let currency = f["currency"].as_str().unwrap_or("USD");
+                    Field::money(name, currency)
+                }
+                _ => Field::string(name), // default to string
+            };
+
+            if required {
+                field = field.required();
+            }
+            if searchable {
+                field = field.searchable();
+            }
+            if unique {
+                field = field.unique();
+            }
+
+            schema = schema.field(field);
+        }
+    }
+
+    schema.with_timestamps()
 }

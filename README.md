@@ -130,7 +130,50 @@ graph TD
 
 ---
 
+## 🦙 Local AI with Ollama — Zero API Keys Required
+
+Vella now has **first-class Ollama support**, letting you run every AI feature entirely on your own hardware — no cloud, no costs, no data leaving your machine.
+
+```rust
+use vella::ai::{LocalLlmEngine, RagEngine};
+
+// Chat with a local model
+let llm = LocalLlmEngine::new_ollama("llama3.2");
+let reply = llm.chat("What is a vector database?").await?;
+
+// Generate real embeddings for RAG
+let rag = RagEngine::new(); // uses nomic-embed-text by default
+let embedding = rag.embed_text("Vella is a Rust web framework.").await?;
+```
+
+### Quick Start
+
+```bash
+# Install & start Ollama
+curl -fsSL https://ollama.com/install.sh | sh && ollama serve
+
+# Pull recommended models
+ollama pull llama3.2           # chat
+ollama pull nomic-embed-text   # RAG embeddings
+ollama pull qwen2.5-coder      # schema generation
+
+# Use Ollama for the AI Scaffolder CLI
+OLLAMA_SCAFFOLD_MODEL=qwen2.5-coder cargo run -- generate model Post \
+  --ai "Blog post with title, markdown body, author, and tags"
+```
+
+| Env Variable | Purpose |
+|---|---|
+| `OLLAMA_BASE_URL` | Override server host (default: `http://localhost:11434`) |
+| `OLLAMA_EMBED_MODEL` | Embedding model for RAG (default: `nomic-embed-text`) |
+| `OLLAMA_SCAFFOLD_MODEL` | Enable Ollama for `generate model` CLI command |
+
+📖 **[Full Ollama Integration Guide →](OLLAMA_INTEGRATION.md)**
+
+---
+
 ## 🔥 NEW: The Vella VS Code Extension is Here!
+
 
 **Prepare to experience the most powerful IDE extension ever created.** The Vella VS Code Extension doesn't just assist you; it practically writes the software for you. This is a massive, game-changing developer tool built for the next generation of engineers.
 

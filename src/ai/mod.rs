@@ -15,7 +15,7 @@ pub mod rag;
 pub mod swarm;
 
 pub use chunking::DocumentSplitter;
-pub use local_llm::LocalLlmEngine;
+pub use local_llm::{LocalLlmEngine, OllamaChatMessage};
 pub use registry::ModelRegistry;
 pub use gpu::HardwareAccelerator;
 pub use gateway::{UnifiedAiGateway, AiConfig, AiProvider};
